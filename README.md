@@ -3,7 +3,7 @@
 > **The Open-Source Digital Platform for the Amazigh Language & Heritage**  
 > *Crowdsourced Dictionary • Educator Academy • Daily Word Games • Pan-Dialect Inclusivity*
 
-[![CI](https://github.com/danniharany/awal/actions/workflows/ci.yml/badge.svg)](https://github.com/danniharany/awal/actions/workflows/ci.yml)
+[![CI](https://github.com/dannyharani/Awal/actions/workflows/ci.yml/badge.svg)](https://github.com/dannyharani/Awal/actions/workflows/ci.yml)
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-2.x-orange.svg)](https://kit.svelte.dev)
 [![Svelte 5](https://img.shields.io/badge/Svelte-5.x%20Runes-red.svg)](https://svelte.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com)
@@ -33,7 +33,7 @@ Awal serves as an all-in-one digital sanctuary where speakers, learners, educato
           ┌──────────────────┬──────┴───────────┬──────────────────┐
           ▼                  ▼                  ▼                  ▼
 ┌──────────────────┐ ┌────────────────┐ ┌────────────────┐ ┌────────────────┐
-│     ⴰⵎⴰⵡⴰⵍ       │ │    ⵜⵉⵎⵙⵉⵔⵉⵏ    │ │     ⵓⵔⴰⵔⵏ      │ │     ⴰⵎⵣⴷⴰⵢ     │
+│     ⴰⵎⴰⵡⴰⵍ       │  │    ⵜⵉⵎⵙⵉⵔⵉⵏ   │ │     ⵓⵔⴰⵔⵏ      │ │     ⴰⵎⵣⴷⴰⵢ     │
 │     Amawal       │ │    Timsirin    │ │     Uraren     │ │    Amezday     │
 │ (Open Dictionary)│ │(Academy/Studio)│ │ (Daily Games)  │ │  (Community)   │
 └──────────────────┘ └────────────────┘ └────────────────┘ └────────────────┘
