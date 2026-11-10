@@ -79,7 +79,7 @@
 
   {#if open && (results.length > 0 || (query.trim().length > 1 && !loading))}
     <div
-      class="bg-popover text-popover-foreground absolute top-full z-50 mt-1 w-full overflow-hidden rounded-md border shadow-lg"
+      class="bg-popover text-popover-foreground fixed inset-x-3 top-14 z-50 overflow-hidden rounded-xl border shadow-xl sm:absolute sm:inset-x-0 sm:top-full sm:mt-1 sm:w-full sm:min-w-[320px]"
     >
       <Command.Root shouldFilter={false}>
         <Command.List class="max-h-80 overflow-y-auto">

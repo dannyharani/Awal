@@ -114,8 +114,8 @@
       </nav>
     </div>
 
-    <div class="flex flex-1 items-center justify-end gap-2">
-      <div class="w-full flex-1 sm:max-w-xs md:max-w-sm">
+    <div class="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
+      <div class="min-w-0 flex-1 sm:max-w-xs md:max-w-sm">
         <SearchBar />
       </div>
 
@@ -125,13 +125,13 @@
         variant="ghost"
         size="icon"
         href="/saved"
-        class="h-9 w-9 text-muted-foreground hover:text-foreground {pathname === '/saved' ? 'text-primary bg-muted' : ''}"
+        class="text-muted-foreground hover:text-foreground hidden h-9 w-9 shrink-0 sm:inline-flex {pathname === '/saved' ? 'text-primary bg-muted' : ''}"
         title={m.nav_saved_words()}
       >
         <Bookmark class="h-4 w-4 {pathname === '/saved' ? 'fill-current' : ''}" />
       </Button>
 
-      <Button variant="outline" size="sm" href="/add" class="hidden gap-1.5 md:flex">
+      <Button variant="outline" size="sm" href="/add" class="hidden shrink-0 gap-1.5 md:flex">
         <Plus class="h-4 w-4" />
         <span>{m.nav_add_word()}</span>
       </Button>
@@ -142,7 +142,7 @@
       <Button
         variant="ghost"
         size="icon"
-        class="h-9 w-9 xl:hidden"
+        class="h-9 w-9 shrink-0 xl:hidden"
         onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
         aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
         aria-expanded={mobileMenuOpen}

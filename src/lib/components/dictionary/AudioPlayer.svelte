@@ -75,13 +75,13 @@
     {/if}
   </Button>
 
-  <div class="flex min-w-[110px] flex-col gap-1">
-    <div class="flex items-center justify-between gap-3">
-      <span class="text-muted-foreground flex items-center gap-1 text-[10px] font-bold tracking-wider uppercase">
-        <Volume2 class="h-3 w-3" />
-        {label}
+  <div class="flex min-w-[96px] max-w-[180px] flex-col gap-1 sm:min-w-[110px] sm:max-w-[220px]">
+    <div class="flex items-center justify-between gap-2">
+      <span class="text-muted-foreground flex min-w-0 items-center gap-1 text-[10px] font-bold tracking-wider uppercase">
+        <Volume2 class="h-3 w-3 shrink-0" />
+        <span class="truncate">{label}</span>
       </span>
-      <span class="text-foreground font-mono text-[11px] font-medium">
+      <span class="text-foreground shrink-0 font-mono text-[11px] font-medium">
         {isPlaying ? formatSeconds(currentTime) : duration > 0 ? formatSeconds(duration) : 'Play'}
       </span>
     </div>

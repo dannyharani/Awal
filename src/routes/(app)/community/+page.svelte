@@ -152,7 +152,7 @@
       </button>
     </div>
 
-    <div class="flex flex-1 flex-wrap items-center justify-end gap-2 sm:flex-none">
+    <div class="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
       <div class="relative w-full sm:w-72">
         <Search class="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
         <Input
@@ -166,7 +166,7 @@
       <select
         bind:value={sortBy}
         aria-label="Sort community members"
-        class="border-input bg-background h-9 rounded-md border px-3 text-xs font-medium"
+        class="border-input bg-background h-9 w-full rounded-md border px-3 text-xs font-medium sm:w-auto"
       >
         <option value="reputation">Sort: Highest Reputation</option>
         <option value="contributions">Sort: Most Contributions</option>

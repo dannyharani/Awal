@@ -93,18 +93,18 @@
     </div>
 
     <!-- Interactive Tawalt Teaser Grid -->
-    <div class="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-2xl border bg-card p-6 shadow-sm">
-      <div class="flex items-center justify-between w-full px-2 text-xs font-semibold text-muted-foreground">
+    <div class="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-2xl border bg-card p-4 shadow-sm sm:p-6">
+      <div class="flex items-center justify-between w-full px-1 text-xs font-semibold text-muted-foreground sm:px-2">
         <span>Tawalt #001 Teaser</span>
         <span class="flex items-center gap-1 text-emerald-600 font-bold">
           <CheckCircle2 class="h-3.5 w-3.5" /> 1/6 Solved!
         </span>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex gap-1.5 sm:gap-2">
         {#each demoWord as letter, i}
           <div
-            class="flex h-14 w-14 flex-col items-center justify-center rounded-lg border-2 font-mono text-xl font-extrabold transition-all duration-300 {demoColors[i]}"
+            class="flex h-12 w-12 flex-col items-center justify-center rounded-lg border-2 font-mono text-lg font-extrabold transition-all duration-300 sm:h-14 sm:w-14 sm:text-xl {demoColors[i]}"
           >
             <span>{letter}</span>
             <span class="text-[10px] font-serif opacity-80">{demoTifinagh[i]}</span>
@@ -192,8 +192,8 @@
   </section>
 
   <!-- Community Call to Action -->
-  <Card.Root class="border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card">
-    <Card.Content class="flex flex-col items-center justify-between gap-6 p-8 text-center sm:flex-row sm:text-left">
+  <Card.Root class="border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card py-0">
+    <Card.Content class="flex flex-col items-center justify-between gap-6 p-5 text-center sm:flex-row sm:p-8 sm:text-left">
       <div class="space-y-2 max-w-xl">
         <h3 class="text-xl font-bold flex items-center gap-2 justify-center sm:justify-start">
           <Sparkles class="h-5 w-5 text-primary" />

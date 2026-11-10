@@ -77,7 +77,7 @@
 </script>
 
 <Card.Root
-  class="group border-border bg-card text-card-foreground hover:border-primary/40 overflow-hidden p-0 transition-all duration-300 hover:shadow-md"
+  class="group border-border bg-card text-card-foreground hover:border-primary/40 gap-0 overflow-hidden p-0 transition-all duration-300 hover:shadow-md"
 >
   <Card.Header
     class="bg-muted/30 flex flex-row flex-wrap items-center justify-between gap-2 border-b px-4 py-3.5"
@@ -185,7 +185,7 @@
     </div>
   </Card.Header>
 
-  <Card.Content class="bg-card space-y-5 pt-5">
+  <Card.Content class="bg-card space-y-4 py-4 sm:space-y-5 sm:py-5">
     {#if def.audio_url}
       <div>
         <AudioPlayer src={def.audio_url} />
@@ -253,9 +253,9 @@
         {#if def.examples && def.examples.length > 0}
           <div class="space-y-3">
             {#each def.examples as example (example.id)}
-              <div class="group/ex bg-muted/20 hover:bg-muted/30 flex items-start justify-between gap-3 rounded-lg border border-transparent hover:border-border/50 p-3 transition-colors">
-                <div class="space-y-1">
-                  <p class="text-foreground/95 text-base font-medium italic leading-relaxed">
+              <div class="group/ex bg-muted/20 hover:bg-muted/30 flex flex-col justify-between gap-2.5 rounded-lg border border-transparent hover:border-border/50 p-3 transition-colors sm:flex-row sm:items-start sm:gap-3">
+                <div class="min-w-0 space-y-1">
+                  <p class="text-foreground/95 break-words text-base font-medium italic leading-relaxed">
                     "{#each tokenizeSentence(example.sentence_text) as token}{#if token.slug}<a
                           href="/word/{encodeURIComponent(token.slug)}"
                           title={m.word_click_word_hint()}
@@ -265,7 +265,7 @@
                   </p>
 
                   {#if example.translation_text}
-                    <p class="text-muted-foreground text-sm">
+                    <p class="text-muted-foreground break-words text-sm">
                       — {example.translation_text}
                     </p>
                   {/if}
@@ -281,7 +281,7 @@
                   {/if}
                 </div>
 
-                <div class="flex shrink-0 items-center gap-1">
+                <div class="flex shrink-0 items-center gap-1 self-end sm:self-auto">
                   <VoteButtons
                     score={example.vote_score ?? 0}
                     exampleId={example.id}
@@ -345,7 +345,7 @@
                 required
               />
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
               <Input
                 name="translation"
                 bind:value={newExampleTranslation}
@@ -355,7 +355,7 @@
               <Button
                 type="submit"
                 size="sm"
-                class="h-8 px-3 text-xs"
+                class="h-8 w-full px-3 text-xs sm:w-auto"
                 disabled={isAddingExample || !newExampleSentence.trim()}
               >
                 {isAddingExample ? m.word_saving() : m.word_save_example()}
@@ -409,7 +409,7 @@
     </div>
 
     {#if isExpanded && hasAttributes}
-      <div transition:slide={{ duration: 200 }} class="border-border/60 w-full border-t px-6 py-4">
+      <div transition:slide={{ duration: 200 }} class="border-border/60 w-full border-t px-4 py-4 sm:px-6">
         <h4 class="text-muted-foreground mb-3 text-[10px] font-bold tracking-wider uppercase">
           {m.word_morphology_title()}
         </h4>
@@ -424,7 +424,7 @@
               >
                 {attrLabels[key] ?? key.replace(/_/g, ' ')}
               </span>
-              <span class="text-foreground truncate font-medium">{value}</span>
+              <span class="text-foreground break-words font-medium">{value}</span>
             </div>
           {/each}
         </div>

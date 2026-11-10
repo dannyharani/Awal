@@ -294,8 +294,8 @@
   </div>
 
   <!-- Search & Secondary Filter Dropdowns -->
-  <div class="bg-muted/20 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3.5">
-    <div class="relative w-full max-w-sm">
+  <div class="bg-muted/20 flex flex-col justify-between gap-3 rounded-xl border p-3.5 md:flex-row md:items-center">
+    <div class="relative w-full md:max-w-sm">
       <Search class="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
       <Input
         type="search"
@@ -305,12 +305,12 @@
       />
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <Filter class="text-muted-foreground h-3.5 w-3.5" />
+    <div class="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 md:flex md:w-auto md:flex-wrap md:items-center">
+      <Filter class="text-muted-foreground hidden h-3.5 w-3.5 md:inline" />
 
       <select
         bind:value={selectedDialect}
-        class="border-input bg-background h-9 rounded-md border px-3 text-xs"
+        class="border-input bg-background h-9 w-full rounded-md border px-3 text-xs md:w-auto"
       >
         <option value="all">{m.courses_filter_dialect()}</option>
         {#each dialects as d}
@@ -320,7 +320,7 @@
 
       <select
         bind:value={selectedLang}
-        class="border-input bg-background h-9 rounded-md border px-3 text-xs uppercase"
+        class="border-input bg-background h-9 w-full rounded-md border px-3 text-xs uppercase md:w-auto"
       >
         <option value="all">{m.courses_filter_lang()}</option>
         {#each locales as loc}
@@ -330,7 +330,7 @@
 
       <select
         bind:value={selectedLevel}
-        class="border-input bg-background h-9 rounded-md border px-3 text-xs"
+        class="border-input bg-background h-9 w-full rounded-md border px-3 text-xs md:w-auto"
       >
         <option value="all">{m.courses_filter_level()}</option>
         <option value="beginner">{m.courses_level_beginner()}</option>

@@ -138,7 +138,7 @@
         </div>
       </Card.Content>
 
-      <Card.Footer class="flex items-center justify-between border-t pt-4">
+      <Card.Footer class="flex flex-wrap items-center justify-between gap-3 border-t py-4">
         <p class="text-muted-foreground text-xs">
           {#if $message}
             <span class="font-medium text-green-600">{$message}</span>

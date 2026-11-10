@@ -47,7 +47,7 @@
   let open = $state(false);
   let containerEl = $state<HTMLElement | null>(null);
   let placement = $state<'top' | 'bottom'>('top');
-  let align = $state<'center' | 'left' | 'right'>('center');
+  let leftOffsetPx = $state(0);
   let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
   let closeTimeout: ReturnType<typeof setTimeout> | null = null;
 
@@ -62,15 +62,12 @@
       placement = 'top';
     }
 
-    // Horizontal overflow handling
-    const halfWidth = 165;
-    if (rect.left + rect.width / 2 < halfWidth + 16) {
-      align = 'left';
-    } else if (window.innerWidth - (rect.left + rect.width / 2) < halfWidth + 16) {
-      align = 'right';
-    } else {
-      align = 'center';
-    }
+    // Viewport-safe horizontal clamping so popover never overflows left or right screen edges
+    const vw = window.innerWidth;
+    const tooltipWidth = Math.min(vw >= 640 ? 320 : 288, vw - 24);
+    const idealViewportLeft = rect.left + rect.width / 2 - tooltipWidth / 2;
+    const clampedViewportLeft = Math.max(12, Math.min(idealViewportLeft, vw - tooltipWidth - 12));
+    leftOffsetPx = Math.round(clampedViewportLeft - rect.left);
   }
 
   let dbChecked = $state(false);
@@ -178,16 +175,9 @@
   let displayDialect = $derived(dbEntry?.dialectName || resolvedDialect);
   let targetSlug = $derived(dbEntry?.slug || resolvedSlug);
 
-  let positionClasses = $derived.by(() => {
-    const v = placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2';
-    const h =
-      align === 'left'
-        ? 'left-0 translate-x-0'
-        : align === 'right'
-          ? 'right-0 left-auto translate-x-0'
-          : 'left-1/2 -translate-x-1/2';
-    return `${v} ${h}`;
-  });
+  let positionClasses = $derived(
+    placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
+  );
 </script>
 
 <span
@@ -227,7 +217,8 @@
   {#if open}
     <div
       role="tooltip"
-      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 font-sans font-normal text-xs tracking-normal leading-normal normal-case antialiased subpixel-antialiased absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 duration-150 [transform-style:preserve-3d] [backface-visibility:hidden] select-text {positionClasses}"
+      style="left: {leftOffsetPx}px;"
+      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 font-sans font-normal text-xs tracking-normal leading-normal normal-case antialiased subpixel-antialiased absolute z-50 w-[min(18rem,calc(100vw-1.5rem))] rounded-xl border p-3.5 text-left shadow-xl sm:w-80 duration-150 [transform-style:preserve-3d] [backface-visibility:hidden] select-text {positionClasses}"
     >
       <div class="flex items-start justify-between gap-2 border-b pb-2.5">
         <div>

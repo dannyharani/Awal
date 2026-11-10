@@ -37,7 +37,7 @@
   }
 </script>
 
-<div class="container mx-auto flex min-h-[85vh] w-full flex-col items-center justify-center py-10">
+<div class="container mx-auto flex w-full flex-col items-center px-4 py-6 sm:min-h-[80vh] sm:justify-center sm:py-10">
   <div class="w-full max-w-lg space-y-6">
     <div class="flex items-center gap-2">
       <Button
@@ -114,16 +114,16 @@
               {/if}
 
               <div
-                class="bg-muted/50 text-muted-foreground flex items-center justify-between rounded-md px-3 py-2 text-xs"
+                class="bg-muted/50 text-muted-foreground flex items-center justify-between gap-2 overflow-hidden rounded-md px-3 py-2 text-xs"
               >
-                <span class="flex items-center gap-2">
-                  <LinkIcon class="h-3 w-3" />
-                  <span>
+                <span class="flex min-w-0 items-center gap-2">
+                  <LinkIcon class="h-3 w-3 shrink-0" />
+                  <span class="truncate">
                     .../word/<span class="text-foreground font-mono font-medium">{slugPreview}</span>
                   </span>
                 </span>
                 {#if $form.script_latin}
-                  <span class="font-tifinagh text-primary text-xs">
+                  <span class="font-tifinagh text-primary shrink-0 text-xs">
                     {latinToTifinagh($form.script_latin)}
                   </span>
                 {/if}

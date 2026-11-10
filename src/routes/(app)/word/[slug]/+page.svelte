@@ -546,12 +546,12 @@
     </div>
 
     <!-- Hero Headword Banner Card -->
-    <div class="border-primary/20 from-primary/5 via-card to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br p-6 shadow-xs sm:p-8">
-      <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
-        <div class="space-y-4">
+    <div class="border-primary/20 from-primary/5 via-card to-card relative overflow-hidden rounded-2xl border bg-gradient-to-br p-4 shadow-xs sm:p-8">
+      <div class="flex flex-col justify-between gap-5 lg:flex-row lg:items-start lg:gap-6">
+        <div class="min-w-0 space-y-4">
           <!-- Multi-Script Display -->
-          <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-            <h1 class="text-foreground text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+          <div class="flex flex-wrap items-center gap-2.5 sm:gap-4">
+            <h1 class="text-foreground break-words text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               {headword.script_latin}
             </h1>
 
@@ -906,7 +906,7 @@
     <!-- Main 2-Column Content Grid -->
     <div class="grid gap-8 md:grid-cols-[1fr_350px] lg:grid-cols-[1fr_400px] lg:gap-10">
       <!-- Left Column: Filter Toolbar + Definitions -->
-      <div class="space-y-6">
+      <div class="min-w-0 space-y-6">
         <div class="space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <h2 class="text-2xl font-bold tracking-tight">
@@ -1014,7 +1014,7 @@
       </div>
 
       <!-- Right Sidebar: Academy Integrations + Add Definition -->
-      <div class="space-y-6">
+      <div class="min-w-0 space-y-6">
         {#if linkedLessons.length > 0 || relatedCourses.length > 0}
           <Card.Root class="border-primary/20 bg-card shadow-xs">
             <Card.Header class="pb-3">

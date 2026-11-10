@@ -55,7 +55,7 @@
 {#if session}
   <DropdownMenu.Root>
     <DropdownMenu.Trigger
-      class={buttonVariants({ variant: 'ghost', class: 'relative h-8 w-8 rounded-full' })}
+      class={buttonVariants({ variant: 'ghost', class: 'relative h-8 w-8 shrink-0 rounded-full' })}
     >
       <Avatar.Root class="h-8 w-8">
         <Avatar.Image src={userProfile?.avatar_url} alt={userProfile?.full_name} />
@@ -107,5 +107,5 @@
     </DropdownMenu.Content>
   </DropdownMenu.Root>
 {:else}
-  <Button onclick={handleLogin} size="sm" variant="default">{m.nav_sign_in()}</Button>
+  <Button onclick={handleLogin} size="sm" variant="default" class="shrink-0 px-2.5 text-xs sm:px-3">{m.nav_sign_in()}</Button>
 {/if}

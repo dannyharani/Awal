@@ -113,7 +113,7 @@
 
     <!-- Step Progress Pills -->
     {#if steps.length > 0}
-      <div class="grid grid-cols-{steps.length} flex gap-1.5 pt-1">
+      <div class="flex w-full gap-1.5 pt-1">
         {#each steps as s, idx (s.id)}
           <button
             type="button"
@@ -133,8 +133,8 @@
   <!-- Active Step Content -->
   {#if activeStep}
     {@const content = (activeStep.content ?? {}) as Record<string, any>}
-    <Card.Root class="border-border shadow-sm">
-      <Card.Header class="bg-muted/20 flex flex-row items-center justify-between border-b px-6 py-3.5">
+    <Card.Root class="border-border gap-0 shadow-sm">
+      <Card.Header class="bg-muted/20 flex flex-row flex-wrap items-center justify-between gap-2 border-b px-4 py-3.5 sm:px-6">
         <Badge variant="secondary" class="text-xs uppercase">{activeStep.step_type}</Badge>
 
         {#if activeStep.headword}
@@ -143,8 +143,8 @@
             target="_blank"
             class="text-primary flex items-center gap-1.5 text-xs font-semibold hover:underline"
           >
-            <BookOpen class="h-3.5 w-3.5" />
-            Dictionary Entry: {activeStep.headword.script_latin}
+            <BookOpen class="h-3.5 w-3.5 shrink-0" />
+            <span>Dictionary Entry: {activeStep.headword.script_latin}</span>
             {#if activeStep.headword.script_tifinagh}
               <span class="font-serif">({activeStep.headword.script_tifinagh})</span>
             {/if}
@@ -152,7 +152,7 @@
         {/if}
       </Card.Header>
 
-      <Card.Content class="p-6 sm:p-8">
+      <Card.Content class="p-4 sm:p-8">
         {#if activeStep.step_type === 'text'}
           <div class="prose dark:prose-invert max-w-none text-base leading-relaxed">
             {@html renderMarkdown(content.markdown || '')}
@@ -300,18 +300,19 @@
       </Card.Content>
 
       <!-- Step Navigation Footer -->
-      <Card.Footer class="bg-muted/20 flex items-center justify-between border-t px-6 py-4">
+      <Card.Footer class="bg-muted/20 flex flex-wrap items-center justify-between gap-2 border-t px-4 py-3.5 sm:px-6 sm:py-4">
         <Button
           variant="outline"
+          size="sm"
           disabled={currentStepIdx === 0}
           onclick={() => (currentStepIdx = Math.max(0, currentStepIdx - 1))}
         >
-          <ArrowLeft class="mr-2 h-4 w-4" /> Previous Step
+          <ArrowLeft class="mr-1.5 h-4 w-4" /> Previous Step
         </Button>
 
         {#if currentStepIdx < steps.length - 1}
-          <Button onclick={() => (currentStepIdx = currentStepIdx + 1)}>
-            Next Step <ArrowRight class="ml-2 h-4 w-4" />
+          <Button size="sm" onclick={() => (currentStepIdx = currentStepIdx + 1)}>
+            Next Step <ArrowRight class="ml-1.5 h-4 w-4" />
           </Button>
         {:else if user}
           <form
@@ -327,13 +328,13 @@
               };
             }}
           >
-            <Button type="submit" class="gap-2 bg-emerald-600 text-white hover:bg-emerald-700">
+            <Button type="submit" size="sm" class="gap-2 bg-emerald-600 text-white hover:bg-emerald-700">
               <CheckCircle2 class="h-4 w-4" />
               {isCompleted || completionBanner ? 'Lesson Completed' : 'Complete Lesson (+10 XP)'}
             </Button>
           </form>
         {:else}
-          <Button href="/courses/{course.slug}">Finish Lesson</Button>
+          <Button size="sm" href="/courses/{course.slug}">Finish Lesson</Button>
         {/if}
       </Card.Footer>
     </Card.Root>
@@ -375,26 +376,26 @@
     </Card.Root>
   {/if}
 
-  <div class="flex items-center justify-between pt-2 text-xs">
+  <div class="flex flex-col gap-2 pt-2 text-xs sm:flex-row sm:items-center sm:justify-between">
     {#if prevLesson}
       <a
         href="/courses/{course.slug}/learn/{prevLesson.id}"
-        class="text-muted-foreground hover:text-foreground flex items-center gap-1 font-medium"
+        class="text-muted-foreground hover:text-foreground flex min-w-0 items-center gap-1 font-medium"
       >
-        <ArrowLeft class="h-3.5 w-3.5" />
-        Prev: {prevLesson.title}
+        <ArrowLeft class="h-3.5 w-3.5 shrink-0" />
+        <span class="truncate">Prev: {prevLesson.title}</span>
       </a>
     {:else}
-      <span></span>
+      <span class="hidden sm:inline"></span>
     {/if}
 
     {#if nextLesson}
       <a
         href="/courses/{course.slug}/learn/{nextLesson.id}"
-        class="text-primary flex items-center gap-1 font-semibold hover:underline"
+        class="text-primary flex min-w-0 items-center justify-end gap-1 font-semibold hover:underline"
       >
-        Next: {nextLesson.title}
-        <ArrowRight class="h-3.5 w-3.5" />
+        <span class="truncate">Next: {nextLesson.title}</span>
+        <ArrowRight class="h-3.5 w-3.5 shrink-0" />
       </a>
     {/if}
   </div>

@@ -38,11 +38,11 @@
       <Button
         variant="ghost"
         size="sm"
-        class="h-8 gap-1.5 px-2.5 text-xs font-semibold"
+        class="h-8 shrink-0 gap-1 px-2 text-xs font-semibold sm:gap-1.5 sm:px-2.5"
         title="Switch interface language"
         {...props}
       >
-        <Languages class="h-4 w-4" />
+        <Languages class="h-4 w-4 shrink-0" />
         <span class="uppercase">{LOCALE_LABELS[activeLocale]?.badge ?? activeLocale}</span>
       </Button>
     {/snippet}

@@ -8,6 +8,6 @@
 </script>
 
 <ModeWatcher />
-<div {dir} class="min-h-screen">
+<div {dir} class="min-h-screen overflow-x-clip">
   {@render children()}
 </div>

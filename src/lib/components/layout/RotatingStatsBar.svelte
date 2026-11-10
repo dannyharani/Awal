@@ -171,11 +171,11 @@
 >
   <!-- Top Controls Bar -->
   <div class="mb-3 flex flex-wrap items-center justify-between gap-2 px-1">
-    <div class="flex flex-wrap items-center gap-1.5">
+    <div class="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1 sm:flex-wrap sm:pb-0">
       <button
         type="button"
         onclick={() => selectCategory('all')}
-        class="rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory === 'all'
+        class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory === 'all'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'}"
       >
@@ -184,7 +184,7 @@
       <button
         type="button"
         onclick={() => selectCategory('dictionary')}
-        class="rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
+        class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
         'dictionary'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'}"
@@ -194,7 +194,7 @@
       <button
         type="button"
         onclick={() => selectCategory('academy')}
-        class="rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
+        class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
         'academy'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'}"
@@ -204,7 +204,7 @@
       <button
         type="button"
         onclick={() => selectCategory('community')}
-        class="rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
+        class="shrink-0 rounded-full px-3 py-1 text-xs font-medium transition-colors {activeCategory ===
         'community'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-muted/60 text-muted-foreground hover:text-foreground hover:bg-muted'}"

@@ -33,7 +33,7 @@
 
   <div class="mb-12 flex flex-col gap-8 md:flex-row md:items-start md:gap-10">
     <Avatar.Root
-      class="border-background ring-border/20 h-32 w-32 shrink-0 border-4 shadow-xl ring-1 md:h-40 md:w-40"
+      class="border-background ring-border/20 mx-auto h-32 w-32 shrink-0 border-4 shadow-xl ring-1 md:mx-0 md:h-40 md:w-40"
     >
       <Avatar.Image src={profile.avatar_url} alt={profile.username} class="object-cover" />
       <Avatar.Fallback
@@ -148,10 +148,10 @@
     {#if contributions.length > 0}
       <div class="grid gap-4">
         {#each contributions as def}
-          <Card.Root class="group hover:border-primary/40 p-0 transition-all hover:shadow-sm">
-            <Card.Header class="pt-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
+          <Card.Root class="group hover:border-primary/40 gap-4 pt-5 pb-0 transition-all hover:shadow-sm">
+            <Card.Header>
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex flex-wrap items-center gap-2.5">
                   <a
                     href="/word/{def.headword?.slug}"
                     class="decoration-primary text-lg font-bold decoration-2 underline-offset-4 hover:underline"
@@ -179,7 +179,7 @@
             </Card.Content>
 
             <Card.Footer
-              class="bg-muted/30 text-muted-foreground flex items-center justify-between border-t px-6 py-6 text-xs"
+              class="bg-muted/30 text-muted-foreground flex items-center justify-between border-t py-3.5 text-xs"
             >
               <div class="flex items-center gap-4">
                 <span class="flex items-center gap-1.5 font-medium">

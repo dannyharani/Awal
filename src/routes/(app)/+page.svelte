@@ -79,39 +79,39 @@
   let selectedQuizIdx = $state<number | null>(null);
 </script>
 
-<div class="container mx-auto space-y-14 px-4 py-10">
+<div class="container mx-auto space-y-10 px-4 py-8 sm:space-y-14 sm:py-10">
   <!-- Hero Section -->
-  <section class="mx-auto max-w-4xl space-y-6 text-center">
-    <div class="inline-flex flex-wrap items-center justify-center gap-2 rounded-full border bg-muted/40 px-4 py-1.5 text-xs font-medium">
-      <Sparkles class="text-primary h-3.5 w-3.5" />
+  <section class="mx-auto max-w-4xl space-y-5 text-center sm:space-y-6">
+    <div class="inline-flex flex-wrap items-center justify-center gap-2 rounded-2xl border bg-muted/40 px-3.5 py-1.5 text-xs font-medium sm:rounded-full sm:px-4">
+      <Sparkles class="text-primary h-3.5 w-3.5 shrink-0" />
       <span>
         <AmazighWord word="Azul" showTifinaghInline />! Welcome to
         <AmazighWord word="Awal" showTifinaghInline /> — hover or tap any dotted Amazigh word for instant definitions
       </span>
     </div>
 
-    <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+    <h1 class="text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
       {m.hero_title_prefix()}
       <span class="text-primary">{m.hero_title_highlight()}</span>
       {m.hero_title_suffix()}
     </h1>
 
-    <p class="text-muted-foreground mx-auto max-w-2xl text-lg leading-relaxed sm:text-xl">
+    <p class="text-muted-foreground mx-auto max-w-2xl text-base leading-relaxed sm:text-xl">
       {m.hero_subtitle()} Explore our living <AmazighWord word="Amawal" />, structured
       <AmazighWord word="Timsirin" />, daily <AmazighWord word="Uraren" />, and global
       <AmazighWord word="Amezday" /> across <AmazighWord word="Tamazɣa" />.
     </p>
 
-    <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
-      <Button size="lg" href="/add" class="gap-2">
+    <div class="flex flex-wrap items-center justify-center gap-2.5 pt-1 sm:gap-3">
+      <Button size="lg" href="/add" class="w-full gap-2 sm:w-auto">
         {m.cta_contribute_word()}
         <ArrowRight class="h-4 w-4" />
       </Button>
-      <Button variant="outline" size="lg" href="/courses" class="gap-2">
+      <Button variant="outline" size="lg" href="/courses" class="w-full gap-2 sm:w-auto">
         <GraduationCap class="h-4 w-4" />
         {m.cta_explore_courses()}
       </Button>
-      <Button variant="ghost" size="lg" href="/community" class="gap-2">
+      <Button variant="ghost" size="lg" href="/community" class="w-full gap-2 sm:w-auto">
         <Users class="h-4 w-4" />
         {m.nav_community ? m.nav_community() : 'Community'}
       </Button>
@@ -262,20 +262,20 @@
         {/each}
       </Card.Content>
 
-      <Card.Footer class="border-t pt-3">
+      <Card.Footer class="border-t py-3.5">
         <a
           href="/games"
           class="text-primary inline-flex w-full items-center justify-between text-xs font-semibold hover:underline"
         >
           <span>Explore Tawalt, Anagam & Assaɣen</span>
-          <ArrowRight class="h-3.5 w-3.5" />
+          <ArrowRight class="h-3.5 w-3.5 shrink-0" />
         </a>
       </Card.Footer>
     </Card.Root>
   </section>
 
   <!-- Browse by Alphabet & Dialect -->
-  <section id="browse" class="bg-muted/20 space-y-5 rounded-xl border p-6">
+  <section id="browse" class="bg-muted/20 space-y-5 rounded-xl border p-4 sm:p-6">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <div class="flex items-center gap-2">
         <Compass class="text-primary h-5 w-5" />
@@ -452,7 +452,7 @@
 
   <!-- Community Contribution & Verification Queue -->
   {#if wordsNeedingHelp.length > 0 || wordsNeedingVerification.length > 0}
-    <section id="contribute" class="bg-muted/15 rounded-2xl border p-6 sm:p-8">
+    <section id="contribute" class="bg-muted/15 rounded-2xl border p-4 sm:p-8">
       <div class="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div class="space-y-1">
           <div class="flex items-center gap-2">
@@ -614,7 +614,7 @@
                     </Card.Description>
                   {/if}
                 </Card.Header>
-                <Card.Footer class="text-muted-foreground flex items-center justify-between border-t pt-3 text-xs">
+                <Card.Footer class="text-muted-foreground flex items-center justify-between border-t py-3.5 text-xs">
                   <span class="inline-flex items-center gap-1">
                     <BookOpen class="h-3.5 w-3.5" />
                     {course.modules?.[0]?.count ?? 0} modules
@@ -650,7 +650,7 @@
         </Button>
       </div>
 
-      <Card.Root>
+      <Card.Root class="py-0">
         <Card.Content class="divide-y p-0">
           {#each topContributors as member (member.id)}
             <a
