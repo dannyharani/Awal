@@ -62,6 +62,18 @@
     root: m.word_consonantal_root(),
     verb_stems: m.word_verb_stems()
   });
+
+  function tokenizeSentence(sentence: string): Array<{ text: string; slug: string | null }> {
+    if (!sentence) return [];
+    const parts = sentence.split(/([\p{L}\p{M}-]+)/gu);
+    return parts.filter(Boolean).map((part) => {
+      if (/^[\p{L}\p{M}-]+$/u.test(part) && part.length >= 2) {
+        const cleanSlug = part.toLowerCase().replace(/^-+|-+$/g, '');
+        return { text: part, slug: cleanSlug || null };
+      }
+      return { text: part, slug: null };
+    });
+  }
 </script>
 
 <Card.Root
@@ -241,10 +253,15 @@
         {#if def.examples && def.examples.length > 0}
           <div class="space-y-3">
             {#each def.examples as example (example.id)}
-              <div class="group/ex bg-muted/20 flex items-start justify-between gap-3 rounded-md p-2.5">
+              <div class="group/ex bg-muted/20 hover:bg-muted/30 flex items-start justify-between gap-3 rounded-lg border border-transparent hover:border-border/50 p-3 transition-colors">
                 <div class="space-y-1">
-                  <p class="text-foreground/90 text-base font-medium italic">
-                    "{example.sentence_text}"
+                  <p class="text-foreground/95 text-base font-medium italic leading-relaxed">
+                    "{#each tokenizeSentence(example.sentence_text) as token}{#if token.slug}<a
+                          href="/word/{encodeURIComponent(token.slug)}"
+                          title={m.word_click_word_hint()}
+                          class="hover:text-primary decoration-primary/40 hover:decoration-primary rounded-xs transition-colors hover:underline decoration-dotted underline-offset-4"
+                          >{token.text}</a
+                        >{:else}{token.text}{/if}{/each}"
                   </p>
 
                   {#if example.translation_text}

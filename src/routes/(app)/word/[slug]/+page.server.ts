@@ -45,6 +45,10 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
       dialects: [],
       definitions: [],
       relatedWords: [],
+      sameRootWords: [],
+      detectedRoots: [],
+      linkedLessons: [],
+      relatedCourses: [],
       userVotes: {},
       userExampleVotes: {},
       role,
@@ -52,8 +56,8 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
     };
   }
 
-  // 2. Fetch Definitions, Dialects, and Word Relations in parallel
-  const [defsRes, dialectsRes, relationsRes] = await Promise.all([
+  // 2. Fetch Definitions, Dialects, Word Relations, and Linked Steps in parallel
+  const [defsRes, dialectsRes, relationsRes, linkedStepsRes] = await Promise.all([
     supabase
       .from('definitions')
       .select(
@@ -97,7 +101,33 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
         target:headwords!word_relations_target_headword_id_fkey (id, slug, script_latin, script_tifinagh)
       `
       )
-      .or(`source_headword_id.eq.${headword.id},target_headword_id.eq.${headword.id}`)
+      .or(`source_headword_id.eq.${headword.id},target_headword_id.eq.${headword.id}`),
+
+    supabase
+      .from('steps')
+      .select(
+        `
+        id,
+        step_type,
+        lessons (
+          id,
+          title,
+          modules (
+            id,
+            title,
+            courses (
+              id,
+              slug,
+              title,
+              is_published,
+              difficulty_level
+            )
+          )
+        )
+      `
+      )
+      .eq('linked_headword_id', headword.id)
+      .limit(6)
   ]);
 
   if (defsRes.error) {
@@ -121,6 +151,93 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
       };
     })
     .filter((item): item is NonNullable<typeof item> => item !== null);
+
+  // Extract consonantal roots from definitions
+  const detectedRoots = Array.from(
+    new Set(
+      definitions
+        .map((d) => {
+          const attrs = typeof d.attributes === 'string' ? JSON.parse(d.attributes) : d.attributes;
+          return (attrs?.root as string | undefined)?.trim().toUpperCase();
+        })
+        .filter((r): r is string => Boolean(r))
+    )
+  );
+
+  // Normalize linked Academy lessons
+  const linkedLessonsMap = new Map<
+    number,
+    {
+      lessonId: number;
+      lessonTitle: string;
+      courseSlug: string;
+      courseTitle: string;
+      difficultyLevel: string | null;
+    }
+  >();
+
+  for (const step of linkedStepsRes.data ?? []) {
+    const lessonObj = Array.isArray(step.lessons) ? step.lessons[0] : step.lessons;
+    if (!lessonObj) continue;
+    const modObj = Array.isArray(lessonObj.modules) ? lessonObj.modules[0] : lessonObj.modules;
+    if (!modObj) continue;
+    const courseObj = Array.isArray(modObj.courses) ? modObj.courses[0] : modObj.courses;
+    if (!courseObj || !courseObj.is_published) continue;
+    if (!linkedLessonsMap.has(lessonObj.id)) {
+      linkedLessonsMap.set(lessonObj.id, {
+        lessonId: lessonObj.id,
+        lessonTitle: lessonObj.title,
+        courseSlug: courseObj.slug,
+        courseTitle: courseObj.title,
+        difficultyLevel: courseObj.difficulty_level
+      });
+    }
+  }
+  const linkedLessons = Array.from(linkedLessonsMap.values());
+
+  // Fetch same-root words and dialect-matching courses in parallel
+  const docDialectIds = Array.from(
+    new Set(definitions.map((d) => d.dialect_id).filter((id): id is number => id !== null))
+  );
+
+  const [sameRootRes, coursesRes] = await Promise.all([
+    detectedRoots.length > 0
+      ? supabase
+          .from('definitions')
+          .select('headwords!inner (id, slug, script_latin, script_tifinagh), attributes')
+          .neq('headword_id', headword.id)
+          .eq('attributes->>root', detectedRoots[0])
+          .limit(8)
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from('courses')
+      .select('id, slug, title, description, difficulty_level, category, target_dialect_id, dialects (name)')
+      .eq('is_published', true)
+      .order('sort_order', { ascending: true })
+      .limit(6)
+  ]);
+
+  const sameRootMap = new Map<
+    number,
+    { id: number; slug: string; script_latin: string | null; script_tifinagh: string | null }
+  >();
+  for (const row of sameRootRes.data ?? []) {
+    const hw = Array.isArray(row.headwords) ? row.headwords[0] : row.headwords;
+    if (hw && !sameRootMap.has(hw.id)) {
+      sameRootMap.set(hw.id, hw);
+    }
+  }
+  const sameRootWords = Array.from(sameRootMap.values());
+
+  const allPublishedCourses = (coursesRes.data ?? []).map((c) => ({
+    ...c,
+    dialectName: (Array.isArray(c.dialects) ? c.dialects[0]?.name : (c.dialects as { name?: string } | null)?.name) ?? null
+  }));
+  const dialectMatchedCourses =
+    docDialectIds.length > 0
+      ? allPublishedCourses.filter((c) => c.target_dialect_id && docDialectIds.includes(c.target_dialect_id))
+      : [];
+  const relatedCourses = (dialectMatchedCourses.length > 0 ? dialectMatchedCourses : allPublishedCourses).slice(0, 3);
 
   const userVotes: Record<number, number> = {};
   const userExampleVotes: Record<number, number> = {};
@@ -179,6 +296,10 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
     dialects,
     definitions,
     relatedWords,
+    sameRootWords,
+    detectedRoots,
+    linkedLessons,
+    relatedCourses,
     userVotes,
     userExampleVotes,
     role,
