@@ -4,6 +4,7 @@ import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { definitionSchema } from '$lib/schemas';
 import { getLocale } from '$lib/paraglide/runtime';
+import { lookupAmazighGlossary, latinToTifinagh } from '$lib/utils/amazigh';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, user, role } }) => {
   const { slug } = params;
@@ -13,13 +14,42 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
     .from('headwords')
     .select('*')
     .eq('slug', slug)
-    .single();
+    .maybeSingle();
 
   if (headwordError || !headword) {
-    console.error('Error fetching headword:', headwordError);
-    error(404, {
-      message: `Word "${slug}" not found`
-    });
+    const glossary = lookupAmazighGlossary(slug);
+    const candidateWord = glossary?.word ?? decodeURIComponent(slug).replace(/[-_]+/g, ' ').trim();
+    const candidateTifinagh = glossary?.tifinagh ?? latinToTifinagh(candidateWord);
+
+    // Also look for similar words in the dictionary to suggest
+    const searchPrefix = candidateWord.slice(0, 3);
+    const { data: similarWords } = await supabase
+      .from('headwords')
+      .select('id, slug, script_latin, script_tifinagh')
+      .ilike('script_latin', `%${searchPrefix}%`)
+      .limit(6);
+
+    return {
+      wordNotFound: true,
+      searchedSlug: slug,
+      candidateWord,
+      candidateTifinagh,
+      glossary: glossary ?? null,
+      similarWords: (similarWords ?? []) as Array<{
+        id: number;
+        slug: string;
+        script_latin: string;
+        script_tifinagh: string | null;
+      }>,
+      headword: null,
+      dialects: [],
+      definitions: [],
+      relatedWords: [],
+      userVotes: {},
+      userExampleVotes: {},
+      role,
+      form: null
+    };
   }
 
   // 2. Fetch Definitions, Dialects, and Word Relations in parallel
@@ -139,6 +169,12 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
   const form = await superValidate({ headword_id: headword.id }, zod4(definitionSchema));
 
   return {
+    wordNotFound: false,
+    searchedSlug: slug,
+    candidateWord: headword.script_latin,
+    candidateTifinagh: headword.script_tifinagh,
+    glossary: null,
+    similarWords: [],
     headword,
     dialects,
     definitions,

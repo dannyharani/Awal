@@ -45,8 +45,33 @@
   let resolvedNotes = $derived(notes ?? glossary?.notes ?? '');
 
   let open = $state(false);
+  let containerEl = $state<HTMLElement | null>(null);
+  let placement = $state<'top' | 'bottom'>('top');
+  let align = $state<'center' | 'left' | 'right'>('center');
   let hoverTimeout: ReturnType<typeof setTimeout> | null = null;
   let closeTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  function updatePosition() {
+    if (!containerEl || typeof window === 'undefined') return;
+    const rect = containerEl.getBoundingClientRect();
+    // The popover is ~200px tall. The sticky navbar is ~56px.
+    // If distance from viewport top is less than 250px, flip to bottom
+    if (rect.top < 250) {
+      placement = 'bottom';
+    } else {
+      placement = 'top';
+    }
+
+    // Horizontal overflow handling
+    const halfWidth = 165;
+    if (rect.left + rect.width / 2 < halfWidth + 16) {
+      align = 'left';
+    } else if (window.innerWidth - (rect.left + rect.width / 2) < halfWidth + 16) {
+      align = 'right';
+    } else {
+      align = 'center';
+    }
+  }
 
   let dbChecked = $state(false);
   let dbEntry = $state<{
@@ -104,6 +129,7 @@
   function handleMouseEnter() {
     if (closeTimeout) clearTimeout(closeTimeout);
     hoverTimeout = setTimeout(() => {
+      updatePosition();
       open = true;
       checkLiveDictionary();
     }, 120);
@@ -118,6 +144,7 @@
 
   function handleFocus() {
     if (closeTimeout) clearTimeout(closeTimeout);
+    updatePosition();
     open = true;
     checkLiveDictionary();
   }
@@ -137,7 +164,10 @@
     } else if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       open = !open;
-      if (open) checkLiveDictionary();
+      if (open) {
+        updatePosition();
+        checkLiveDictionary();
+      }
     }
   }
 
@@ -147,9 +177,21 @@
   let displayPos = $derived(dbEntry?.pos || resolvedPos);
   let displayDialect = $derived(dbEntry?.dialectName || resolvedDialect);
   let targetSlug = $derived(dbEntry?.slug || resolvedSlug);
+
+  let positionClasses = $derived.by(() => {
+    const v = placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2';
+    const h =
+      align === 'left'
+        ? 'left-0 translate-x-0'
+        : align === 'right'
+          ? 'right-0 left-auto translate-x-0'
+          : 'left-1/2 -translate-x-1/2';
+    return `${v} ${h}`;
+  });
 </script>
 
 <span
+  bind:this={containerEl}
   role="group"
   class="relative inline-block align-baseline"
   onmouseenter={handleMouseEnter}
@@ -165,7 +207,10 @@
     onkeydown={handleKeyDown}
     onclick={() => {
       open = !open;
-      if (open) checkLiveDictionary();
+      if (open) {
+        updatePosition();
+        checkLiveDictionary();
+      }
     }}
     class="decoration-primary/50 hover:decoration-primary hover:bg-primary/10 focus-visible:ring-primary/40 inline-flex cursor-pointer items-baseline gap-1 rounded px-0.5 underline decoration-dotted underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:outline-none {className}"
   >
@@ -182,7 +227,7 @@
   {#if open}
     <div
       role="tooltip"
-      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 zoom-in-95 absolute bottom-full left-1/2 z-50 mb-2 w-72 -translate-x-1/2 rounded-xl border p-3.5 text-left shadow-xl sm:w-80"
+      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 zoom-in-95 absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 {positionClasses}"
     >
       <div class="flex items-start justify-between gap-2 border-b pb-2.5">
         <div>

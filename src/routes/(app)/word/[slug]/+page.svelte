@@ -21,19 +21,20 @@
     Link2,
     Plus,
     X,
-    Filter
+    Filter,
+    ArrowLeft,
+    ArrowRight,
+    Sparkles
   } from '@lucide/svelte';
 
   let { data } = $props();
-  let {
-    headword,
-    definitions,
-    dialects,
-    relatedWords = [],
-    userVotes,
-    userExampleVotes,
-    role
-  } = $derived(data);
+  let headword = $derived(data.headword);
+  let definitions = $derived(data.definitions ?? []);
+  let dialects = $derived(data.dialects ?? []);
+  let relatedWords = $derived(data.relatedWords ?? []);
+  let userVotes = $derived((data.userVotes ?? {}) as Record<number, number>);
+  let userExampleVotes = $derived((data.userExampleVotes ?? {}) as Record<number, number>);
+  let role = $derived(data.role);
   let { user, supabase } = $derived(page.data);
 
   // Edit scripts dialog state
@@ -42,12 +43,14 @@
   let arabicInput = $state('');
 
   function openEditScripts() {
+    if (!headword) return;
     tifinaghInput = headword.script_tifinagh ?? '';
     arabicInput = headword.script_arabic ?? '';
     editScriptsOpen = true;
   }
 
   function autoFillTifinagh() {
+    if (!headword) return;
     tifinaghInput = latinToTifinagh(headword.script_latin ?? '');
   }
 
@@ -60,6 +63,7 @@
   >([]);
 
   async function searchRelatedWord(term: string) {
+    if (!headword) return;
     relationSlug = term;
     if (!term || term.trim().length < 2) {
       relationSearchResults = [];
@@ -113,7 +117,114 @@
   };
 </script>
 
-<div class="mx-auto max-w-7xl px-4 py-10">
+{#if data.wordNotFound}
+  <div class="mx-auto max-w-4xl space-y-10 px-4 py-12">
+    <div>
+      <Button
+        variant="ghost"
+        size="sm"
+        href="/"
+        class="text-muted-foreground hover:text-foreground -ml-2 gap-1.5 text-xs"
+      >
+        <ArrowLeft class="h-3.5 w-3.5" />
+        {m.word_back_to_dict()}
+      </Button>
+    </div>
+
+    <!-- Main Word Not Found Card -->
+    <Card.Root class="border-dashed p-8 text-center sm:p-12">
+      <div class="space-y-6">
+        <div class="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold">
+          <Sparkles class="h-3.5 w-3.5" />
+          <span>Word Not Yet in Dictionary</span>
+        </div>
+
+        <div class="space-y-2">
+          <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
+            "{data.candidateWord}"
+          </h1>
+          {#if data.candidateTifinagh}
+            <p class="text-primary font-serif text-3xl sm:text-4xl">
+              {data.candidateTifinagh}
+            </p>
+          {/if}
+        </div>
+
+        <p class="text-muted-foreground mx-auto max-w-md text-base leading-relaxed">
+          This Amazigh word has not been documented in the Awal dictionary yet. You can be the first to create it and add its meaning!
+        </p>
+
+        {#if data.glossary}
+          <div class="bg-primary/5 border-primary/20 mx-auto max-w-lg rounded-xl border p-4 text-left space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="text-primary text-xs font-bold uppercase tracking-wider">
+                Built-in Cultural Glossary
+              </span>
+              <span class="text-muted-foreground text-xs">{data.glossary.dialect}</span>
+            </div>
+            <p class="text-sm font-semibold">
+              {data.glossary.word} <span class="text-primary font-serif">({data.glossary.tifinagh})</span>:
+              <span class="text-muted-foreground font-normal">{data.glossary.meaning}</span>
+            </p>
+            {#if data.glossary.notes}
+              <p class="text-muted-foreground text-xs italic">{data.glossary.notes}</p>
+            {/if}
+          </div>
+        {/if}
+
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <Button
+            size="lg"
+            href="/add?word={encodeURIComponent(data.candidateWord ?? '')}&tifinagh={encodeURIComponent(data.candidateTifinagh ?? '')}"
+            class="gap-2"
+          >
+            <Plus class="h-5 w-5" />
+            Add "{data.candidateWord}" to Dictionary
+          </Button>
+          <Button variant="outline" size="lg" href="/">
+            Browse Dictionary
+          </Button>
+        </div>
+
+        {#if !user}
+          <p class="text-muted-foreground text-xs">
+            Sign in with Google to create this word, add pronunciation audio, and earn contributor reputation.
+          </p>
+        {/if}
+      </div>
+    </Card.Root>
+
+    <!-- Did you mean / Similar Words -->
+    {#if data.similarWords && data.similarWords.length > 0}
+      <div class="space-y-4">
+        <h3 class="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+          Similar Words in Dictionary
+        </h3>
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+          {#each data.similarWords as word (word.id)}
+            <a
+              href="/word/{word.slug}"
+              class="bg-card hover:border-primary/50 group flex items-center justify-between rounded-lg border p-3.5 transition-all hover:shadow-xs"
+            >
+              <div>
+                <p class="group-hover:text-primary font-bold transition-colors">
+                  {word.script_latin}
+                </p>
+                {#if word.script_tifinagh}
+                  <p class="text-muted-foreground font-serif text-xs">
+                    {word.script_tifinagh}
+                  </p>
+                {/if}
+              </div>
+              <ArrowRight class="text-muted-foreground group-hover:text-primary h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </a>
+          {/each}
+        </div>
+      </div>
+    {/if}
+  </div>
+{:else if headword}
+  <div class="mx-auto max-w-7xl px-4 py-10">
   <!-- Headword Header -->
   <div class="mb-8 space-y-4">
     <div class="flex flex-wrap items-end justify-between gap-4">
@@ -430,3 +541,4 @@
     <AddDefinitionCard {data} />
   </div>
 </div>
+{/if}

@@ -2,18 +2,24 @@ import { fail, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { headwordSchema } from '$lib/schemas';
-import { generateWordSlug } from '$lib/utils/amazigh';
+import { generateWordSlug, latinToTifinagh } from '$lib/utils/amazigh';
 
 export const load = async ({ url, locals: { user } }) => {
   // 1. Auth Check
   if (!user) throw redirect(302, '/login');
 
-  // 2. Pre-fill from URL (if coming from Search Bar)
-  const term = url.searchParams.get('term') || '';
+  // 2. Pre-fill from URL (if coming from Search Bar or /word/ not-found page)
+  const term = url.searchParams.get('term') || url.searchParams.get('word') || '';
+  const tifinagh = url.searchParams.get('tifinagh') || '';
   const form = await superValidate(zod4(headwordSchema));
 
   if (term) {
     form.data.script_latin = term;
+  }
+  if (tifinagh) {
+    form.data.script_tifinagh = tifinagh;
+  } else if (term) {
+    form.data.script_tifinagh = latinToTifinagh(term);
   }
 
   return { form };
