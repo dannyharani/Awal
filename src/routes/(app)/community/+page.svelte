@@ -62,15 +62,10 @@
   });
 
   let totalEducators = $derived(
-    members.filter((m) => m.role === 'admin' || m.role === 'instructor' || m.role === 'moderator')
-      .length
+    members.filter((m) => m.role === 'admin' || m.role === 'instructor' || m.role === 'moderator').length
   );
-  let totalContributionsAll = $derived(
-    members.reduce((acc, m) => acc + m.totalContributions, 0)
-  );
-  let totalLessonsAll = $derived(
-    members.reduce((acc, m) => acc + m.lessonsCompletedCount, 0)
-  );
+  let totalContributionsAll = $derived(members.reduce((acc, m) => acc + m.totalContributions, 0));
+  let totalLessonsAll = $derived(members.reduce((acc, m) => acc + m.lessonsCompletedCount, 0));
 </script>
 
 <div class="container mx-auto max-w-6xl space-y-10 px-4 py-10">
@@ -82,7 +77,8 @@
         <span>Community Directory • ⴰⵎⵣⴷⴰⵢ</span>
       </div>
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
-        The <AmazighWord word="Awal" /> <AmazighWord word="Amezday" showTifinaghInline />
+        The <AmazighWord word="Awal" />
+        <AmazighWord word="Amezday" showTifinaghInline />
       </h1>
       <p class="text-muted-foreground text-lg">
         Meet the contributors, native speakers, educators, and learners preserving
@@ -139,8 +135,7 @@
       <button
         type="button"
         onclick={() => (roleFilter = 'educators')}
-        class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors {roleFilter ===
-        'educators'
+        class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors {roleFilter === 'educators'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-background text-muted-foreground hover:text-foreground border'}"
       >
@@ -149,8 +144,7 @@
       <button
         type="button"
         onclick={() => (roleFilter = 'contributors')}
-        class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors {roleFilter ===
-        'contributors'
+        class="rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors {roleFilter === 'contributors'
           ? 'bg-primary text-primary-foreground shadow-xs'
           : 'bg-background text-muted-foreground hover:text-foreground border'}"
       >
@@ -159,7 +153,7 @@
     </div>
 
     <div class="flex flex-1 flex-wrap items-center justify-end gap-2 sm:flex-none">
-      <div class="relative w-full sm:w-64">
+      <div class="relative w-full sm:w-72">
         <Search class="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
         <Input
           type="search"
@@ -202,9 +196,7 @@
       <Card.Content class="space-y-3">
         <Users class="text-muted-foreground mx-auto h-10 w-10 opacity-40" />
         <p class="text-lg font-semibold">No members match your filter</p>
-        <p class="text-muted-foreground text-sm">
-          Try clearing your search query or switching back to All Members.
-        </p>
+        <p class="text-muted-foreground text-sm">Try clearing your search query or switching back to All Members.</p>
       </Card.Content>
     </Card.Root>
   {:else}
@@ -215,7 +207,9 @@
             ? `${member.first_name ?? ''} ${member.last_name ?? ''}`.trim()
             : member.username}
         <a href="/user/{member.username}" class="group block">
-          <Card.Root class="hover:border-primary/50 flex h-full flex-col justify-between transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <Card.Root
+            class="hover:border-primary/50 flex h-full flex-col justify-between transition-all hover:-translate-y-0.5 hover:shadow-md"
+          >
             <Card.Header class="space-y-3 pb-3">
               <div class="flex items-start justify-between gap-3">
                 <div class="flex items-center gap-3 overflow-hidden">
@@ -233,7 +227,9 @@
                   </div>
                 </div>
 
-                <span class="bg-primary/10 text-primary inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold">
+                <span
+                  class="bg-primary/10 text-primary inline-flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold"
+                >
                   <Award class="h-3.5 w-3.5" />
                   {member.reputation_points}
                 </span>
@@ -245,9 +241,7 @@
                     {member.role}
                   </Badge>
                 {:else}
-                  <Badge variant="secondary" class="text-[10px]">
-                    Member
-                  </Badge>
+                  <Badge variant="secondary" class="text-[10px]">Member</Badge>
                 {/if}
 
                 {#if member.created_at}
@@ -266,9 +260,7 @@
                   {member.bio}
                 </p>
               {:else}
-                <p class="text-muted-foreground/60 text-xs italic">
-                  Awal community member
-                </p>
+                <p class="text-muted-foreground/60 text-xs italic">Awal community member</p>
               {/if}
             </Card.Header>
 
