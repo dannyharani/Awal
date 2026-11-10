@@ -2,6 +2,7 @@
   import { Mic, Square, RotateCcw, Upload, CircleAlert } from '@lucide/svelte';
   import { Button } from '$lib/components/ui/button';
   import AudioPlayer from './AudioPlayer.svelte';
+  import * as m from '$lib/paraglide/messages.js';
 
   let { name = 'audio', onFileChange }: { name?: string; onFileChange?: (file: File | undefined) => void } = $props();
 
@@ -133,7 +134,7 @@
   <div class="flex items-center justify-between">
     <span class="text-foreground flex items-center gap-1.5 text-xs font-medium">
       <Mic class="text-primary h-3.5 w-3.5" />
-      Pronunciation Audio
+      {m.word_pronunciation_audio()}
     </span>
 
     <div class="bg-muted inline-flex rounded-md p-0.5 text-[11px]">
@@ -144,7 +145,7 @@
           ? 'bg-background text-foreground shadow-2xs'
           : 'text-muted-foreground hover:text-foreground'}"
       >
-        Record Mic
+        {m.word_record_mic()}
       </button>
       <button
         type="button"
@@ -153,7 +154,7 @@
           ? 'bg-background text-foreground shadow-2xs'
           : 'text-muted-foreground hover:text-foreground'}"
       >
-        Upload File
+        {m.word_upload_file()}
       </button>
     </div>
   </div>
@@ -181,7 +182,7 @@
         class="text-muted-foreground hover:text-destructive h-7 gap-1 px-2 text-xs"
       >
         <RotateCcw class="h-3 w-3" />
-        Redo
+        {m.word_redo()}
       </Button>
     </div>
   {:else if mode === 'record'}
@@ -204,11 +205,11 @@
           class="h-8 gap-1.5 text-xs"
         >
           <Square class="h-3 w-3 fill-current" />
-          Stop
+          {m.word_stop_recording()}
         </Button>
       {:else}
         <span class="text-muted-foreground text-xs">
-          Speak clearly in your dialect (max {MAX_SECONDS}s)
+          {m.word_speak_clearly()}
         </span>
         <Button
           type="button"
@@ -218,7 +219,7 @@
           class="h-8 gap-1.5 text-xs font-medium"
         >
           <Mic class="text-primary h-3.5 w-3.5" />
-          Start Recording
+          {m.word_start_recording()}
         </Button>
       {/if}
     </div>

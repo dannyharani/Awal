@@ -8,6 +8,7 @@
   import { Separator } from '$lib/components/ui/separator';
   import AudioPlayer from './AudioPlayer.svelte';
   import AudioRecorder from './AudioRecorder.svelte';
+  import * as m from '$lib/paraglide/messages.js';
   import {
     PARTS_OF_SPEECH,
     GENDERS,
@@ -80,7 +81,7 @@
 
         <div class="space-y-3">
           <div class="space-y-1.5">
-            <Label>Dialect</Label>
+            <Label>{m.word_region_dialect()}</Label>
             <select
               name="dialect_id"
               class="border-input bg-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 text-sm focus-visible:ring-2 focus-visible:outline-none"
@@ -93,11 +94,12 @@
           </div>
 
           <div class="space-y-1.5">
-            <Label>Definition</Label>
+            <Label>{m.word_definition_label()}</Label>
             <Textarea
               name="definition_text"
               class="min-h-[80px] resize-none"
               value={definition.definition_text}
+              required
             />
           </div>
         </div>
@@ -107,12 +109,12 @@
           <div
             class="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
           >
-            <BookOpen class="h-3.5 w-3.5" /> Grammar & Morphology
+            <BookOpen class="h-3.5 w-3.5" /> {m.word_grammar_morphology()}
           </div>
 
           <div class="grid grid-cols-2 gap-2.5">
             <div class="space-y-1">
-              <Label class="text-[11px]">Part of Speech</Label>
+              <Label class="text-[11px]">{m.word_part_of_speech()}</Label>
               <select
                 name="part_of_speech"
                 value={attributes.part_of_speech ?? ''}
@@ -126,7 +128,7 @@
             </div>
 
             <div class="space-y-1">
-              <Label class="text-[11px]">Gender</Label>
+              <Label class="text-[11px]">{m.word_gender()}</Label>
               <select
                 name="gender"
                 value={attributes.gender ?? ''}
@@ -142,7 +144,7 @@
 
           <div class="grid grid-cols-2 gap-2.5">
             <div class="space-y-1">
-              <Label class="text-[11px]">Number</Label>
+              <Label class="text-[11px]">{m.word_number()}</Label>
               <select
                 name="grammatical_number"
                 value={attributes.grammatical_number ?? ''}
@@ -156,7 +158,7 @@
             </div>
 
             <div class="space-y-1">
-              <Label class="text-[11px]">Consonantal Root</Label>
+              <Label class="text-[11px]">{m.word_consonantal_root()}</Label>
               <Input
                 name="root"
                 value={attributes.root ?? ''}
@@ -168,7 +170,7 @@
 
           <div class="grid grid-cols-2 gap-2.5">
             <div class="space-y-1">
-              <Label class="text-[11px]">Construct State (Addad Amaruz)</Label>
+              <Label class="text-[11px]">{m.word_construct_state()}</Label>
               <Input
                 name="construct_state"
                 value={attributes.construct_state ?? ''}
@@ -178,7 +180,7 @@
             </div>
 
             <div class="space-y-1">
-              <Label class="text-[11px]">Plural Form</Label>
+              <Label class="text-[11px]">{m.word_plural_form()}</Label>
               <Input
                 name="plural"
                 value={attributes.plural ?? ''}
@@ -189,7 +191,7 @@
           </div>
 
           <div class="space-y-1">
-            <Label class="text-[11px]">Verb Stems (Aorist / Preterite / Intensive)</Label>
+            <Label class="text-[11px]">{m.word_verb_stems()}</Label>
             <Input
               name="verb_stems"
               value={attributes.verb_stems ?? ''}
@@ -203,7 +205,7 @@
           <div
             class="text-muted-foreground mb-3 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
           >
-            <Mic class="h-3.5 w-3.5" /> Pronunciation Audio
+            <Mic class="h-3.5 w-3.5" /> {m.word_pronunciation_audio()}
           </div>
 
           {#if definition.audio_url}
@@ -217,7 +219,7 @@
                 class="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 gap-1.5"
               >
                 <Trash2 class="h-3.5 w-3.5" />
-                <span class="text-xs">Remove</span>
+                <span class="text-xs">{m.common_delete()}</span>
               </Button>
             </div>
           {:else}
@@ -225,9 +227,12 @@
           {/if}
         </div>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end gap-2">
+          <Button type="button" variant="ghost" size="sm" onclick={() => (open = false)}>
+            {m.common_cancel()}
+          </Button>
           <Button type="submit" size="sm" disabled={loading}>
-            {loading ? 'Saving...' : 'Save Changes'}
+            {loading ? m.word_saving() : m.common_save()}
           </Button>
         </div>
       </form>

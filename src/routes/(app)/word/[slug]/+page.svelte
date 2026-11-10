@@ -238,7 +238,7 @@
               {headword.script_tifinagh}
             </span>
           {:else}
-            <span class="text-muted-foreground/50 text-sm italic">No Tifinagh script yet</span>
+            <span class="text-muted-foreground/50 text-sm italic">{m.word_no_tifinagh()}</span>
           {/if}
 
           {#if headword.script_arabic}
@@ -266,7 +266,7 @@
               </Dialog.Trigger>
               <Dialog.Content class="sm:max-w-[440px]">
                 <Dialog.Header>
-                  <Dialog.Title>Update Scripts for "{headword.script_latin}"</Dialog.Title>
+                  <Dialog.Title>{m.word_update_scripts_title({ word: headword.script_latin ?? '' })}</Dialog.Title>
                 </Dialog.Header>
                 <form
                   method="POST"
@@ -281,7 +281,7 @@
                 >
                   <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                      <Label for="edit-tifinagh">Tifinagh Script (Neo-Tifinagh)</Label>
+                      <Label for="edit-tifinagh">{m.word_tifinagh_label()}</Label>
                       <Button
                         type="button"
                         variant="ghost"
@@ -290,7 +290,7 @@
                         class="text-primary h-6 gap-1 px-2 text-xs"
                       >
                         <WandSparkles class="h-3 w-3" />
-                        Auto-transliterate
+                        {m.word_auto_transliterate()}
                       </Button>
                     </div>
                     <Input
@@ -303,7 +303,7 @@
                   </div>
 
                   <div class="space-y-2">
-                    <Label for="edit-arabic">Arabic Script</Label>
+                    <Label for="edit-arabic">{m.word_arabic_label()}</Label>
                     <Input
                       id="edit-arabic"
                       name="script_arabic"
@@ -371,7 +371,7 @@
           </div>
         {/each}
       {:else}
-        <span class="text-muted-foreground text-xs italic">None linked yet</span>
+        <span class="text-muted-foreground text-xs italic">{m.word_none_linked()}</span>
       {/if}
 
       {#if user}
@@ -385,13 +385,13 @@
                 {...props}
               >
                 <Plus class="h-3 w-3" />
-                Link Word
+                {m.word_link_word()}
               </Button>
             {/snippet}
           </Dialog.Trigger>
           <Dialog.Content class="sm:max-w-[440px]">
             <Dialog.Header>
-              <Dialog.Title>Link Related or Cross-Dialect Word</Dialog.Title>
+              <Dialog.Title>{m.word_link_dialog_title()}</Dialog.Title>
             </Dialog.Header>
 
             <form
@@ -408,7 +408,7 @@
               class="space-y-4 pt-2"
             >
               <div class="space-y-2">
-                <Label>Relation Type</Label>
+                <Label>{m.word_relation_type()}</Label>
                 <select
                   name="relation_type"
                   bind:value={relationType}
@@ -421,12 +421,12 @@
               </div>
 
               <div class="space-y-2">
-                <Label>Target Word</Label>
+                <Label>{m.word_target_word()}</Label>
                 <Input
                   name="target_slug"
                   value={relationSlug}
                   oninput={(e) => searchRelatedWord((e.target as HTMLInputElement).value)}
-                  placeholder="Type a word in the dictionary (e.g. aydi, tafukt)..."
+                  placeholder={m.word_target_placeholder()}
                   autocomplete="off"
                   required
                 />
@@ -459,10 +459,10 @@
                   size="sm"
                   onclick={() => (addRelationOpen = false)}
                 >
-                  Cancel
+                  {m.common_cancel()}
                 </Button>
                 <Button type="submit" size="sm" disabled={!relationSlug.trim()}>
-                  Link Word
+                  {m.word_link_word()}
                 </Button>
               </div>
             </form>
@@ -516,11 +516,11 @@
             class="text-muted-foreground flex flex-col items-center justify-center py-12 text-center"
           >
             <Globe class="mb-4 h-10 w-10 opacity-50" />
-            <p class="text-lg font-medium">No definitions found</p>
+            <p class="text-lg font-medium">{m.word_no_definitions()}</p>
             <p class="text-sm">
               {definitions.length === 0
-                ? `Be the first to share what "${headword.script_latin}" means.`
-                : 'No entries match your active dialect or language filter.'}
+                ? m.word_be_first_share({ word: headword.script_latin ?? '' })
+                : m.word_no_filter_match()}
             </p>
           </Card.Content>
         </Card.Root>

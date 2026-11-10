@@ -21,6 +21,7 @@
   import AmazighKeyboardBar from './AmazighKeyboardBar.svelte';
   import EditDefinitionDialog from '$lib/components/dictionary/EditDefinitionDialog.svelte';
   import { getLocale } from '$lib/paraglide/runtime';
+  import * as m from '$lib/paraglide/messages.js';
 
   let {
     def,
@@ -52,15 +53,15 @@
     Boolean(user && (user.id === def.user_id || canModerate))
   );
 
-  const ATTR_LABELS: Record<string, string> = {
-    part_of_speech: 'Part of Speech',
-    gender: 'Gender',
-    grammatical_number: 'Number',
-    construct_state: 'Construct State (Addad Amaruz)',
-    plural: 'Plural Form',
-    root: 'Consonantal Root',
-    verb_stems: 'Verb Stems (Aorist / Preterite / Intensive)'
-  };
+  let attrLabels = $derived<Record<string, string>>({
+    part_of_speech: m.word_part_of_speech(),
+    gender: m.word_gender(),
+    grammatical_number: m.word_number(),
+    construct_state: m.word_construct_state(),
+    plural: m.word_plural_form(),
+    root: m.word_consonantal_root(),
+    verb_stems: m.word_verb_stems()
+  });
 </script>
 
 <Card.Root
@@ -107,7 +108,7 @@
             : 'Verified entry'}
         >
           <ShieldCheck class="h-3 w-3" />
-          <span>Verified</span>
+          <span>{m.word_verified()}</span>
         </Badge>
       {/if}
 
@@ -129,7 +130,7 @@
             title={def.is_verified ? 'Remove verification badge' : 'Verify this definition'}
           >
             <ShieldCheck class="h-3.5 w-3.5" />
-            {def.is_verified ? 'Unverify' : 'Verify'}
+            {def.is_verified ? m.word_unverify() : m.word_verify()}
           </Button>
         </form>
       {/if}
@@ -140,7 +141,7 @@
     </div>
 
     <div class="text-muted-foreground ml-auto flex shrink-0 items-center gap-2 text-xs">
-      <span class="hidden sm:inline">by</span>
+      <span class="hidden sm:inline">{m.word_by()}</span>
       {#if def.author?.username}
         <a
           href="/user/{def.author.username}"
@@ -166,7 +167,7 @@
           <Avatar.Root class="bg-background h-5 w-5 border">
             <Avatar.Fallback class="text-[9px]">U</Avatar.Fallback>
           </Avatar.Root>
-          <span>Anonymous</span>
+          <span>{m.word_anonymous()}</span>
         </div>
       {/if}
     </div>
@@ -188,25 +189,25 @@
       <div class="flex flex-wrap items-center gap-2 pt-1">
         {#if attributes.construct_state}
           <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
-            <span class="text-muted-foreground font-medium">Construct (Addad Amaruz):</span>
+            <span class="text-muted-foreground font-medium">{m.word_attr_construct()}</span>
             <span class="text-foreground font-semibold">{attributes.construct_state}</span>
           </div>
         {/if}
         {#if attributes.plural}
           <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
-            <span class="text-muted-foreground font-medium">Plural:</span>
+            <span class="text-muted-foreground font-medium">{m.word_attr_plural()}</span>
             <span class="text-foreground font-semibold">{attributes.plural}</span>
           </div>
         {/if}
         {#if attributes.root}
           <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
-            <span class="text-muted-foreground font-medium">Root:</span>
+            <span class="text-muted-foreground font-medium">{m.word_attr_root()}</span>
             <span class="text-primary font-mono font-bold tracking-wider uppercase">{attributes.root}</span>
           </div>
         {/if}
         {#if attributes.verb_stems}
           <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
-            <span class="text-muted-foreground font-medium">Stems:</span>
+            <span class="text-muted-foreground font-medium">{m.word_attr_stems()}</span>
             <span class="text-foreground font-semibold">{attributes.verb_stems}</span>
           </div>
         {/if}
@@ -220,7 +221,7 @@
           <span
             class="text-muted-foreground block text-[10px] font-bold tracking-widest uppercase"
           >
-            Examples in Context ({def.examples?.length ?? 0})
+            {m.word_examples_in_context({ count: def.examples?.length ?? 0 })}
           </span>
 
           {#if user}
@@ -232,7 +233,7 @@
               onclick={() => (showAddExample = !showAddExample)}
             >
               <Plus class="h-3 w-3" />
-              {showAddExample ? 'Cancel' : 'Add Example'}
+              {showAddExample ? m.common_cancel() : m.word_add_example()}
             </Button>
           {/if}
         </div>
@@ -254,7 +255,7 @@
 
                   {#if example.author?.username}
                     <p class="text-muted-foreground/70 text-[10px]">
-                      Added by <a
+                      {m.word_added_by()} <a
                         href="/user/{example.author.username}"
                         class="hover:text-foreground hover:underline"
                         >{example.author.username}</a
@@ -292,7 +293,7 @@
           </div>
         {:else}
           <p class="text-muted-foreground text-xs italic">
-            No example sentences yet. Add one to illustrate how this word is used!
+            {m.word_no_examples()}
           </p>
         {/if}
 
@@ -322,7 +323,7 @@
               <Input
                 name="sentence"
                 bind:value={newExampleSentence}
-                placeholder="Amazigh example sentence..."
+                placeholder={m.word_example_placeholder()}
                 class="h-8 text-xs"
                 required
               />
@@ -331,7 +332,7 @@
               <Input
                 name="translation"
                 bind:value={newExampleTranslation}
-                placeholder="Translation (optional)..."
+                placeholder={m.word_translation_placeholder()}
                 class="h-8 flex-1 text-xs"
               />
               <Button
@@ -340,7 +341,7 @@
                 class="h-8 px-3 text-xs"
                 disabled={isAddingExample || !newExampleSentence.trim()}
               >
-                {isAddingExample ? 'Saving...' : 'Save Example'}
+                {isAddingExample ? m.word_saving() : m.word_save_example()}
               </Button>
             </div>
           </form>
@@ -360,7 +361,7 @@
             class="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-3 text-xs font-medium"
           >
             <Info class="h-3.5 w-3.5" />
-            {isExpanded ? 'Hide Morphology' : 'Morphology'}
+            {isExpanded ? m.word_hide_morphology() : m.word_morphology()}
             {#if isExpanded}
               <ChevronUp class="h-3.5 w-3.5" />
             {:else}
@@ -378,7 +379,7 @@
             : ''}"
         >
           <MessageSquare class="h-3.5 w-3.5" />
-          Discussion ({def.comments?.length ?? 0})
+          {m.word_discussion({ count: def.comments?.length ?? 0 })}
         </Button>
       </div>
 
@@ -393,7 +394,7 @@
     {#if isExpanded && hasAttributes}
       <div transition:slide={{ duration: 200 }} class="border-border/60 w-full border-t px-6 py-4">
         <h4 class="text-muted-foreground mb-3 text-[10px] font-bold tracking-wider uppercase">
-          Linguistic & Morphological Attributes
+          {m.word_morphology_title()}
         </h4>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -404,7 +405,7 @@
               <span
                 class="text-muted-foreground mb-0.5 text-[10px] font-bold tracking-wide uppercase opacity-70"
               >
-                {ATTR_LABELS[key] ?? key.replace(/_/g, ' ')}
+                {attrLabels[key] ?? key.replace(/_/g, ' ')}
               </span>
               <span class="text-foreground truncate font-medium">{value}</span>
             </div>

@@ -227,7 +227,7 @@
   {#if open}
     <div
       role="tooltip"
-      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 font-sans font-normal tracking-normal leading-normal normal-case antialiased absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 duration-150 {positionClasses}"
+      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 font-sans font-normal text-xs tracking-normal leading-normal normal-case antialiased subpixel-antialiased absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 duration-150 [transform-style:preserve-3d] [backface-visibility:hidden] select-text {positionClasses}"
     >
       <div class="flex items-start justify-between gap-2 border-b pb-2.5">
         <div>
@@ -239,17 +239,17 @@
           </div>
           <div class="mt-1 flex flex-wrap items-center gap-1.5 font-sans">
             {#if displayPos}
-              <span class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-semibold italic">
+              <span class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[11px] font-semibold italic">
                 {displayPos}
               </span>
             {/if}
             {#if displayDialect}
-              <span class="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-[10px] font-medium">
+              <span class="bg-muted text-muted-foreground rounded px-1.5 py-0.5 text-[11px] font-medium">
                 {displayDialect}
               </span>
             {/if}
             {#if dbEntry}
-              <span class="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">
+              <span class="inline-flex items-center gap-0.5 rounded bg-emerald-500/10 px-1.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
                 <Sparkles class="h-2.5 w-2.5" /> Live Entry
               </span>
             {/if}
@@ -262,12 +262,12 @@
       </p>
 
       {#if resolvedNotes}
-        <p class="text-muted-foreground bg-muted/50 mt-2 rounded-md px-2 py-1.5 text-[11px] leading-snug tracking-normal font-sans">
+        <p class="text-muted-foreground bg-muted/60 mt-2 rounded-md px-2.5 py-1.5 text-xs leading-snug tracking-normal font-sans">
           {resolvedNotes}
         </p>
       {/if}
 
-      <div class="mt-3 flex items-center justify-between gap-2 border-t pt-2.5 text-[11px] font-sans">
+      <div class="mt-3 flex items-center justify-between gap-2 border-t pt-2.5 text-xs font-sans">
         <a
           href="/word/{targetSlug}"
           class="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
