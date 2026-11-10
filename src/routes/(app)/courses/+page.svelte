@@ -6,6 +6,7 @@
   import { locales } from '$lib/paraglide/runtime';
   import * as m from '$lib/paraglide/messages.js';
   import { COURSE_CATEGORIES } from '$lib/utils/amazigh';
+  import AmazighWord from '$lib/components/dictionary/AmazighWord.svelte';
   import {
     GraduationCap,
     Globe,
@@ -175,6 +176,13 @@
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{m.courses_title()}</h1>
       <p class="text-muted-foreground text-lg">
         {m.courses_subtitle()}
+      </p>
+      <p class="text-muted-foreground pt-1 text-xs">
+        Explore tracks in <AmazighWord word="Asiwel" showTifinaghInline />,
+        <AmazighWord word="Tajerrumt" showTifinaghInline />,
+        <AmazighWord word="Amawal" showTifinaghInline />,
+        <AmazighWord word="Agemmay" showTifinaghInline />, and
+        <AmazighWord word="Tasekla" showTifinaghInline />.
       </p>
     </div>
 

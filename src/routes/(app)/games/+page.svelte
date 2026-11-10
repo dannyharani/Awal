@@ -3,6 +3,7 @@
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
   import * as m from '$lib/paraglide/messages.js';
+  import AmazighWord from '$lib/components/dictionary/AmazighWord.svelte';
   import {
     Gamepad2,
     Sparkles,
@@ -112,7 +113,7 @@
       </div>
 
       <p class="text-xs text-muted-foreground text-center pt-1">
-        <strong class="text-foreground">Azul</strong> ("Hello / Peace") — Guessed in 1 attempt!
+        <AmazighWord word="Azul" showTifinaghInline /> ("Hello / Peace") — Guessed in 1 attempt!
       </p>
     </div>
   </section>
@@ -157,8 +158,10 @@
 
             <div>
               <Card.Title class="text-2xl flex items-center gap-2.5">
-                <span>{game.nameLatin}</span>
-                <span class="text-primary font-serif text-xl">{game.nameTifinagh}</span>
+                <AmazighWord word={game.nameLatin} tifinagh={game.nameTifinagh}>
+                  <span>{game.nameLatin}</span>
+                  <span class="text-primary font-serif text-xl">{game.nameTifinagh}</span>
+                </AmazighWord>
               </Card.Title>
               <p class="text-primary text-xs font-semibold mt-0.5">{game.tagline}</p>
             </div>

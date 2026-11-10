@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as m from '$lib/paraglide/messages.js';
-  import { Github, Heart, BookOpen, GraduationCap, Gamepad2, Info } from '@lucide/svelte';
+  import { Github, Heart, BookOpen, GraduationCap, Gamepad2, Info, Users } from '@lucide/svelte';
+  import AmazighWord from '$lib/components/dictionary/AmazighWord.svelte';
 
   const currentYear = new Date().getFullYear();
 </script>
@@ -54,6 +55,12 @@
             </a>
           </li>
           <li>
+            <a href="/community" class="hover:text-foreground flex items-center gap-1.5 transition-colors">
+              <Users class="h-3.5 w-3.5" />
+              {m.nav_community()}
+            </a>
+          </li>
+          <li>
             <a href="/about" class="hover:text-foreground flex items-center gap-1.5 transition-colors">
               <Info class="h-3.5 w-3.5" />
               {m.nav_about()}
@@ -66,10 +73,10 @@
       <div class="space-y-2">
         <h4 class="text-foreground text-xs font-bold tracking-wider uppercase">Pillars</h4>
         <ul class="text-muted-foreground space-y-1.5 text-xs">
-          <li>ⴰⵎⴰⵡⴰⵍ • Amawal (Dictionary)</li>
-          <li>ⵜⵉⵎⵙⵉⵔⵉⵏ • Timsirin (Academy)</li>
-          <li>ⵓⵔⴰⵔⵏ • Uraren (Daily Games)</li>
-          <li>ⴰⵎⵣⴷⴰⵢ • Amezday (Community)</li>
+          <li><AmazighWord word="Amawal" showTifinaghInline /> (Dictionary)</li>
+          <li><AmazighWord word="Timsirin" showTifinaghInline /> (Academy)</li>
+          <li><AmazighWord word="Uraren" showTifinaghInline /> (Daily Games)</li>
+          <li><AmazighWord word="Amezday" showTifinaghInline /> (Community)</li>
         </ul>
       </div>
     </div>

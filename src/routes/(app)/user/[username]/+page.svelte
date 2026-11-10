@@ -5,7 +5,7 @@
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Separator } from '$lib/components/ui/separator';
-  import { Trophy, BookOpen, Star, Calendar, ArrowRight, Settings } from '@lucide/svelte';
+  import { Trophy, BookOpen, Star, Calendar, ArrowRight, ArrowLeft, Settings } from '@lucide/svelte';
 
   let { data } = $props();
   const { profile, stats, contributions } = $derived(data);
@@ -15,9 +15,21 @@
 
   // Check if this is MY profile
   let isOwnProfile = $derived(user?.id === profile.id);
+  let displayName = $derived(
+    profile.first_name || profile.last_name
+      ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim()
+      : profile.username
+  );
 </script>
 
-<div class="container mx-auto max-w-4xl px-4 py-12">
+<div class="container mx-auto max-w-4xl px-4 py-10">
+  <div class="mb-6">
+    <Button variant="ghost" size="sm" href="/community" class="text-muted-foreground hover:text-foreground -ml-2 gap-1.5 text-xs">
+      <ArrowLeft class="h-3.5 w-3.5" />
+      Back to Community Directory
+    </Button>
+  </div>
+
   <div class="mb-12 flex flex-col gap-8 md:flex-row md:items-start md:gap-10">
     <Avatar.Root
       class="border-background ring-border/20 h-32 w-32 shrink-0 border-4 shadow-xl ring-1 md:h-40 md:w-40"
@@ -32,10 +44,17 @@
 
     <div class="flex min-w-0 flex-1 flex-col gap-4 text-center md:text-left">
       <div class="flex flex-col justify-between gap-4 md:flex-row md:items-start">
-        <div class="space-y-1">
-          <h1 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            {profile.first_name + ' ' + profile.last_name}
-          </h1>
+        <div class="space-y-1.5">
+          <div class="flex flex-wrap items-center justify-center gap-2.5 md:justify-start">
+            <h1 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              {displayName}
+            </h1>
+            {#if profile.role && profile.role !== 'user'}
+              <Badge variant="default" class="text-xs capitalize">
+                {profile.role}
+              </Badge>
+            {/if}
+          </div>
           <div
             class="text-muted-foreground flex flex-wrap items-center justify-center gap-x-4 gap-y-2 md:justify-start"
           >
@@ -43,12 +62,14 @@
             <span class="hidden md:inline">•</span>
             <div class="flex items-center gap-1.5 text-sm">
               <Calendar class="h-3.5 w-3.5" />
-              <span
-                >Joined {profile.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, {
-                  month: 'long',
-                  year: 'numeric'
-                }) : ''}</span>
-              >
+              <span>
+                Joined {profile.created_at
+                  ? new Date(profile.created_at).toLocaleDateString(undefined, {
+                      month: 'long',
+                      year: 'numeric'
+                    })
+                  : ''}
+              </span>
             </div>
           </div>
         </div>

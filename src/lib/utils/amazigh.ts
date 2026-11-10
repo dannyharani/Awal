@@ -144,3 +144,207 @@ export const COURSE_CATEGORIES = [
   { value: 'culture', label: 'Culture & Literature (Tasekla)' }
 ] as const;
 
+export interface AmazighGlossaryEntry {
+  word: string;
+  tifinagh: string;
+  slug: string;
+  partOfSpeech: string;
+  meaning: string;
+  dialect: string;
+  notes?: string;
+}
+
+export const AMAZIGH_GLOSSARY: Record<string, AmazighGlossaryEntry> = {
+  awal: {
+    word: 'Awal',
+    tifinagh: 'ⴰⵡⴰⵍ',
+    slug: 'awal',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Word, speech, language, or promise.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Plural: Awalen (ⴰⵡⴰⵍⵏ) • Construct state: Wawal (ⵡⴰⵡⴰⵍ)'
+  },
+  amawal: {
+    word: 'Amawal',
+    tifinagh: 'ⴰⵎⴰⵡⴰⵍ',
+    slug: 'amawal',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Dictionary, lexicon, or vocabulary collection.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Derived from root W-L (awal = word). Construct state: Umawal.'
+  },
+  timsirin: {
+    word: 'Timsirin',
+    tifinagh: 'ⵜⵉⵎⵙⵉⵔⵉⵏ',
+    slug: 'timsirin',
+    partOfSpeech: 'noun (f. pl.)',
+    meaning: 'Lessons, courses, or structured educational modules.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Singular: Tamsirt (ⵜⴰⵎⵙⵉⵔⵜ)'
+  },
+  uraren: {
+    word: 'Uraren',
+    tifinagh: 'ⵓⵔⴰⵔⵏ',
+    slug: 'uraren',
+    partOfSpeech: 'noun (m. pl.)',
+    meaning: 'Games, playful challenges, or traditional festivities.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Singular: Urar (ⵓⵔⴰⵔ)'
+  },
+  amezday: {
+    word: 'Amezday',
+    tifinagh: 'ⴰⵎⵣⴷⴰⵢ',
+    slug: 'amezday',
+    partOfSpeech: 'noun / adj.',
+    meaning: 'Community, collective, or common shared space.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Derived from root Z-D-Y (to unite, connect, bring together).'
+  },
+  asiwel: {
+    word: 'Asiwel',
+    tifinagh: 'ⴰⵙⵉⵡⵍ',
+    slug: 'asiwel',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Conversation, dialogue, speech, or spoken communication.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Verbal noun of siwel (to speak, call, converse).'
+  },
+  tajerrumt: {
+    word: 'Tajerrumt',
+    tifinagh: 'ⵜⴰⵊⵕⵕⵓⵎⵜ',
+    slug: 'tajerrumt',
+    partOfSpeech: 'noun (f.)',
+    meaning: 'Grammar and structural rules of language.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Historically linked to the Amazigh grammarian Ibn Ajarrum.'
+  },
+  agemmay: {
+    word: 'Agemmay',
+    tifinagh: 'ⴰⴳⵎⵎⴰⵢ',
+    slug: 'agemmay',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Alphabet, spelling system, or literacy.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Refers to both Tifinagh (ⵜⵉⴼⵉⵏⴰⵖ) and Tamazight Latin scripts.'
+  },
+  tasekla: {
+    word: 'Tasekla',
+    tifinagh: 'ⵜⴰⵙⴽⵍⴰ',
+    slug: 'tasekla',
+    partOfSpeech: 'noun (f.)',
+    meaning: 'Literature, poetic heritage, and written or oral arts.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Encompasses both ancient oral poetry (Izlan, Isefra) and modern prose.'
+  },
+  tawalt: {
+    word: 'Tawalt',
+    tifinagh: 'ⵜⴰⵡⴰⵍⵜ',
+    slug: 'tawalt',
+    partOfSpeech: 'noun (f.)',
+    meaning: 'A single word, short phrase, or turn of speech.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Diminutive/feminine form of Awal (ⴰⵡⴰⵍ).'
+  },
+  anagam: {
+    word: 'Anagam',
+    tifinagh: 'ⴰⵏⴰⴳⴰⵎ',
+    slug: 'anagam',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Seeker, researcher, or explorer of roots and meanings.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Used for Awal’s daily triconsonantal root-finder challenge.'
+  },
+  assaghen: {
+    word: 'Assaɣen',
+    tifinagh: 'ⴰⵙⵙⴰⵖⵏ',
+    slug: 'assaɣen',
+    partOfSpeech: 'noun (m. pl.)',
+    meaning: 'Connections, links, relationships, or bonds.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Singular: Assaɣ (ⴰⵙⵙⴰⵖ)'
+  },
+  'assaɣen': {
+    word: 'Assaɣen',
+    tifinagh: 'ⴰⵙⵙⴰⵖⵏ',
+    slug: 'assaɣen',
+    partOfSpeech: 'noun (m. pl.)',
+    meaning: 'Connections, links, relationships, or bonds.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Singular: Assaɣ (ⴰⵙⵙⴰⵖ)'
+  },
+  azul: {
+    word: 'Azul',
+    tifinagh: 'ⴰⵣⵓⵍ',
+    slug: 'azul',
+    partOfSpeech: 'interjection',
+    meaning: 'Hello, greetings, peace (literally: from the heart / toward goodness).',
+    dialect: 'Pan-Amazigh',
+    notes: 'Common response: Azul fell-ak (m.) / Azul fell-am (f.).'
+  },
+  tamazight: {
+    word: 'Tamaziɣt',
+    tifinagh: 'ⵜⴰⵎⴰⵣⵉⵖⵜ',
+    slug: 'tamaziɣt',
+    partOfSpeech: 'noun (f.)',
+    meaning: 'The indigenous Amazigh language family of North Africa.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Spoken across Tamazɣa from Siwa Oasis to the Canary Islands.'
+  },
+  'tamaziɣt': {
+    word: 'Tamaziɣt',
+    tifinagh: 'ⵜⴰⵎⴰⵣⵉⵖⵜ',
+    slug: 'tamaziɣt',
+    partOfSpeech: 'noun (f.)',
+    meaning: 'The indigenous Amazigh language family of North Africa.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Spoken across Tamazɣa from Siwa Oasis to the Canary Islands.'
+  },
+  tamazgha: {
+    word: 'Tamazɣa',
+    tifinagh: 'ⵜⴰⵎⴰⵣⵖⴰ',
+    slug: 'tamazɣa',
+    partOfSpeech: 'proper noun (f.)',
+    meaning: 'The historical and cultural homeland of the Imaziɣen across North Africa.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Spans Morocco, Algeria, Tunisia, Libya, Siwa (Egypt), Canary Islands, and the Sahel.'
+  },
+  'tamazɣa': {
+    word: 'Tamazɣa',
+    tifinagh: 'ⵜⴰⵎⴰⵣⵖⴰ',
+    slug: 'tamazɣa',
+    partOfSpeech: 'proper noun (f.)',
+    meaning: 'The historical and cultural homeland of the Imaziɣen across North Africa.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Spans Morocco, Algeria, Tunisia, Libya, Siwa (Egypt), Canary Islands, and the Sahel.'
+  },
+  tifinagh: {
+    word: 'Tifinagh',
+    tifinagh: 'ⵜⵉⴼⵉⵏⴰⵖ',
+    slug: 'tifinagh',
+    partOfSpeech: 'noun (f. pl.)',
+    meaning: 'The indigenous alphabetic script used to write the Amazigh languages.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Attested in rock inscriptions across North Africa for over two millennia.'
+  },
+  'addad-amaruz': {
+    word: 'Addad Amaruz',
+    tifinagh: 'ⴰⴷⴷⴰⴷ ⴰⵎⴰⵔⵓⵣ',
+    slug: 'addad-amaruz',
+    partOfSpeech: 'noun phrase',
+    meaning: 'Construct State (annexed state) of an Amazigh noun after prepositions or post-verbal subject position.',
+    dialect: 'Pan-Amazigh Grammar',
+    notes: 'Contrasts with Addad Ilelli (Free State), e.g., Aman → Waman, Tamurt → Tmurt.'
+  }
+};
+
+export function lookupAmazighGlossary(term: string): AmazighGlossaryEntry | undefined {
+  const key = term.trim().toLowerCase();
+  if (AMAZIGH_GLOSSARY[key]) return AMAZIGH_GLOSSARY[key];
+  const slugKey = generateWordSlug(key);
+  if (AMAZIGH_GLOSSARY[slugKey]) return AMAZIGH_GLOSSARY[slugKey];
+  return Object.values(AMAZIGH_GLOSSARY).find(
+    (entry) => entry.tifinagh === term.trim() || entry.word.toLowerCase() === key
+  );
+}
+
+

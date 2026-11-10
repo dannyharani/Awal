@@ -3,12 +3,13 @@
   import { Button, buttonVariants } from '$lib/components/ui/button';
   import * as Avatar from '$lib/components/ui/avatar';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-  import { Settings, LogOut, User, Sparkles } from '@lucide/svelte';
+  import { Settings, LogOut, User, Sparkles, ExternalLink, Users } from '@lucide/svelte';
   import { goto, invalidateAll } from '$app/navigation';
   import * as m from '$lib/paraglide/messages.js';
 
   let session = $derived(page.data.session);
   let role = $derived(page.data.role);
+  let username = $derived(page.data.username);
   let supabase = $derived(page.data.supabase);
   let userProfile = $derived(session?.user?.user_metadata);
 
@@ -21,7 +22,14 @@
     });
   };
 
-  const redirectProfile = async () => {
+  const redirectPublicProfile = async () => {
+    if (username) {
+      goto(`/user/${username}`);
+    } else {
+      goto('/settings/profile');
+    }
+  };
+  const redirectEditProfile = async () => {
     goto('/settings/profile');
   };
   const redirectSettings = async () => {
@@ -29,6 +37,9 @@
   };
   const redirectStudio = async () => {
     goto('/admin/courses');
+  };
+  const redirectCommunity = async () => {
+    goto('/community');
   };
 
   const handleLogout = async () => {
@@ -50,7 +61,12 @@
     </DropdownMenu.Trigger>
 
     <DropdownMenu.Content class="w-56" align="end">
-      <DropdownMenu.Label>{m.nav_my_account()}</DropdownMenu.Label>
+      <DropdownMenu.Label class="flex flex-col">
+        <span>{m.nav_my_account()}</span>
+        {#if username}
+          <span class="text-muted-foreground text-xs font-normal">@{username}</span>
+        {/if}
+      </DropdownMenu.Label>
       <DropdownMenu.Separator />
       {#if role === 'admin' || role === 'instructor'}
         <DropdownMenu.Item onclick={redirectStudio}>
@@ -58,13 +74,23 @@
           {m.nav_studio()}
         </DropdownMenu.Item>
       {/if}
-      <DropdownMenu.Item onclick={redirectProfile}>
+      {#if username}
+        <DropdownMenu.Item onclick={redirectPublicProfile}>
+          <ExternalLink class="mr-2 h-4 w-4" />
+          Public {m.nav_profile()}
+        </DropdownMenu.Item>
+      {/if}
+      <DropdownMenu.Item onclick={redirectEditProfile}>
         <User class="mr-2 h-4 w-4" />
-        {m.nav_profile()}
+        Edit {m.nav_profile()}
       </DropdownMenu.Item>
       <DropdownMenu.Item onclick={redirectSettings}>
         <Settings class="mr-2 h-4 w-4" />
         {m.settings_title()}
+      </DropdownMenu.Item>
+      <DropdownMenu.Item onclick={redirectCommunity}>
+        <Users class="mr-2 h-4 w-4" />
+        {m.nav_community()}
       </DropdownMenu.Item>
       <DropdownMenu.Separator />
       <DropdownMenu.Item onclick={handleLogout}>
