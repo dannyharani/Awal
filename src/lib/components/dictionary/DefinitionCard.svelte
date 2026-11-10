@@ -1,15 +1,35 @@
 <script lang="ts">
+  import { enhance } from '$app/forms';
   import { slide } from 'svelte/transition';
-  import { Info, ChevronUp, ChevronDown, ShieldCheck, Play } from '@lucide/svelte';
+  import {
+    Info,
+    ChevronUp,
+    ChevronDown,
+    ShieldCheck,
+    MessageSquare,
+    Plus,
+    Trash2
+  } from '@lucide/svelte';
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
+  import { Input } from '$lib/components/ui/input';
   import * as Avatar from '$lib/components/ui/avatar';
   import * as Card from '$lib/components/ui/card';
   import VoteButtons from './VoteButtons.svelte';
+  import AudioPlayer from './AudioPlayer.svelte';
+  import DefinitionComments from './DefinitionComments.svelte';
+  import AmazighKeyboardBar from './AmazighKeyboardBar.svelte';
   import EditDefinitionDialog from '$lib/components/dictionary/EditDefinitionDialog.svelte';
   import { getLocale } from '$lib/paraglide/runtime';
 
-  let { def, userVote, user, dialects } = $props();
+  let {
+    def,
+    userVote,
+    userExampleVotes = {},
+    user,
+    role = 'user',
+    dialects
+  } = $props();
 
   const currentLang = getLocale();
 
@@ -18,14 +38,36 @@
   );
 
   let isExpanded = $state(false);
+  let showComments = $state(false);
+  let showAddExample = $state(false);
+  let newExampleSentence = $state('');
+  let newExampleTranslation = $state('');
+  let isAddingExample = $state(false);
+
   let hasAttributes = $derived(Object.keys(attributes).length > 0);
+  let canModerate = $derived(
+    role === 'admin' || role === 'moderator' || role === 'instructor'
+  );
+  let canEdit = $derived(
+    Boolean(user && (user.id === def.user_id || canModerate))
+  );
+
+  const ATTR_LABELS: Record<string, string> = {
+    part_of_speech: 'Part of Speech',
+    gender: 'Gender',
+    grammatical_number: 'Number',
+    construct_state: 'Construct State (Addad Amaruz)',
+    plural: 'Plural Form',
+    root: 'Consonantal Root',
+    verb_stems: 'Verb Stems (Aorist / Preterite / Intensive)'
+  };
 </script>
 
 <Card.Root
   class="group border-border bg-card text-card-foreground hover:border-primary/40 overflow-hidden p-0 transition-all duration-300 hover:shadow-md"
 >
   <Card.Header
-    class="bg-muted/30 flex flex-row items-start justify-between border-b px-4 py-4 sm:items-center"
+    class="bg-muted/30 flex flex-row flex-wrap items-center justify-between gap-2 border-b px-4 py-3.5"
   >
     <div class="flex flex-wrap items-center gap-2">
       <Badge
@@ -34,6 +76,17 @@
       >
         {def.dialects?.name ?? 'General'}
       </Badge>
+
+      {#if attributes.part_of_speech}
+        <Badge variant="secondary" class="font-serif text-xs italic capitalize">
+          {attributes.part_of_speech}
+          {#if attributes.gender === 'masculine'}
+            <span class="text-muted-foreground ml-1 not-italic">(m.)</span>
+          {:else if attributes.gender === 'feminine'}
+            <span class="text-muted-foreground ml-1 not-italic">(f.)</span>
+          {/if}
+        </Badge>
+      {/if}
 
       {#if def.language_code && def.language_code !== currentLang}
         <Badge
@@ -48,50 +101,81 @@
       {#if def.is_verified}
         <Badge
           variant="default"
-          class="flex h-5 w-5 items-center justify-center rounded-full bg-green-600/90 p-0 hover:bg-green-600"
-          title={`Verified by ${def.verifier?.username}`}
+          class="flex items-center gap-1 rounded-full bg-emerald-600/90 px-2 py-0.5 text-[10px] text-white hover:bg-emerald-600"
+          title={def.verifier?.username
+            ? `Verified by ${def.verifier.username}`
+            : 'Verified entry'}
         >
           <ShieldCheck class="h-3 w-3" />
-          <span class="sr-only">Verified by {def.verifier?.username}</span>
+          <span>Verified</span>
         </Badge>
       {/if}
 
-      {#if user?.id === def.user_id}
+      {#if canModerate}
+        <form method="POST" action="?/verifyDefinition" use:enhance>
+          <input type="hidden" name="definition_id" value={def.id} />
+          <input
+            type="hidden"
+            name="is_verified"
+            value={def.is_verified ? 'false' : 'true'}
+          />
+          <Button
+            type="submit"
+            variant="ghost"
+            size="sm"
+            class="h-6 gap-1 px-2 text-[11px] {def.is_verified
+              ? 'text-muted-foreground hover:text-destructive'
+              : 'text-emerald-600 hover:bg-emerald-500/10 hover:text-emerald-700'}"
+            title={def.is_verified ? 'Remove verification badge' : 'Verify this definition'}
+          >
+            <ShieldCheck class="h-3.5 w-3.5" />
+            {def.is_verified ? 'Unverify' : 'Verify'}
+          </Button>
+        </form>
+      {/if}
+
+      {#if canEdit}
         <EditDefinitionDialog definition={def} {dialects} />
       {/if}
     </div>
 
-    <div class="text-muted-foreground ml-2 flex shrink-0 items-center gap-2 text-xs">
+    <div class="text-muted-foreground ml-auto flex shrink-0 items-center gap-2 text-xs">
       <span class="hidden sm:inline">by</span>
-      <div class="text-foreground flex items-center gap-1.5 font-medium">
-        <Avatar.Root class="bg-background h-5 w-5 border">
-          <Avatar.Image src={def.author?.avatar_url} />
-          <Avatar.Fallback class="text-[9px]">
-            {def.author?.username?.slice(0, 2).toUpperCase() ?? 'U'}
-          </Avatar.Fallback>
-        </Avatar.Root>
-        <span class="max-w-[80px] truncate sm:max-w-none">
-          {def.author?.username ?? 'Anonymous'}
-        </span>
-      </div>
+      {#if def.author?.username}
+        <a
+          href="/user/{def.author.username}"
+          class="text-foreground hover:text-primary flex items-center gap-1.5 font-medium transition-colors"
+        >
+          <Avatar.Root class="bg-background h-5 w-5 border">
+            <Avatar.Image src={def.author?.avatar_url} />
+            <Avatar.Fallback class="text-[9px]">
+              {def.author.username.slice(0, 2).toUpperCase()}
+            </Avatar.Fallback>
+          </Avatar.Root>
+          <span class="max-w-[110px] truncate hover:underline sm:max-w-none">
+            {def.author.username}
+          </span>
+        </a>
+        {#if def.author?.role && def.author.role !== 'user'}
+          <Badge variant="outline" class="h-4 px-1.5 text-[9px] capitalize">
+            {def.author.role}
+          </Badge>
+        {/if}
+      {:else}
+        <div class="text-foreground flex items-center gap-1.5 font-medium">
+          <Avatar.Root class="bg-background h-5 w-5 border">
+            <Avatar.Fallback class="text-[9px]">U</Avatar.Fallback>
+          </Avatar.Root>
+          <span>Anonymous</span>
+        </div>
+      {/if}
     </div>
   </Card.Header>
 
-  <Card.Content class="bg-card space-y-6">
+  <Card.Content class="bg-card space-y-5 pt-5">
     {#if def.audio_url}
-      <div class="bg-muted/40 mb-4 flex w-fit items-center gap-2 rounded-md border px-3 py-1.5">
-        <Button
-          variant="ghost"
-          size="icon"
-          class="bg-primary text-primary-foreground hover:bg-primary/80 h-8 w-8 rounded-full"
-        >
-          <Play class="text-accent ml-0.5 h-4 w-4" />
-        </Button>
-        <div class="flex flex-col">
-          <span class="text-muted-foreground text-[10px] font-bold uppercase">Pronunciation</span>
-          <span class="text-xs font-medium">0:04</span>
-          <!-- TODO: get audio length -->
-        </div>
+      <div>
+        <AudioPlayer src={def.audio_url} />
       </div>
     {/if}
 
@@ -99,57 +183,204 @@
       {def.definition_text}
     </p>
 
-    {#if def.examples && def.examples.length > 0}
-      <div class="border-primary/20 relative border-l-2 pl-4">
-        <span
-          class="text-muted-foreground mb-2 block text-[10px] font-bold tracking-widest uppercase"
-        >
-          Context
-        </span>
+    <!-- Quick Morphology Pills (Construct State, Plural, Root, Verb Stems) -->
+    {#if attributes.construct_state || attributes.plural || attributes.root || attributes.verb_stems}
+      <div class="flex flex-wrap items-center gap-2 pt-1">
+        {#if attributes.construct_state}
+          <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
+            <span class="text-muted-foreground font-medium">Construct (Addad Amaruz):</span>
+            <span class="text-foreground font-semibold">{attributes.construct_state}</span>
+          </div>
+        {/if}
+        {#if attributes.plural}
+          <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
+            <span class="text-muted-foreground font-medium">Plural:</span>
+            <span class="text-foreground font-semibold">{attributes.plural}</span>
+          </div>
+        {/if}
+        {#if attributes.root}
+          <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
+            <span class="text-muted-foreground font-medium">Root:</span>
+            <span class="text-primary font-mono font-bold tracking-wider uppercase">{attributes.root}</span>
+          </div>
+        {/if}
+        {#if attributes.verb_stems}
+          <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
+            <span class="text-muted-foreground font-medium">Stems:</span>
+            <span class="text-foreground font-semibold">{attributes.verb_stems}</span>
+          </div>
+        {/if}
+      </div>
+    {/if}
 
-        <div class="space-y-3">
-          {#each def.examples as example}
-            <div class="group/ex">
-              <p class="text-foreground/90 text-base font-medium italic">
-                "{example.sentence_text}"
-              </p>
+    <!-- Examples Section -->
+    {#if (def.examples && def.examples.length > 0) || user}
+      <div class="border-primary/20 relative space-y-3 border-l-2 pl-4">
+        <div class="flex items-center justify-between">
+          <span
+            class="text-muted-foreground block text-[10px] font-bold tracking-widest uppercase"
+          >
+            Examples in Context ({def.examples?.length ?? 0})
+          </span>
 
-              {#if example.translation_text}
-                <p
-                  class="text-muted-foreground group-hover/ex:text-foreground/80 mt-0.5 text-sm transition-colors"
-                >
-                  — {example.translation_text}
-                </p>
-              {/if}
-            </div>
-          {/each}
+          {#if user}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              class="text-primary hover:text-primary/80 h-6 gap-1 px-2 text-xs"
+              onclick={() => (showAddExample = !showAddExample)}
+            >
+              <Plus class="h-3 w-3" />
+              {showAddExample ? 'Cancel' : 'Add Example'}
+            </Button>
+          {/if}
         </div>
+
+        {#if def.examples && def.examples.length > 0}
+          <div class="space-y-3">
+            {#each def.examples as example (example.id)}
+              <div class="group/ex bg-muted/20 flex items-start justify-between gap-3 rounded-md p-2.5">
+                <div class="space-y-1">
+                  <p class="text-foreground/90 text-base font-medium italic">
+                    "{example.sentence_text}"
+                  </p>
+
+                  {#if example.translation_text}
+                    <p class="text-muted-foreground text-sm">
+                      — {example.translation_text}
+                    </p>
+                  {/if}
+
+                  {#if example.author?.username}
+                    <p class="text-muted-foreground/70 text-[10px]">
+                      Added by <a
+                        href="/user/{example.author.username}"
+                        class="hover:text-foreground hover:underline"
+                        >{example.author.username}</a
+                      >
+                    </p>
+                  {/if}
+                </div>
+
+                <div class="flex shrink-0 items-center gap-1">
+                  <VoteButtons
+                    score={example.vote_score ?? 0}
+                    exampleId={example.id}
+                    userVote={userExampleVotes?.[example.id] ?? null}
+                    orientation="horizontal"
+                    size="sm"
+                  />
+
+                  {#if user && (user.id === example.user_id || role === 'admin' || role === 'moderator')}
+                    <form method="POST" action="?/deleteExample" use:enhance>
+                      <input type="hidden" name="example_id" value={example.id} />
+                      <Button
+                        type="submit"
+                        variant="ghost"
+                        size="icon"
+                        class="text-muted-foreground hover:text-destructive h-7 w-7 opacity-60 hover:opacity-100"
+                        title="Delete example"
+                      >
+                        <Trash2 class="h-3.5 w-3.5" />
+                      </Button>
+                    </form>
+                  {/if}
+                </div>
+              </div>
+            {/each}
+          </div>
+        {:else}
+          <p class="text-muted-foreground text-xs italic">
+            No example sentences yet. Add one to illustrate how this word is used!
+          </p>
+        {/if}
+
+        {#if showAddExample && user}
+          <form
+            method="POST"
+            action="?/addExample"
+            use:enhance={() => {
+              isAddingExample = true;
+              return async ({ update }) => {
+                isAddingExample = false;
+                newExampleSentence = '';
+                newExampleTranslation = '';
+                showAddExample = false;
+                await update();
+              };
+            }}
+            class="bg-muted/30 space-y-2.5 rounded-lg border p-3"
+          >
+            <input type="hidden" name="definition_id" value={def.id} />
+            <div class="space-y-1.5">
+              <AmazighKeyboardBar
+                onInsert={(ch) => {
+                  newExampleSentence += ch;
+                }}
+              />
+              <Input
+                name="sentence"
+                bind:value={newExampleSentence}
+                placeholder="Amazigh example sentence..."
+                class="h-8 text-xs"
+                required
+              />
+            </div>
+            <div class="flex items-center gap-2">
+              <Input
+                name="translation"
+                bind:value={newExampleTranslation}
+                placeholder="Translation (optional)..."
+                class="h-8 flex-1 text-xs"
+              />
+              <Button
+                type="submit"
+                size="sm"
+                class="h-8 px-3 text-xs"
+                disabled={isAddingExample || !newExampleSentence.trim()}
+              >
+                {isAddingExample ? 'Saving...' : 'Save Example'}
+              </Button>
+            </div>
+          </form>
+        {/if}
       </div>
     {/if}
   </Card.Content>
 
   <Card.Footer class="bg-muted/30 m-0 flex flex-col border-t p-0">
-    <div class="flex w-full justify-between px-4 pb-4">
-      {#if hasAttributes}
+    <div class="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-3">
+      <div class="flex items-center gap-2">
+        {#if hasAttributes}
+          <Button
+            variant="ghost"
+            size="sm"
+            onclick={() => (isExpanded = !isExpanded)}
+            class="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-3 text-xs font-medium"
+          >
+            <Info class="h-3.5 w-3.5" />
+            {isExpanded ? 'Hide Morphology' : 'Morphology'}
+            {#if isExpanded}
+              <ChevronUp class="h-3.5 w-3.5" />
+            {:else}
+              <ChevronDown class="h-3.5 w-3.5" />
+            {/if}
+          </Button>
+        {/if}
+
         <Button
           variant="ghost"
           size="sm"
-          onclick={() => (isExpanded = !isExpanded)}
-          class="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-3 text-xs font-medium"
+          onclick={() => (showComments = !showComments)}
+          class="text-muted-foreground hover:text-foreground h-8 gap-1.5 px-3 text-xs font-medium {showComments
+            ? 'bg-muted text-foreground'
+            : ''}"
         >
-          <Info class="h-3.5 w-3.5" />
-          {isExpanded ? 'Hide Details' : 'View Details'}
-          {#if isExpanded}
-            <ChevronUp />
-          {:else}
-            <ChevronDown />
-          {/if}
+          <MessageSquare class="h-3.5 w-3.5" />
+          Discussion ({def.comments?.length ?? 0})
         </Button>
-      {:else}
-        <span class="text-muted-foreground/40 px-3 text-xs italic select-none">
-          No extra details
-        </span>
-      {/if}
+      </div>
 
       <VoteButtons
         score={def.vote_score}
@@ -160,9 +391,9 @@
     </div>
 
     {#if isExpanded && hasAttributes}
-      <div transition:slide={{ duration: 200 }} class="w-full px-6 pb-6">
+      <div transition:slide={{ duration: 200 }} class="border-border/60 w-full border-t px-6 py-4">
         <h4 class="text-muted-foreground mb-3 text-[10px] font-bold tracking-wider uppercase">
-          Linguistic Attributes
+          Linguistic & Morphological Attributes
         </h4>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -173,12 +404,23 @@
               <span
                 class="text-muted-foreground mb-0.5 text-[10px] font-bold tracking-wide uppercase opacity-70"
               >
-                {key.replace(/_/g, ' ')}
+                {ATTR_LABELS[key] ?? key.replace(/_/g, ' ')}
               </span>
-              <span class="text-foreground truncate font-medium capitalize">{value}</span>
+              <span class="text-foreground truncate font-medium">{value}</span>
             </div>
           {/each}
         </div>
+      </div>
+    {/if}
+
+    {#if showComments}
+      <div transition:slide={{ duration: 200 }} class="w-full">
+        <DefinitionComments
+          definitionId={def.id}
+          comments={def.comments ?? []}
+          {user}
+          {role}
+        />
       </div>
     {/if}
   </Card.Footer>

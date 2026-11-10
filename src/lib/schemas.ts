@@ -1,15 +1,25 @@
 import { z } from 'zod';
+import { locales } from '$lib/paraglide/runtime';
 
 export const definitionSchema = z.object({
   headword_id: z.coerce.number().int().default(0),
   dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0),
-  definition_text: z.string().min(12, 'Definition is too short').max(500).default(''),
+  definition_text: z.string().min(3, 'Definition is too short').max(500).default(''),
 
-  // NEW FIELDS
+  // Linguistic / Grammar Attributes (stored in definitions.attributes JSONB)
+  part_of_speech: z.string().max(40).optional().default(''),
+  gender: z.string().max(30).optional().default(''),
+  grammatical_number: z.string().max(30).optional().default(''),
+  construct_state: z.string().max(60).optional().default(''),
+  plural: z.string().max(60).optional().default(''),
+  root: z.string().max(30).optional().default(''),
+  verb_stems: z.string().max(100).optional().default(''),
+
+  // Example sentence
   example_sentence: z.string().max(200, 'Sentence too long').optional().default(''),
   example_translation: z.string().max(200, 'Translation too long').optional().default(''),
 
-  // File validation: Optional, max 5MB
+  // File validation: Optional, max 500KB
   audio: z
     .instanceof(File, { message: 'Invalid file' })
     .refine((f) => f.size < 500 * 1024, 'Max 500KB')
@@ -20,9 +30,12 @@ export const headwordSchema = z.object({
   // Latin is required because we generate the URL slug from it
   script_latin: z
     .string()
-    .min(2, 'Word is too short')
+    .min(1, 'Word is too short')
     .max(50, 'Word is too long')
-    .regex(/^[a-zA-Z\u00C0-\u024F\u1E00-\u1EFF\s-]+$/, 'Invalid characters in Latin script'), // Allows standard extended Latin
+    .regex(
+      /^[a-zA-Z\u00C0-\u02AF\u1E00-\u1EFFɣƔɛƐčČǧǦḍḌṭṬẓẒḥḤṣṢṛṚʷγγε\s'-]+$/,
+      'Invalid characters in Latin script'
+    ),
 
   // Optional scripts
   script_tifinagh: z.string().max(50).optional(),
@@ -48,8 +61,6 @@ export const profileSchema = z.object({
     .optional()
 });
 
-import { locales } from '$lib/paraglide/runtime';
-
 export const settingsSchema = z.object({
   preferred_locale: z.enum([...locales] as [string, ...string[]], {
     message: 'Please select a valid language.'
@@ -68,7 +79,7 @@ export const createCourseSchema = z.object({
     })
     .default('beginner'),
 
-  target_dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0) // Default 0 acts as a placeholder
+  target_dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0)
 });
 
 export const createLessonSchema = z.object({
@@ -110,7 +121,7 @@ export const createStepSchema = z.object({
 });
 
 export const textStepSchema = z.object({
-  step_id: z.number(), // We need this to know which row to update
+  step_id: z.number(),
   content: z.object({
     markdown: z.string().default('')
   })
@@ -124,23 +135,19 @@ export const videoStepSchema = z.object({
   })
 });
 
-// 2. The Shape of a Single Step in the JSON Array
 export const stepItemSchema = z.object({
-  id: z.union([z.number(), z.string()]), // Number = DB ID, String = Temp ID
+  id: z.union([z.number(), z.string()]),
   type: z.enum(['text', 'video', 'flashcard', 'quiz']),
-  content: z.record(z.any(), z.any()) // We validate strictly below based on type
+  content: z.record(z.any(), z.any())
 });
 
-// 3. The Form Schema (Hidden Input)
 export const saveLessonSchema = z.object({
-  steps_data: z.string() // The JSON string
+  steps_data: z.string()
 });
 
 export const strictStepSchema = z.object({
-  // ID can be a database ID (number) or a temp ID (string)
   id: z.union([z.number(), z.string()]),
 
-  // Discriminated union to validate content based on type
   data: z.discriminatedUnion('type', [
     z.object({
       type: z.literal('text'),
@@ -149,14 +156,13 @@ export const strictStepSchema = z.object({
     z.object({
       type: z.literal('video'),
       content: z.object({
-        // Note: Accepting 'url' or 'video_url' to match your UI implementation
         url: z.string().optional(),
         video_url: z.string().optional()
       })
     }),
     z.object({
       type: z.literal('flashcard'),
-      content: z.record(z.string(), z.any()) // Define strictly if you have flashcard fields
+      content: z.record(z.string(), z.any())
     }),
     z.object({
       type: z.literal('quiz'),

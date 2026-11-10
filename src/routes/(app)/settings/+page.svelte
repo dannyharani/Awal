@@ -16,6 +16,7 @@
   const { profile } = $derived(data);
 
   // 1. CONFIGURE SUPERFORM
+  // svelte-ignore state_referenced_locally
   const { form, enhance, delayed, message } = superForm(data.form, {
     // This runs ONLY after the server action is successful
     onUpdate({ form, result }) {

@@ -2,6 +2,7 @@
   import { page } from '$app/state';
   import { superForm } from 'sveltekit-superforms';
   import { getLocale, locales, setLocale } from '$lib/paraglide/runtime';
+  import { slide } from 'svelte/transition';
 
   // UI Components
   import { Button } from '$lib/components/ui/button';
@@ -10,27 +11,45 @@
   import { Input } from '$lib/components/ui/input';
   import { Label } from '$lib/components/ui/label';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+  import AmazighKeyboardBar from './AmazighKeyboardBar.svelte';
+  import AudioRecorder from './AudioRecorder.svelte';
+  import {
+    PARTS_OF_SPEECH,
+    GENDERS,
+    GRAMMATICAL_NUMBERS
+  } from '$lib/utils/amazigh';
 
   // Icons
-  import { CirclePlus, User, Mic, Type, Languages, ChevronDown } from '@lucide/svelte';
+  import {
+    CirclePlus,
+    User,
+    Mic,
+    Type,
+    Languages,
+    ChevronDown,
+    ChevronUp,
+    BookOpen
+  } from '@lucide/svelte';
   import { zod4 } from 'sveltekit-superforms/adapters';
   import { definitionSchema } from '$lib/schemas';
 
   let { data } = $props();
-  let { headword, dialects, form } = $derived(data);
+  let { headword, dialects } = $derived(data);
   let { user } = $derived(page.data);
 
   const currentLang = getLocale();
 
   let hasSubmitted = $state(false);
+  let showGrammar = $state(false);
 
+  // svelte-ignore state_referenced_locally
   const {
     form: formData,
     enhance,
     delayed,
     errors,
     tainted
-  } = superForm(form, {
+  } = superForm(data.form, {
     validators: zod4(definitionSchema),
     validationMethod: 'auto',
     onSubmit: () => {
@@ -59,7 +78,7 @@
       <Card.Content>
         {#if user}
           <div
-            class="bg-background/50 mb-6 flex items-center justify-between rounded-md border px-3 py-2 shadow-sm"
+            class="bg-background/50 mb-5 flex items-center justify-between rounded-md border px-3 py-2 shadow-sm"
           >
             <div class="text-muted-foreground flex items-center gap-2 text-xs">
               <Languages class="h-3.5 w-3.5" />
@@ -100,16 +119,16 @@
             action="?/addDefinition"
             enctype="multipart/form-data"
             use:enhance
-            class="space-y-5"
+            class="space-y-4"
           >
             <input type="hidden" name="headword_id" value={headword.id} />
 
-            <div class="space-y-4">
-              <div class="space-y-2">
-                <Label for="dialect">Region / Dialect <span class="text-destructive">*</span></Label
-                >
+            <div class="space-y-3">
+              <div class="space-y-1.5">
+                <Label for="dialect">Region / Dialect <span class="text-destructive">*</span></Label>
                 <div class="relative">
                   <select
+                    id="dialect"
                     name="dialect_id"
                     bind:value={$formData.dialect_id}
                     class="border-input bg-background ring-offset-background focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
@@ -129,13 +148,14 @@
                 {/if}
               </div>
 
-              <div class="space-y-2">
+              <div class="space-y-1.5">
                 <Label for="definition">Definition <span class="text-destructive">*</span></Label>
                 <Textarea
+                  id="definition"
                   name="definition_text"
                   bind:value={$formData.definition_text}
-                  placeholder={`Write the definition...`}
-                  class="min-h-[100px] resize-none {showFieldErrors('definition_text')
+                  placeholder="Write the definition or translation..."
+                  class="min-h-[85px] resize-none {showFieldErrors('definition_text')
                     ? 'border-destructive'
                     : ''}"
                 />
@@ -148,42 +168,161 @@
               </div>
             </div>
 
-            <div class="bg-muted/30 space-y-4 rounded-lg border border-dashed p-4">
+            <!-- Grammar & Morphology Accordion -->
+            <div class="bg-muted/30 rounded-lg border border-dashed">
+              <button
+                type="button"
+                onclick={() => (showGrammar = !showGrammar)}
+                class="text-muted-foreground hover:text-foreground flex w-full items-center justify-between px-3.5 py-2.5 text-xs font-semibold tracking-wider uppercase transition-colors"
+              >
+                <span class="flex items-center gap-2">
+                  <BookOpen class="h-3.5 w-3.5" /> Grammar & Morphology
+                </span>
+                {#if showGrammar}
+                  <ChevronUp class="h-3.5 w-3.5" />
+                {:else}
+                  <ChevronDown class="h-3.5 w-3.5" />
+                {/if}
+              </button>
+
+              {#if showGrammar}
+                <div transition:slide={{ duration: 150 }} class="space-y-3 border-t px-3.5 py-3">
+                  <div class="grid grid-cols-2 gap-2.5">
+                    <div class="space-y-1">
+                      <Label class="text-[11px]">Part of Speech</Label>
+                      <select
+                        name="part_of_speech"
+                        bind:value={$formData.part_of_speech}
+                        class="border-input bg-background flex h-8 w-full rounded-md border px-2 text-xs"
+                      >
+                        <option value="">— Select —</option>
+                        {#each PARTS_OF_SPEECH as pos}
+                          <option value={pos.value}>{pos.label}</option>
+                        {/each}
+                      </select>
+                    </div>
+
+                    <div class="space-y-1">
+                      <Label class="text-[11px]">Gender</Label>
+                      <select
+                        name="gender"
+                        bind:value={$formData.gender}
+                        class="border-input bg-background flex h-8 w-full rounded-md border px-2 text-xs"
+                      >
+                        <option value="">— Select —</option>
+                        {#each GENDERS as g}
+                          <option value={g.value}>{g.label}</option>
+                        {/each}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2.5">
+                    <div class="space-y-1">
+                      <Label class="text-[11px]">Number</Label>
+                      <select
+                        name="grammatical_number"
+                        bind:value={$formData.grammatical_number}
+                        class="border-input bg-background flex h-8 w-full rounded-md border px-2 text-xs"
+                      >
+                        <option value="">— Select —</option>
+                        {#each GRAMMATICAL_NUMBERS as num}
+                          <option value={num.value}>{num.label}</option>
+                        {/each}
+                      </select>
+                    </div>
+
+                    <div class="space-y-1">
+                      <Label class="text-[11px]" title="Consonantal root, e.g. G-L-D or Z-Ɣ">
+                        Consonantal Root
+                      </Label>
+                      <Input
+                        name="root"
+                        bind:value={$formData.root}
+                        placeholder="e.g. G-L-D"
+                        class="h-8 text-xs uppercase"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-2.5">
+                    <div class="space-y-1">
+                      <Label class="text-[11px]" title="Addad Amaruz (Annexed State)">
+                        Construct State (Addad Amaruz)
+                      </Label>
+                      <Input
+                        name="construct_state"
+                        bind:value={$formData.construct_state}
+                        placeholder="e.g. uɣrum / waman"
+                        class="h-8 text-xs"
+                      />
+                    </div>
+
+                    <div class="space-y-1">
+                      <Label class="text-[11px]">Plural Form</Label>
+                      <Input
+                        name="plural"
+                        bind:value={$formData.plural}
+                        placeholder="e.g. iɣerman"
+                        class="h-8 text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="space-y-1">
+                    <Label class="text-[11px]" title="Verb aspects: Aorist / Preterite / Intensive">
+                      Verb Stems (Aorist / Preterite / Intensive)
+                    </Label>
+                    <Input
+                      name="verb_stems"
+                      bind:value={$formData.verb_stems}
+                      placeholder="e.g. aru / yura / ttaru"
+                      class="h-8 text-xs"
+                    />
+                  </div>
+                </div>
+              {/if}
+            </div>
+
+            <!-- Context & Audio -->
+            <div class="bg-muted/30 space-y-3 rounded-lg border border-dashed p-3.5">
               <div
                 class="text-muted-foreground flex items-center gap-2 text-xs font-semibold tracking-wider uppercase"
               >
-                <Type class="h-3 w-3" /> Optional Context
+                <Type class="h-3.5 w-3.5" /> Context & Audio
               </div>
-              <div class="grid gap-3">
-                <div class="space-y-1">
+
+              <div class="grid gap-2.5">
+                <div class="space-y-1.5">
                   <Label class="text-xs">Example Sentence (Amazigh)</Label>
+                  <AmazighKeyboardBar
+                    onInsert={(ch) => {
+                      $formData.example_sentence = ($formData.example_sentence || '') + ch;
+                    }}
+                  />
                   <Input
                     name="example_sentence"
                     bind:value={$formData.example_sentence}
                     placeholder="Azul, amek tellid?"
-                    class="h-9"
+                    class="h-9 text-xs"
                   />
                 </div>
                 <div class="space-y-1">
-                  <Label class="text-xs">Translation</Label>
+                  <Label class="text-xs">Sentence Translation</Label>
                   <Input
                     name="example_translation"
                     bind:value={$formData.example_translation}
                     placeholder="Hello, how are you?"
-                    class="h-9"
+                    class="h-9 text-xs"
                   />
                 </div>
               </div>
-              <div class="space-y-2 pt-2">
-                <Label class="flex items-center gap-1 text-xs">
-                  <Mic class="h-3 w-3" /> Pronunciation Audio
+
+              <div class="space-y-1.5 pt-1">
+                <Label class="flex items-center gap-1.5 text-xs">
+                  <Mic class="h-3.5 w-3.5" /> Pronunciation Audio
                 </Label>
-                <input
-                  type="file"
-                  name="audio"
-                  accept="audio/*"
-                  class="border-input bg-background text-muted-foreground file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex w-full rounded-md border px-3 py-2 text-xs file:border-0 file:bg-transparent file:text-xs file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
-                />
+                <AudioRecorder name="audio" />
               </div>
             </div>
 
@@ -199,6 +338,7 @@
             <p class="text-muted-foreground text-sm">
               You must be logged in to contribute to the community dictionary.
             </p>
+            <Button variant="outline" size="sm" href="/login">Sign In to Contribute</Button>
           </div>
         {/if}
       </Card.Content>

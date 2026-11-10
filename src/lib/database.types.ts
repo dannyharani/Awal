@@ -126,6 +126,61 @@ export type Database = {
           },
         ]
       }
+      definition_comments: {
+        Row: {
+          content: string
+          created_at: string
+          definition_id: number
+          id: number
+          is_edited: boolean
+          parent_id: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          definition_id: number
+          id?: number
+          is_edited?: boolean
+          parent_id?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          definition_id?: number
+          id?: number
+          is_edited?: boolean
+          parent_id?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "definition_comments_definition_id_fkey"
+            columns: ["definition_id"]
+            isOneToOne: false
+            referencedRelation: "definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "definition_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "definition_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "definition_comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       definitions: {
         Row: {
           attributes: Json | null
@@ -558,6 +613,55 @@ export type Database = {
           },
         ]
       }
+      word_relations: {
+        Row: {
+          created_at: string
+          id: number
+          relation_type: string
+          source_headword_id: number
+          target_headword_id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          relation_type?: string
+          source_headword_id: number
+          target_headword_id: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          relation_type?: string
+          source_headword_id?: number
+          target_headword_id?: number
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "word_relations_source_headword_id_fkey"
+            columns: ["source_headword_id"]
+            isOneToOne: false
+            referencedRelation: "headwords"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "word_relations_target_headword_id_fkey"
+            columns: ["target_headword_id"]
+            isOneToOne: false
+            referencedRelation: "headwords"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "word_relations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -596,11 +700,17 @@ export type Database = {
           total_upvotes: number
         }[]
       }
+      is_moderator_or_admin: { Args: never; Returns: boolean }
+      normalize_amazigh_latin: { Args: { input_text: string }; Returns: string }
       search_dictionary: {
         Args: { term: string }
         Returns: {
           headword_text: string
           id: number
+          match_preview: string
+          match_type: string
+          script_arabic: string
+          script_tifinagh: string
           similarity: number
           slug: string
         }[]

@@ -25,10 +25,12 @@
   import type { Step } from '$lib/types';
 
   let { data } = $props();
+  // svelte-ignore state_referenced_locally
   const { form, enhance, delayed, message } = superForm(data.form, {});
 
   // 1. Initialize Local State
   // We map existing steps from DB to our internal structure
+  // svelte-ignore state_referenced_locally
   let steps = $state<Step[]>(
     data.lesson.steps.map((s: any) => ({
       id: s.id,
@@ -39,6 +41,7 @@
     }))
   );
 
+  // svelte-ignore state_referenced_locally
   let selectedStepId = $state<string | number | null>(steps.length > 0 ? steps[0].id : null);
 
   // Derived helper to find the currently selected step object
@@ -136,6 +139,7 @@
       <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
         <div class="space-y-3 relative">
           {#each steps as step, i (step.id)}
+            {@const StepIcon = getStepIcon(step.type)}
             {#if i !== steps.length - 1}
               <div class="absolute left-[26px] top-12 bottom-[-12px] w-px bg-border/60 -z-10"></div>
             {/if}
@@ -156,7 +160,7 @@
 
                 <div class="shrink-0 mr-3 mt-0.5">
                   <div class={`h-8 w-8 rounded-md flex items-center justify-center ${getStepColor(step.type)}`}>
-                    <svelte:component this={getStepIcon(step.type)} class="h-4 w-4" />
+                    <StepIcon class="h-4 w-4" />
                   </div>
                 </div>
 

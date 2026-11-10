@@ -1,11 +1,31 @@
 <script lang="ts">
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
-  import { ArrowRight, Sparkles, Clock } from '@lucide/svelte';
+  import {
+    ArrowRight,
+    Sparkles,
+    Clock,
+    Compass,
+    HandHeart,
+    Globe,
+    X
+  } from '@lucide/svelte';
   import { Badge } from '$lib/components/ui/badge';
+  import { ALPHABET_LATIN } from '$lib/utils/amazigh';
 
   let { data } = $props();
-  const { wordOfTheDay, recentWords, stats } = $derived(data);
+  const {
+    wordOfTheDay,
+    recentWords,
+    stats,
+    dialects,
+    browsedWords,
+    wordsNeedingHelp,
+    activeLetter,
+    activeDialect
+  } = $derived(data);
+
+  let isFiltering = $derived(Boolean(activeLetter || activeDialect));
 </script>
 
 <div class="container mx-auto space-y-12 py-10">
@@ -14,24 +34,137 @@
       The Open <span class="text-primary">Amazigh</span> Dictionary
     </h1>
     <p class="text-muted-foreground text-xl">
-      A community-driven project to document, preserve, and standardize the Amazigh language.
+      A community-driven project to document, preserve, and standardize the Amazigh language across
+      all regions and scripts.
     </p>
 
-    <div class="flex items-center justify-center gap-4 pt-4">
-      <div class="bg-muted/30 flex flex-col items-center rounded-lg border p-3">
+    <div class="flex items-center justify-center gap-4 pt-2">
+      <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
         <span class="text-2xl font-bold">{stats.total_words}</span>
         <span class="text-muted-foreground text-xs tracking-wider uppercase">Words</span>
       </div>
-      <div class="bg-muted/30 flex flex-col items-center rounded-lg border p-3">
+      <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
         <span class="text-2xl font-bold">{stats.total_definitions}</span>
         <span class="text-muted-foreground text-xs tracking-wider uppercase">Definitions</span>
       </div>
+      <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
+        <span class="text-2xl font-bold">{dialects.length}</span>
+        <span class="text-muted-foreground text-xs tracking-wider uppercase">Dialects</span>
+      </div>
     </div>
 
-    <div class="flex justify-center gap-4 pt-4">
+    <div class="flex justify-center gap-4 pt-2">
       <Button size="lg" href="/add">Contribute a Word</Button>
-      <Button variant="outline" size="lg" href="/about">Learn More</Button>
+      <Button variant="outline" size="lg" href="/courses">Explore Courses</Button>
     </div>
+  </section>
+
+  <!-- Browse by Alphabet & Dialect -->
+  <section class="bg-muted/20 space-y-5 rounded-xl border p-6">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <Compass class="text-primary h-5 w-5" />
+        <h2 class="text-xl font-bold">Browse the Dictionary</h2>
+      </div>
+      {#if isFiltering}
+        <Button variant="ghost" size="sm" href="/" class="h-7 gap-1 text-xs">
+          <X class="h-3.5 w-3.5" />
+          Clear Filters
+        </Button>
+      {/if}
+    </div>
+
+    <!-- Alphabet Strip -->
+    <div class="space-y-2">
+      <span class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+        By Letter (Tamaziɣt Latin)
+      </span>
+      <div class="flex flex-wrap gap-1.5">
+        {#each ALPHABET_LATIN as letter}
+          <a
+            href={activeLetter === letter
+              ? activeDialect
+                ? `/?dialect=${activeDialect}`
+                : '/'
+              : `/?letter=${encodeURIComponent(letter)}${activeDialect ? `&dialect=${activeDialect}` : ''}`}
+            class="inline-flex h-8 w-8 items-center justify-center rounded-md border text-xs font-bold transition-colors {activeLetter ===
+            letter
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-background hover:bg-muted text-foreground'}"
+          >
+            {letter}
+          </a>
+        {/each}
+      </div>
+    </div>
+
+    <!-- Dialect Strip -->
+    <div class="space-y-2">
+      <span class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+        By Region / Dialect
+      </span>
+      <div class="flex flex-wrap gap-2">
+        {#each dialects as dialect}
+          <a
+            href={activeDialect === dialect.id
+              ? activeLetter
+                ? `/?letter=${encodeURIComponent(activeLetter)}`
+                : '/'
+              : `/?dialect=${dialect.id}${activeLetter ? `&letter=${encodeURIComponent(activeLetter)}` : ''}`}
+            class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors {activeDialect ===
+            dialect.id
+              ? 'bg-primary text-primary-foreground border-primary'
+              : 'bg-background hover:bg-muted text-foreground'}"
+          >
+            <Globe class="h-3 w-3" />
+            {dialect.name}
+          </a>
+        {/each}
+      </div>
+    </div>
+
+    {#if isFiltering}
+      <div class="border-t pt-4">
+        <h3 class="text-muted-foreground mb-3 text-xs font-bold tracking-wider uppercase">
+          Matching Words ({browsedWords.length})
+        </h3>
+        {#if browsedWords.length === 0}
+          <div class="bg-background rounded-lg border border-dashed p-6 text-center">
+            <p class="text-muted-foreground text-sm">
+              No words found matching this filter yet.
+            </p>
+            <Button variant="link" size="sm" href="/add" class="mt-1">
+              + Contribute the first entry
+            </Button>
+          </div>
+        {:else}
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {#each browsedWords as word (word.id)}
+              <a
+                href="/word/{word.slug}"
+                class="bg-background hover:border-primary/50 flex items-center justify-between rounded-lg border p-3.5 transition-all hover:shadow-sm"
+              >
+                <div>
+                  <p class="text-foreground font-bold">{word.script_latin}</p>
+                  {#if word.definitions?.[0]?.definition_text}
+                    <p class="text-muted-foreground line-clamp-1 text-xs">
+                      {word.definitions[0].definition_text}
+                    </p>
+                  {:else}
+                    <p class="text-muted-foreground/60 text-xs italic">Needs definition</p>
+                  {/if}
+                </div>
+                {#if word.script_tifinagh}
+                  <Badge variant="secondary" class="font-serif text-sm">
+                    {word.script_tifinagh}
+                  </Badge>
+                {/if}
+              </a>
+            {/each}
+          </div>
+        {/if}
+      </div>
+    {/if}
   </section>
 
   {#if wordOfTheDay}
@@ -83,8 +216,9 @@
                   </Badge>
                 {/if}
               </Card.Title>
-              <Card.Description class="pt-2 text-xs">
-                Added {new Date(word.created_at).toLocaleDateString()}
+              <Card.Description class="flex items-center justify-between pt-2 text-xs">
+                <span>Added {new Date(word.created_at).toLocaleDateString()}</span>
+                <span>{word.definitions?.[0]?.count ?? 0} definitions</span>
               </Card.Description>
             </Card.Header>
           </Card.Root>
@@ -92,4 +226,44 @@
       {/each}
     </div>
   </section>
+
+  {#if wordsNeedingHelp.length > 0}
+    <section>
+      <div class="mb-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <HandHeart class="text-primary h-5 w-5" />
+          <h2 class="text-2xl font-bold">Help Complete These Entries</h2>
+        </div>
+      </div>
+      <p class="text-muted-foreground mb-5 text-sm">
+        These headwords are missing definitions or Tifinagh script. Click any word to contribute!
+      </p>
+
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {#each wordsNeedingHelp as word (word.id)}
+          <a
+            href="/word/{word.slug}"
+            class="bg-card hover:border-primary/50 flex items-center justify-between rounded-lg border p-4 transition-all hover:shadow-sm"
+          >
+            <div class="space-y-1">
+              <p class="font-bold">{word.script_latin}</p>
+              <div class="flex flex-wrap gap-1.5">
+                {#if !word.definitions || word.definitions.length === 0}
+                  <Badge variant="outline" class="border-amber-500/40 text-[10px] text-amber-600">
+                    Needs Definition
+                  </Badge>
+                {/if}
+                {#if !word.script_tifinagh}
+                  <Badge variant="outline" class="border-blue-500/40 text-[10px] text-blue-600">
+                    Needs Tifinagh
+                  </Badge>
+                {/if}
+              </div>
+            </div>
+            <ArrowRight class="text-muted-foreground h-4 w-4" />
+          </a>
+        {/each}
+      </div>
+    </section>
+  {/if}
 </div>

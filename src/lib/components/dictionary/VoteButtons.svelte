@@ -4,20 +4,32 @@
   import { Button } from '$lib/components/ui/button';
   import { ArrowBigUp, ArrowBigDown } from '@lucide/svelte';
 
-  // 1. Receive data from parent + new orientation prop (defaulting to vertical)
-  let { score, definitionId, userVote, orientation = 'vertical' } = $props();
+  interface Props {
+    score: number;
+    definitionId?: number;
+    exampleId?: number;
+    userVote?: number | null;
+    orientation?: 'vertical' | 'horizontal';
+    size?: 'default' | 'sm';
+  }
 
-  // 2. Create Local State (Optimistic Truth)
-  let optimisticScore = $derived(score);
-  let optimisticVote = $derived(userVote);
+  let {
+    score = 0,
+    definitionId,
+    exampleId,
+    userVote = null,
+    orientation = 'vertical',
+    size = 'default'
+  }: Props = $props();
 
-  // 3. Sync Logic
+  let optimisticScore = $state(0);
+  let optimisticVote = $state<number | null>(null);
+
   $effect(() => {
-    optimisticScore = score;
-    optimisticVote = userVote;
+    optimisticScore = score ?? 0;
+    optimisticVote = userVote ?? null;
   });
 
-  // 4. The Optimistic Handler
   const handleVote: SubmitFunction = ({ formData }) => {
     const value = Number(formData.get('value'));
     const previousVote = optimisticVote;
@@ -37,31 +49,41 @@
       await update();
     };
   };
+
+  let btnClass = $derived(size === 'sm' ? 'h-7 w-7' : 'h-9 w-9');
+  let iconClass = $derived(size === 'sm' ? 'h-4 w-4 stroke-[2.5px]' : 'h-6 w-6 stroke-[3px]');
 </script>
 
 <div
   class={orientation === 'horizontal'
-    ? 'flex flex-row items-center gap-3'
+    ? 'flex flex-row items-center gap-1.5'
     : 'flex flex-col items-center gap-1'}
 >
   <form method="POST" action="?/vote" use:enhance={handleVote}>
-    <input type="hidden" name="definition_id" value={definitionId} />
+    {#if definitionId}
+      <input type="hidden" name="definition_id" value={definitionId} />
+    {/if}
+    {#if exampleId}
+      <input type="hidden" name="example_id" value={exampleId} />
+    {/if}
     <input type="hidden" name="value" value="1" />
     <Button
       variant="ghost"
       size="icon"
       type="submit"
-      class="h-9 w-9 rounded-full transition-colors hover:bg-emerald-100 hover:text-emerald-600 {optimisticVote ===
+      class="{btnClass} rounded-full transition-colors hover:bg-emerald-100 hover:text-emerald-600 dark:hover:bg-emerald-950/60 {optimisticVote ===
       1
-        ? 'bg-emerald-100 text-emerald-600 ring-1 ring-emerald-600/20'
+        ? 'bg-emerald-100 text-emerald-600 ring-1 ring-emerald-600/20 dark:bg-emerald-950/60'
         : 'text-muted-foreground'}"
     >
-      <ArrowBigUp class="h-6 w-6 stroke-[3px]" />
+      <ArrowBigUp class={iconClass} />
     </Button>
   </form>
 
   <span
-    class="min-w-[1.5rem] text-center font-mono text-sm font-bold select-none
+    class="min-w-[1.25rem] text-center font-mono {size === 'sm'
+      ? 'text-xs'
+      : 'text-sm'} font-bold select-none
       {optimisticVote === 1
       ? 'text-emerald-600'
       : optimisticVote === -1
@@ -72,18 +94,23 @@
   </span>
 
   <form method="POST" action="?/vote" use:enhance={handleVote}>
-    <input type="hidden" name="definition_id" value={definitionId} />
+    {#if definitionId}
+      <input type="hidden" name="definition_id" value={definitionId} />
+    {/if}
+    {#if exampleId}
+      <input type="hidden" name="example_id" value={exampleId} />
+    {/if}
     <input type="hidden" name="value" value="-1" />
     <Button
       variant="ghost"
       size="icon"
       type="submit"
-      class="h-9 w-9 rounded-full transition-colors hover:bg-rose-100 hover:text-rose-600 {optimisticVote ===
+      class="{btnClass} rounded-full transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-950/60 {optimisticVote ===
       -1
-        ? 'bg-rose-100 text-rose-600 ring-1 ring-rose-600/20'
+        ? 'bg-rose-100 text-rose-600 ring-1 ring-rose-600/20 dark:bg-rose-950/60'
         : 'text-muted-foreground'}"
     >
-      <ArrowBigDown class="h-6 w-6 stroke-[3px]" />
+      <ArrowBigDown class={iconClass} />
     </Button>
   </form>
 </div>

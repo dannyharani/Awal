@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { headwordSchema } from '$lib/schemas';
+import { generateWordSlug } from '$lib/utils/amazigh';
 
 export const load = async ({ url, locals: { user } }) => {
   // 1. Auth Check
@@ -27,20 +28,22 @@ export const actions = {
 
     const { script_latin, script_tifinagh, script_arabic } = form.data;
 
-    // Generate Slug
-    const slug = script_latin.toLowerCase().trim().replace(/\s+/g, '-');
+    // Generate Slug consistently with client preview
+    const slug = generateWordSlug(script_latin);
+    if (!slug) {
+      return message(form, 'Please provide a valid Latin script word.', { status: 400 });
+    }
 
     // Insert Headword
     const { error } = await supabase.from('headwords').insert({
       slug,
-      script_latin,
-      script_tifinagh: script_tifinagh || null,
-      script_arabic: script_arabic || null
+      script_latin: script_latin.trim(),
+      script_tifinagh: script_tifinagh?.trim() || null,
+      script_arabic: script_arabic?.trim() || null
     });
 
     if (error) {
       if (error.code === '23505') {
-        // 400 Bad Request for duplicates
         return message(form, 'This word already exists in the dictionary.', {
           status: 400
         });
@@ -50,7 +53,6 @@ export const actions = {
       });
     }
 
-    // SUCCESS: Do NOT redirect. Return the form with a success message.
     return message(form, {
       text: 'Word created successfully!',
       slug: slug

@@ -12,11 +12,13 @@
   let { data } = $props();
   const { profile } = $derived(data);
 
+  // svelte-ignore state_referenced_locally
   const { form, errors, enhance, delayed, message } = superForm(data.form, {
     resetForm: false
   });
 
   // Local state for image preview
+  // svelte-ignore state_referenced_locally
   let previewUrl = $state(profile?.avatar_url);
   let fileInput: HTMLInputElement; // Reference to the hidden input
 

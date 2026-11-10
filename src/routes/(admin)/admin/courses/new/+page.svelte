@@ -14,6 +14,7 @@
   let { data } = $props();
 
   // Initialize Superform
+  // svelte-ignore state_referenced_locally
   const { form, errors, constraints, message, enhance } = superForm(data.form, {
     // Optional: client-side validation using the same schema
     // validators: zod(createCourseSchema),

@@ -5,6 +5,8 @@
   import { Label } from '$lib/components/ui/label';
   import * as Card from '$lib/components/ui/card';
   import { Separator } from '$lib/components/ui/separator';
+  import AmazighKeyboardBar from '$lib/components/dictionary/AmazighKeyboardBar.svelte';
+  import { generateWordSlug, latinToTifinagh } from '$lib/utils/amazigh';
   import {
     ArrowLeft,
     Languages,
@@ -13,26 +15,25 @@
     Link as LinkIcon,
     Info,
     Check,
-    CircleAlert
+    CircleAlert,
+    WandSparkles
   } from '@lucide/svelte';
 
   let { data } = $props();
 
+  // svelte-ignore state_referenced_locally
   const { form, errors, enhance, delayed, message } = superForm(data.form);
 
   // Dynamic preview for the user as they type
-  let slugPreview = $derived(
-    $form.script_latin
-      ? $form.script_latin
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9ɣɛ\-_]/g, '')
-      : '...'
-  );
+  let slugPreview = $derived($form.script_latin ? generateWordSlug($form.script_latin) || '...' : '...');
 
-  // Robust Success Check:
-  // We check if $message exists AND if it has the specific 'slug' property we return on success
   let isSuccess = $derived($message && typeof $message === 'object' && 'slug' in $message);
+
+  function autoFillTifinagh() {
+    if ($form.script_latin) {
+      $form.script_tifinagh = latinToTifinagh($form.script_latin);
+    }
+  }
 </script>
 
 <div class="container mx-auto flex min-h-[85vh] w-full flex-col items-center justify-center py-10">
@@ -104,17 +105,27 @@
                   class="pl-10"
                 />
               </div>
+
+              <AmazighKeyboardBar bind:value={$form.script_latin} />
+
               {#if $errors.script_latin}
                 <span class="text-destructive text-xs font-medium">{$errors.script_latin}</span>
               {/if}
 
               <div
-                class="bg-muted/50 text-muted-foreground flex items-center gap-2 rounded-md px-3 py-2 text-xs"
+                class="bg-muted/50 text-muted-foreground flex items-center justify-between rounded-md px-3 py-2 text-xs"
               >
-                <LinkIcon class="h-3 w-3" />
-                <span>
-                  .../word/<span class="text-foreground font-mono font-medium">{slugPreview}</span>
+                <span class="flex items-center gap-2">
+                  <LinkIcon class="h-3 w-3" />
+                  <span>
+                    .../word/<span class="text-foreground font-mono font-medium">{slugPreview}</span>
+                  </span>
                 </span>
+                {#if $form.script_latin}
+                  <span class="font-tifinagh text-primary text-xs">
+                    {latinToTifinagh($form.script_latin)}
+                  </span>
+                {/if}
               </div>
             </div>
 
@@ -122,12 +133,25 @@
 
             <div class="grid gap-4 md:grid-cols-2">
               <div class="space-y-2">
-                <Label for="tifinagh" class="flex items-center gap-2 text-sm">
-                  Tifinagh <span
-                    class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase"
-                    >(Optional)</span
-                  >
-                </Label>
+                <div class="flex items-center justify-between">
+                  <Label for="tifinagh" class="flex items-center gap-1.5 text-sm">
+                    Tifinagh
+                    <span class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase">
+                      (Optional)
+                    </span>
+                  </Label>
+                  {#if $form.script_latin}
+                    <button
+                      type="button"
+                      onclick={autoFillTifinagh}
+                      class="text-primary hover:text-primary/80 flex items-center gap-1 text-[11px] font-semibold transition-colors"
+                      title="Convert Latin script to Neo-Tifinagh"
+                    >
+                      <WandSparkles class="h-3 w-3" />
+                      Auto-fill
+                    </button>
+                  {/if}
+                </div>
                 <div class="relative">
                   <Globe
                     class="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
@@ -144,10 +168,10 @@
 
               <div class="space-y-2">
                 <Label for="arabic" class="flex items-center gap-2 text-sm">
-                  Arabic <span
-                    class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase"
-                    >(Optional)</span
-                  >
+                  Arabic
+                  <span class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase">
+                    (Optional)
+                  </span>
                 </Label>
                 <div class="relative">
                   <Languages
@@ -170,7 +194,7 @@
             >
               <Info class="h-5 w-5 shrink-0" />
               <p>
-                Create the headword first. You will be able to add definitions, examples, and audio
+                Create the headword first. You will be able to add definitions, grammar details, examples, and audio
                 recordings on the next screen.
               </p>
             </div>

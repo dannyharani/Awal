@@ -14,6 +14,7 @@
   let { data } = $props();
 
   // --- Module Form ---
+  // svelte-ignore state_referenced_locally
   const {
     form: mForm,
     enhance: mEnhance,
@@ -24,6 +25,7 @@
 
   // --- Lesson Form ---
   // We use this single form instance for ALL modules
+  // svelte-ignore state_referenced_locally
   const {
     form: lForm,
     enhance: lEnhance,
