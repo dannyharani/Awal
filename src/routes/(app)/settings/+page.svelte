@@ -48,7 +48,7 @@
               <Badge variant={profile.role === 'admin' ? 'default' : 'secondary'} class="h-5 text-[10px] uppercase">
                 {profile.role}
               </Badge>
-              <span class="text-muted-foreground text-xs">Reputation: {profile.reputation_points}</span>
+              <span class="text-muted-foreground text-xs">Reputation: {profile.reputation_points ?? 0}</span>
             </div>
           </div>
         </div>

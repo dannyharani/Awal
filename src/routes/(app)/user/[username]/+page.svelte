@@ -111,7 +111,7 @@
             Reputation
           </div>
           <span class="text-2xl font-bold tracking-tight"
-            >{stats.reputation_score.toLocaleString()}</span
+            >{(profile.reputation_points ?? stats.reputation_score ?? 0).toLocaleString()}</span
           >
         </div>
 

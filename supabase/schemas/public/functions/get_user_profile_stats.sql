@@ -16,10 +16,15 @@ begin
     -- 2. How many votes have they received total?
     (select coalesce(sum(vote_score), 0) from definitions where user_id = target_user_id) as total_upvotes,
 
-    -- 3. The "Karma" Score (Simple Formula: 10 pts per def + 1 pt per vote)
+    -- 3. The Authoritative Reputation Score (stored in profiles.reputation_points, falling back to karma calculation if null)
     (
-      (select count(*) * 10 from definitions where user_id = target_user_id) +
-      (select coalesce(sum(vote_score), 0) from definitions where user_id = target_user_id)
+      select coalesce(
+        p.reputation_points,
+        (select count(*) * 10 from definitions where user_id = target_user_id) +
+        (select coalesce(sum(vote_score), 0) from definitions where user_id = target_user_id)
+      )
+      from profiles p
+      where p.id = target_user_id
     ) as reputation_score;
 end;
 $function$;

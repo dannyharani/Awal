@@ -6,7 +6,7 @@ export const load = async ({ params, locals: { supabase } }) => {
   // 1. Get the Profile ID from the Username
   const { data: profile, error: profileError } = await supabase
     .from('profiles')
-    .select('id, username, first_name, last_name, bio, avatar_url, role, created_at')
+    .select('id, username, first_name, last_name, bio, avatar_url, role, reputation_points, created_at')
     .eq('username', username)
     .single();
 
