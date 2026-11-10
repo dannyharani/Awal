@@ -227,17 +227,17 @@
   {#if open}
     <div
       role="tooltip"
-      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 zoom-in-95 absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 {positionClasses}"
+      class="bg-popover text-popover-foreground border-border animate-in fade-in-0 font-sans font-normal tracking-normal leading-normal normal-case antialiased absolute z-50 w-72 rounded-xl border p-3.5 text-left shadow-xl sm:w-80 duration-150 {positionClasses}"
     >
       <div class="flex items-start justify-between gap-2 border-b pb-2.5">
         <div>
           <div class="flex flex-wrap items-baseline gap-2">
-            <span class="text-foreground text-base font-bold tracking-tight">{displayLatin}</span>
+            <span class="text-foreground text-base font-bold tracking-normal">{displayLatin}</span>
             {#if displayTifinagh}
               <span class="text-primary font-serif text-base font-semibold">{displayTifinagh}</span>
             {/if}
           </div>
-          <div class="mt-1 flex flex-wrap items-center gap-1.5">
+          <div class="mt-1 flex flex-wrap items-center gap-1.5 font-sans">
             {#if displayPos}
               <span class="bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[10px] font-semibold italic">
                 {displayPos}
@@ -257,17 +257,17 @@
         </div>
       </div>
 
-      <p class="text-foreground/90 mt-2.5 text-xs leading-relaxed font-normal">
+      <p class="text-foreground/90 mt-2.5 text-xs leading-relaxed font-normal tracking-normal font-sans">
         {displayMeaning}
       </p>
 
       {#if resolvedNotes}
-        <p class="text-muted-foreground bg-muted/50 mt-2 rounded-md px-2 py-1.5 text-[11px] leading-snug">
+        <p class="text-muted-foreground bg-muted/50 mt-2 rounded-md px-2 py-1.5 text-[11px] leading-snug tracking-normal font-sans">
           {resolvedNotes}
         </p>
       {/if}
 
-      <div class="mt-3 flex items-center justify-between gap-2 border-t pt-2.5 text-[11px]">
+      <div class="mt-3 flex items-center justify-between gap-2 border-t pt-2.5 text-[11px] font-sans">
         <a
           href="/word/{targetSlug}"
           class="text-primary inline-flex items-center gap-1 font-semibold hover:underline"
