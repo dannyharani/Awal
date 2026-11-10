@@ -7,6 +7,7 @@
   import { Separator } from '$lib/components/ui/separator';
   import AmazighKeyboardBar from '$lib/components/dictionary/AmazighKeyboardBar.svelte';
   import { generateWordSlug, latinToTifinagh } from '$lib/utils/amazigh';
+  import * as m from '$lib/paraglide/messages.js';
   import {
     ArrowLeft,
     Languages,
@@ -46,15 +47,15 @@
         class="text-muted-foreground hover:text-foreground -ml-2"
       >
         <ArrowLeft class="mr-2 h-4 w-4" />
-        Back to Dictionary
+        {m.word_back_to_dict()}
       </Button>
     </div>
 
     <Card.Root class="shadow-lg">
       <Card.Header class="space-y-1">
-        <Card.Title class="text-2xl">Add New Word</Card.Title>
+        <Card.Title class="text-2xl">{m.word_create_title()}</Card.Title>
         <Card.Description>
-          Contribute to the dictionary by creating a new headword.
+          {m.word_create_desc()}
         </Card.Description>
       </Card.Header>
 
@@ -69,14 +70,14 @@
               <Check class="h-6 w-6" />
             </div>
             <div class="space-y-1">
-              <h3 class="text-lg font-semibold">Word Created!</h3>
+              <h3 class="text-lg font-semibold">{m.word_created_success()}</h3>
               <p class="text-muted-foreground text-sm">
                 The entry for <span class="text-foreground font-medium">{$form.script_latin}</span> has
                 been added.
               </p>
             </div>
             <Button href="/word/{$message.slug}" class="w-full gap-2">
-              Add Definition Now
+              {m.word_add_definition_now()}
               <ArrowLeft class="h-4 w-4 rotate-180" />
             </Button>
           </div>
@@ -92,7 +93,7 @@
 
           <form method="POST" use:enhance class="space-y-6">
             <div class="space-y-3">
-              <Label for="latin">Latin Script <span class="text-destructive">*</span></Label>
+              <Label for="latin">{m.word_latin_label()} <span class="text-destructive">*</span></Label>
               <div class="relative">
                 <Type
                   class="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
@@ -101,7 +102,7 @@
                   id="latin"
                   name="script_latin"
                   bind:value={$form.script_latin}
-                  placeholder="e.g. Aɣrum"
+                  placeholder={m.word_latin_placeholder()}
                   class="pl-10"
                 />
               </div>
@@ -135,10 +136,7 @@
               <div class="space-y-2">
                 <div class="flex items-center justify-between">
                   <Label for="tifinagh" class="flex items-center gap-1.5 text-sm">
-                    Tifinagh
-                    <span class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase">
-                      (Optional)
-                    </span>
+                    {m.word_tifinagh_label()}
                   </Label>
                   {#if $form.script_latin}
                     <button
@@ -148,7 +146,7 @@
                       title="Convert Latin script to Neo-Tifinagh"
                     >
                       <WandSparkles class="h-3 w-3" />
-                      Auto-fill
+                      {m.word_tifinagh_autofill()}
                     </button>
                   {/if}
                 </div>
@@ -160,7 +158,7 @@
                     id="tifinagh"
                     name="script_tifinagh"
                     bind:value={$form.script_tifinagh}
-                    placeholder="e.g. ⴰⵖⵔⵓⵎ"
+                    placeholder={m.word_tifinagh_placeholder()}
                     class="font-tifinagh pl-10"
                   />
                 </div>
@@ -168,10 +166,7 @@
 
               <div class="space-y-2">
                 <Label for="arabic" class="flex items-center gap-2 text-sm">
-                  Arabic
-                  <span class="text-muted-foreground text-[10px] font-normal tracking-wider uppercase">
-                    (Optional)
-                  </span>
+                  {m.word_arabic_label()}
                 </Label>
                 <div class="relative">
                   <Languages
@@ -181,7 +176,7 @@
                     id="arabic"
                     name="script_arabic"
                     bind:value={$form.script_arabic}
-                    placeholder="e.g. أغروم"
+                    placeholder={m.word_arabic_placeholder()}
                     class="pl-10 text-right"
                     dir="rtl"
                   />
@@ -194,8 +189,7 @@
             >
               <Info class="h-5 w-5 shrink-0" />
               <p>
-                Create the headword first. You will be able to add definitions, grammar details, examples, and audio
-                recordings on the next screen.
+                {m.word_create_desc()}
               </p>
             </div>
 
@@ -204,9 +198,9 @@
                 <div
                   class="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
                 ></div>
-                Creating Headword...
+                {m.word_submit_btn()}...
               {:else}
-                Create Word Entry
+                {m.word_submit_btn()}
               {/if}
             </Button>
           </form>

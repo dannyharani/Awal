@@ -1,0 +1,52 @@
+name: Translation or Dialect Proposal
+description: Suggest a new translation, improve existing phrasing, or propose a new Amazigh dialect.
+title: "[i18n]: "
+labels: ["i18n", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping make Aselkim accessible to more Amazigh speakers and learners!
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Target Language / Dialect
+      options:
+        - Taqbaylit (Kabyle)
+        - Tamaziɣt Tanawayt (Standard Moroccan - Tifinagh)
+        - Tachelhit (Sous)
+        - Tarifit (Rif)
+        - Tamazight (Central Atlas)
+        - Tumẓabt (Mzab)
+        - Chaouia (Aurès)
+        - Tamahaq / Tamacheq (Tuareg)
+        - Français
+        - Español
+        - English
+        - العربية
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-translation
+    attributes:
+      label: Current Translation or Key (if applicable)
+      description: The current phrasing or the message key in `messages/*.json`.
+      placeholder: e.g. "nav_studio" currently displays "..."
+
+  - type: textarea
+    id: suggested-translation
+    attributes:
+      label: Suggested Translation & Script
+      description: Provide the improved phrasing in Neo-Tifinagh, Latin, and/or Arabic script.
+      placeholder: e.g. "ⴰⵙⴰⵔⴰⴳ ⵏ ⵓⵙⵍⵎⴷ" / "Asarag n Uselmed"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Linguistic Context & References
+      description: Etymology, IRCAM or HCA dictionary citation, dialectal notes, or reason for change.

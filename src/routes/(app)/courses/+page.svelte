@@ -170,7 +170,7 @@
     <div class="max-w-2xl space-y-2">
       <div class="text-primary flex items-center gap-2 text-xs font-bold tracking-wider uppercase">
         <GraduationCap class="h-4 w-4" />
-        Aselkim Academy
+        {m.courses_badge()}
       </div>
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">{m.courses_title()}</h1>
       <p class="text-muted-foreground text-lg">
@@ -197,7 +197,7 @@
           : 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
       >
         <BookOpen class="h-4 w-4" />
-        <span>All Courses</span>
+        <span>{m.courses_tab_all()}</span>
         <span class="rounded-full bg-background/20 px-2 py-0.5 text-xs font-semibold">
           {courses.length}
         </span>
@@ -211,7 +211,7 @@
           : 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
       >
         <UserCheck class="h-4 w-4" />
-        <span>My Enrolled Courses</span>
+        <span>{m.courses_tab_enrolled()}</span>
         <span class="rounded-full bg-background/20 px-2 py-0.5 text-xs font-semibold">
           {enrolledCourses.length}
         </span>
@@ -221,7 +221,7 @@
     {#if hasActiveFilters}
       <Button variant="ghost" size="sm" onclick={clearAllFilters} class="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground">
         <X class="h-3.5 w-3.5" />
-        Reset Filters
+        {m.courses_reset_filters()}
       </Button>
     {/if}
   </div>
@@ -230,11 +230,11 @@
   <div class="space-y-2">
     <div class="flex items-center justify-between">
       <span class="text-muted-foreground text-xs font-bold tracking-wider uppercase">
-        Explore by Subject / Category
+        {m.courses_explore_category()}
       </span>
       {#if selectedTag}
         <Badge variant="secondary" class="gap-1 text-xs">
-          Tag: #{selectedTag}
+          {m.courses_tag_filter({ tag: selectedTag })}
           <button type="button" onclick={() => (selectedTag = null)} class="ml-1 hover:text-destructive">
             <X class="h-3 w-3" />
           </button>
@@ -252,7 +252,7 @@
           : 'bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground'}"
       >
         <Layers class="h-3.5 w-3.5" />
-        All Topics
+        {m.courses_category_all()}
       </button>
 
       {#each COURSE_CATEGORIES as cat}
@@ -266,16 +266,20 @@
         >
           {#if cat.value === 'conversation'}
             <MessageCircle class="h-3.5 w-3.5" />
+            {m.courses_category_conversation()}
           {:else if cat.value === 'grammar'}
             <BookA class="h-3.5 w-3.5" />
+            {m.courses_category_grammar()}
           {:else if cat.value === 'vocabulary'}
             <BookMarked class="h-3.5 w-3.5" />
+            {m.courses_category_vocabulary()}
           {:else if cat.value === 'alphabet'}
             <SpellCheck class="h-3.5 w-3.5" />
+            {m.courses_category_alphabet()}
           {:else}
             <Sparkles class="h-3.5 w-3.5" />
+            {m.courses_category_culture()}
           {/if}
-          {cat.label}
         </button>
       {/each}
     </div>
@@ -288,7 +292,7 @@
       <Input
         type="search"
         bind:value={searchQuery}
-        placeholder="Search courses, topics, or #tags..."
+        placeholder={m.courses_search_placeholder()}
         class="h-9 pl-9 text-xs"
       />
     </div>
@@ -347,15 +351,18 @@
       <Card.Content class="space-y-3">
         <BookOpen class="text-muted-foreground mx-auto h-10 w-10 opacity-40" />
         {#if activeTab === 'enrolled'}
-          <p class="text-lg font-semibold">You haven't enrolled in any courses yet</p>
+          <p class="text-lg font-semibold">{m.courses_empty_enrolled()}</p>
           <p class="text-muted-foreground text-sm max-w-md mx-auto">
-            Browse our full catalog of Amazigh courses and start your learning journey!
+            {m.courses_empty_enrolled_desc()}
           </p>
-          <Button onclick={() => (activeTab = 'all')} class="mt-2">Browse All Courses</Button>
+          <Button onclick={() => (activeTab = 'all')} class="mt-2">{m.courses_tab_all()}</Button>
         {:else}
-          <p class="text-lg font-semibold">No courses match your active search or filters</p>
+          <p class="text-lg font-semibold">{m.courses_empty_all()}</p>
+          <p class="text-muted-foreground text-sm max-w-md mx-auto">
+            {m.courses_empty_all_desc()}
+          </p>
           <Button variant="outline" size="sm" onclick={clearAllFilters} class="mt-2">
-            Clear Filters
+            {m.courses_reset_filters()}
           </Button>
         {/if}
       </Card.Content>
@@ -425,8 +432,8 @@
             {#if isEnrolled}
               <div class="bg-muted/40 rounded-lg border p-2.5 space-y-1.5">
                 <div class="flex items-center justify-between text-xs font-semibold">
-                  <span class="text-muted-foreground">Progress</span>
-                  <span class="text-primary">{prog.completed} / {prog.total} ({prog.percent}%)</span>
+                  <span class="text-muted-foreground">{m.courses_tab_enrolled()}</span>
+                  <span class="text-primary">{m.courses_progress_format({ completed: prog.completed, total: prog.total, percent: prog.percent })}</span>
                 </div>
                 <div class="bg-background h-2 w-full overflow-hidden rounded-full border">
                   <div

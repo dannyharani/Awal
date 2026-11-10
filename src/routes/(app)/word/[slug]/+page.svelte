@@ -4,6 +4,7 @@
   import { enhance } from '$app/forms';
   import { page } from '$app/state';
   import { latinToTifinagh, WORD_RELATION_TYPES } from '$lib/utils/amazigh';
+  import * as m from '$lib/paraglide/messages.js';
 
   // UI Components
   import * as Card from '$lib/components/ui/card';
@@ -148,7 +149,7 @@
                     {...props}
                   >
                     <Pencil class="h-3 w-3" />
-                    Edit Scripts
+                    {m.word_edit_scripts()}
                   </Button>
                 {/snippet}
               </Dialog.Trigger>
@@ -209,9 +210,9 @@
                       size="sm"
                       onclick={() => (editScriptsOpen = false)}
                     >
-                      Cancel
+                      {m.common_cancel()}
                     </Button>
-                    <Button type="submit" size="sm">Save Scripts</Button>
+                    <Button type="submit" size="sm">{m.common_save()}</Button>
                   </div>
                 </form>
               </Dialog.Content>
@@ -225,7 +226,7 @@
     <div class="flex flex-wrap items-center gap-2 pt-2">
       <span class="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wider uppercase">
         <Link2 class="h-3.5 w-3.5" />
-        Related & Cross-Dialect Words:
+        {m.word_related_words()}:
       </span>
 
       {#if relatedWords.length > 0}
@@ -364,11 +365,7 @@
     <div class="space-y-6">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <h2 class="text-2xl font-semibold tracking-tight">Definitions</h2>
-          <Badge variant="outline" class="rounded-full px-3">
-            {filteredDefinitions.length}
-            {filteredDefinitions.length === 1 ? 'Entry' : 'Entries'}
-          </Badge>
+          <h2 class="text-2xl font-semibold tracking-tight">{m.word_definitions_header({ count: filteredDefinitions.length })}</h2>
         </div>
 
         <!-- Dialect & Language Filter Bar -->
@@ -380,7 +377,7 @@
                 bind:value={selectedDialectId}
                 class="border-input bg-background h-8 rounded-md border px-2.5 text-xs"
               >
-                <option value="all">All Dialects ({definitions.length})</option>
+                <option value="all">{m.word_all_dialects()} ({definitions.length})</option>
                 {#each availableDialects as d}
                   <option value={d.id}>{d.name}</option>
                 {/each}
@@ -392,7 +389,7 @@
                 bind:value={selectedLang}
                 class="border-input bg-background h-8 rounded-md border px-2.5 text-xs uppercase"
               >
-                <option value="all">All Languages</option>
+                <option value="all">{m.word_all_languages()} ({definitions.length})</option>
                 {#each availableLangs as lang}
                   <option value={lang}>{lang.toUpperCase()}</option>
                 {/each}

@@ -2,6 +2,7 @@
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import * as Card from '$lib/components/ui/card';
+  import * as m from '$lib/paraglide/messages.js';
   import {
     Gamepad2,
     Sparkles,
@@ -78,15 +79,15 @@
   <section class="mx-auto max-w-3xl space-y-6 text-center">
     <div class="inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
       <Construction class="h-3.5 w-3.5" />
-      <span>Uraren is currently in active development</span>
+      <span>{m.games_under_construction()}</span>
     </div>
 
     <div class="space-y-3">
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-        Uraren <span class="text-primary font-serif">ⵓⵔⴰⵔⵏ</span>
+        {m.games_title()}
       </h1>
       <p class="text-muted-foreground text-xl">
-        Daily Amazigh word games designed to make learning, vocabulary recall, and script practice an addictive daily habit.
+        {m.games_subtitle()}
       </p>
     </div>
 
