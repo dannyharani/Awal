@@ -105,5 +105,23 @@ export const actions = {
     }
 
     return message(form, 'Lesson saved successfully!');
+  },
+
+  renameLesson: async ({ request, params, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const title = String(formData.get('title') || '').trim();
+    const lessonId = Number(params.lessonId);
+
+    if (!lessonId || !title) {
+      return fail(400, { message: 'Lesson title cannot be empty' });
+    }
+
+    const { error } = await supabase
+      .from('lessons')
+      .update({ title })
+      .eq('id', lessonId);
+
+    if (error) return fail(500, { message: error.message });
+    return { success: true, title };
   }
 };

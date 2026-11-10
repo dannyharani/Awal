@@ -176,5 +176,41 @@ export const actions = {
     const { error } = await supabase.from('lessons').delete().eq('id', lessonId);
     if (error) return fail(500, { message: error.message });
     return { success: true };
+  },
+
+  renameModule: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const moduleId = Number(formData.get('module_id'));
+    const title = String(formData.get('title') || '').trim();
+
+    if (!moduleId || !title) {
+      return fail(400, { message: 'Module title cannot be empty' });
+    }
+
+    const { error } = await supabase
+      .from('modules')
+      .update({ title })
+      .eq('id', moduleId);
+
+    if (error) return fail(500, { message: error.message });
+    return { success: true };
+  },
+
+  renameLesson: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData();
+    const lessonId = Number(formData.get('lesson_id'));
+    const title = String(formData.get('title') || '').trim();
+
+    if (!lessonId || !title) {
+      return fail(400, { message: 'Lesson title cannot be empty' });
+    }
+
+    const { error } = await supabase
+      .from('lessons')
+      .update({ title })
+      .eq('id', lessonId);
+
+    if (error) return fail(500, { message: error.message });
+    return { success: true };
   }
 };

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { enhance as svelteKitEnhance } from '$app/forms';
   import { superForm } from 'sveltekit-superforms';
   import { page } from '$app/state';
   import {
@@ -13,12 +14,16 @@
     Layers,
     Trash2,
     Save,
-    CheckCircle2
+    CheckCircle2,
+    Pencil,
+    Check,
+    X
   } from '@lucide/svelte';
 
   // UI Components
   import { Button } from '$lib/components/ui/button';
   import { Badge } from '$lib/components/ui/badge';
+  import { Input } from '$lib/components/ui/input';
 
   // Editors
   import TextEdit from '$lib/components/courses/lessons/TextEdit.svelte';
@@ -32,6 +37,13 @@
   let { data } = $props();
   // svelte-ignore state_referenced_locally
   const { enhance, delayed, message } = superForm(data.form, {});
+
+  // Lesson Title Editing State
+  // svelte-ignore state_referenced_locally
+  let lessonTitle = $state(data.lesson.title);
+  let editingLessonHeader = $state(false);
+  // svelte-ignore state_referenced_locally
+  let headerLessonTitle = $state(data.lesson.title);
 
   // 1. Initialize Local State
   // svelte-ignore state_referenced_locally
@@ -179,7 +191,61 @@
         <ArrowLeft class="h-4 w-4" />
       </Button>
       <div class="flex flex-col">
-        <h1 class="text-lg leading-tight font-semibold">{data.lesson.title}</h1>
+        {#if editingLessonHeader}
+          <form
+            method="POST"
+            action="?/renameLesson"
+            class="flex items-center gap-2"
+            use:svelteKitEnhance={() => {
+              const newTitle = headerLessonTitle.trim();
+              if (newTitle) {
+                lessonTitle = newTitle;
+              }
+              editingLessonHeader = false;
+              return async ({ update }) => {
+                await update({ reset: false });
+              };
+            }}
+          >
+            <Input
+              name="title"
+              bind:value={headerLessonTitle}
+              class="h-8 w-64 text-base font-semibold"
+              placeholder="Lesson Title"
+              autofocus
+              onkeydown={(e) => {
+                if (e.key === 'Escape') editingLessonHeader = false;
+              }}
+            />
+            <Button type="submit" size="sm" variant="default" class="h-8 gap-1 px-2.5 text-xs">
+              <Check class="h-3.5 w-3.5" /> Save
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              class="h-8 px-2"
+              onclick={() => (editingLessonHeader = false)}
+            >
+              <X class="h-3.5 w-3.5" />
+            </Button>
+          </form>
+        {:else}
+          <div class="group flex items-center gap-2">
+            <h1 class="text-lg leading-tight font-semibold">{lessonTitle}</h1>
+            <button
+              type="button"
+              onclick={() => {
+                headerLessonTitle = lessonTitle;
+                editingLessonHeader = true;
+              }}
+              class="text-muted-foreground hover:text-foreground rounded p-1 opacity-70 transition-opacity hover:opacity-100"
+              title="Rename lesson"
+            >
+              <Pencil class="h-3.5 w-3.5" />
+            </button>
+          </div>
+        {/if}
         <div class="flex items-center gap-2">
           <span class="text-muted-foreground text-xs">Interactive Step Builder</span>
           {#if steps.some((s) => s.isNew)}

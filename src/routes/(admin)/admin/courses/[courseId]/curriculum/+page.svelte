@@ -12,7 +12,10 @@
     Settings2,
     Eye,
     CheckCircle2,
-    ArrowLeft
+    ArrowLeft,
+    Pencil,
+    Check,
+    X
   } from '@lucide/svelte';
 
   // UI Components
@@ -74,6 +77,23 @@
   let dialogOpen = $state(false);
   let editCourseOpen = $state(false);
   let orderSaved = $state(false);
+
+  // --- Renaming State ---
+  let editingModuleId = $state<number | null>(null);
+  let editingModuleTitle = $state('');
+
+  let editingLessonId = $state<number | null>(null);
+  let editingLessonTitle = $state('');
+
+  function startEditingModule(module: any) {
+    editingModuleId = module.id;
+    editingModuleTitle = module.title;
+  }
+
+  function startEditingLesson(lesson: any) {
+    editingLessonId = lesson.id;
+    editingLessonTitle = lesson.title;
+  }
 
   // Drag-and-drop state for modules
   let draggedModuleIdx = $state<number | null>(null);
@@ -338,7 +358,59 @@
                   </button>
                 </div>
 
-                <h3 class="text-xl font-semibold">{module.title}</h3>
+                {#if editingModuleId === module.id}
+                  <form
+                    method="POST"
+                    action="?/renameModule"
+                    class="flex flex-1 items-center gap-2 max-w-md"
+                    use:enhance={() => {
+                      const newTitle = editingModuleTitle.trim();
+                      if (newTitle) {
+                        module.title = newTitle;
+                      }
+                      editingModuleId = null;
+                      return async ({ update }) => {
+                        await update({ reset: false });
+                      };
+                    }}
+                  >
+                    <input type="hidden" name="module_id" value={module.id} />
+                    <Input
+                      name="title"
+                      bind:value={editingModuleTitle}
+                      class="h-8 text-base font-semibold"
+                      placeholder="Module Title"
+                      autofocus
+                      onkeydown={(e) => {
+                        if (e.key === 'Escape') editingModuleId = null;
+                      }}
+                    />
+                    <Button type="submit" size="sm" variant="default" class="h-8 gap-1 px-2.5">
+                      <Check class="h-3.5 w-3.5" /> Save
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      class="h-8 px-2"
+                      onclick={() => (editingModuleId = null)}
+                    >
+                      <X class="h-3.5 w-3.5" />
+                    </Button>
+                  </form>
+                {:else}
+                  <div class="group flex items-center gap-2">
+                    <h3 class="text-xl font-semibold">{module.title}</h3>
+                    <button
+                      type="button"
+                      onclick={() => startEditingModule(module)}
+                      class="text-muted-foreground hover:text-foreground rounded p-1 opacity-70 transition-opacity hover:opacity-100"
+                      title="Rename module"
+                    >
+                      <Pencil class="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                {/if}
 
                 <div class="ml-auto flex items-center gap-2">
                   <span class="text-muted-foreground text-xs">Module {modIdx + 1}</span>
@@ -407,12 +479,64 @@
                         </button>
                       </div>
 
-                      <a
-                        href="/admin/courses/{data.course.id}/lessons/{lesson.id}"
-                        class="hover:text-primary flex-1 font-medium transition-colors hover:underline"
-                      >
-                        {lesson.title}
-                      </a>
+                      {#if editingLessonId === lesson.id}
+                        <form
+                          method="POST"
+                          action="?/renameLesson"
+                          class="flex flex-1 items-center gap-2 mr-3"
+                          use:enhance={() => {
+                            const newTitle = editingLessonTitle.trim();
+                            if (newTitle) {
+                              lesson.title = newTitle;
+                            }
+                            editingLessonId = null;
+                            return async ({ update }) => {
+                              await update({ reset: false });
+                            };
+                          }}
+                        >
+                          <input type="hidden" name="lesson_id" value={lesson.id} />
+                          <Input
+                            name="title"
+                            bind:value={editingLessonTitle}
+                            class="h-8 text-sm"
+                            placeholder="Lesson Title"
+                            autofocus
+                            onkeydown={(e) => {
+                              if (e.key === 'Escape') editingLessonId = null;
+                            }}
+                          />
+                          <Button type="submit" size="sm" variant="default" class="h-8 gap-1 px-2.5 text-xs">
+                            <Check class="h-3 w-3" /> Save
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            class="h-8 px-2"
+                            onclick={() => (editingLessonId = null)}
+                          >
+                            <X class="h-3 w-3" />
+                          </Button>
+                        </form>
+                      {:else}
+                        <div class="flex flex-1 items-center gap-2 min-w-0 mr-3">
+                          <a
+                            href="/admin/courses/{data.course.id}/lessons/{lesson.id}"
+                            class="hover:text-primary truncate font-medium transition-colors hover:underline"
+                          >
+                            {lesson.title}
+                          </a>
+                          <button
+                            type="button"
+                            onclick={() => startEditingLesson(lesson)}
+                            class="text-muted-foreground hover:text-foreground rounded p-1 opacity-70 transition-opacity hover:opacity-100"
+                            title="Rename lesson"
+                          >
+                            <Pencil class="h-3 w-3" />
+                          </button>
+                        </div>
+                      {/if}
 
                       <span class="text-muted-foreground mr-3 text-xs">
                         {lesson.steps?.length ?? 0} steps
