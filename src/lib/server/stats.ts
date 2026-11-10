@@ -25,8 +25,7 @@ export async function getPlatformStats(
     dialectsRes,
     contributorsRes,
     coursesRes,
-    lessonsRes,
-    stepsRes,
+    publishedCoursesWithLessons,
     examplesRes,
     audioRes,
     votesRes,
@@ -37,8 +36,10 @@ export async function getPlatformStats(
     supabase.from('dialects').select('*', { count: 'exact', head: true }),
     supabase.from('profiles').select('*', { count: 'exact', head: true }),
     supabase.from('courses').select('*', { count: 'exact', head: true }).eq('is_published', true),
-    supabase.from('lessons').select('*', { count: 'exact', head: true }),
-    supabase.from('steps').select('*', { count: 'exact', head: true }),
+    supabase
+      .from('courses')
+      .select('id, modules ( id, lessons ( id, steps ( id ) ) )')
+      .eq('is_published', true),
     supabase.from('examples').select('*', { count: 'exact', head: true }),
     supabase
       .from('definitions')
@@ -51,8 +52,17 @@ export async function getPlatformStats(
       .eq('is_verified', true)
   ]);
 
-  const totalLessons = lessonsRes.count ?? 0;
-  const totalSteps = stepsRes.count ?? 0;
+  let totalLessons = 0;
+  let totalSteps = 0;
+  for (const course of (publishedCoursesWithLessons.data ?? []) as any[]) {
+    for (const mod of course.modules ?? []) {
+      const lessons = mod.lessons ?? [];
+      totalLessons += lessons.length;
+      for (const les of lessons) {
+        totalSteps += (les.steps ?? []).length;
+      }
+    }
+  }
   // Estimate ~18 mins per lesson + ~4 mins per interactive step, minimum 0.5h if any course content exists
   const rawMinutes = totalLessons * 18 + totalSteps * 4;
   const estimatedLearningHours =
