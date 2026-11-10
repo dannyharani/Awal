@@ -62,6 +62,11 @@
   <Card.Root class="from-primary/10 via-card to-card border-primary/20 bg-gradient-to-br">
     <Card.Content class="space-y-6 p-8">
       <div class="flex flex-wrap items-center gap-2">
+        {#if course.category}
+          <Badge variant="default" class="text-xs capitalize">
+            {course.category}
+          </Badge>
+        {/if}
         {#if course.dialects?.name}
           <Badge variant="outline" class="bg-background gap-1 text-xs">
             <Globe class="h-3 w-3" />
@@ -85,6 +90,15 @@
           <p class="text-muted-foreground max-w-2xl text-base leading-relaxed">
             {course.description}
           </p>
+        {/if}
+        {#if Array.isArray(course.tags) && course.tags.length > 0}
+          <div class="flex flex-wrap gap-1.5 pt-2">
+            {#each course.tags as tag}
+              <span class="bg-background/80 text-muted-foreground rounded-md border px-2 py-0.5 text-xs font-medium">
+                #{tag}
+              </span>
+            {/each}
+          </div>
         {/if}
       </div>
 

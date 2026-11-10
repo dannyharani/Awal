@@ -4,7 +4,7 @@
   import LanguageSwitcher from './LanguageSwitcher.svelte';
   import SearchBar from '../layout/SearchBar.svelte';
   import { Button } from '$lib/components/ui/button';
-  import { Plus, BookOpen, GraduationCap, Sparkles } from '@lucide/svelte';
+  import { Plus, BookOpen, GraduationCap, Sparkles, Gamepad2 } from '@lucide/svelte';
   import * as m from '$lib/paraglide/messages.js';
 
   let role = $derived(page.data.role);
@@ -43,6 +43,19 @@
         >
           <GraduationCap class="h-4 w-4" />
           {m.nav_courses()}
+        </a>
+
+        <a
+          href="/games"
+          class="flex items-center gap-1.5 transition-colors {pathname.startsWith('/games')
+            ? 'text-foreground font-semibold'
+            : 'text-foreground/60 hover:text-foreground/80'}"
+        >
+          <Gamepad2 class="h-4 w-4" />
+          <span>{m.nav_games()}</span>
+          <span class="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-primary">
+            Soon
+          </span>
         </a>
 
         {#if canAccessStudio}

@@ -28,6 +28,13 @@ export const actions = {
     const baseSlug = generateWordSlug(form.data.title) || 'course';
     const slug = `${baseSlug}-${Date.now().toString(36).slice(-4)}`;
 
+    const tagsArray = form.data.tags
+      ? form.data.tags
+          .split(',')
+          .map((t: string) => t.trim().toLowerCase())
+          .filter(Boolean)
+      : [];
+
     const { count } = await supabase
       .from('courses')
       .select('*', { count: 'exact', head: true });
@@ -41,6 +48,8 @@ export const actions = {
         difficulty_level: form.data.difficulty_level,
         target_dialect_id: form.data.target_dialect_id,
         instruction_language: form.data.instruction_language || 'en',
+        category: form.data.category || 'conversation',
+        tags: tagsArray,
         creator_id: session.user.id,
         is_published: false,
         sort_order: (count || 0) + 1

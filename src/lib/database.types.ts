@@ -84,6 +84,8 @@ export type Database = {
           instruction_language: string
           slug: string
           sort_order: number
+          category: string
+          tags: string[]
           id: number
           is_published: boolean | null
           target_dialect_id: number | null
@@ -98,6 +100,8 @@ export type Database = {
           instruction_language?: string
           slug?: string
           sort_order?: number
+          category?: string
+          tags?: string[]
           id?: number
           is_published?: boolean | null
           target_dialect_id?: number | null
@@ -112,6 +116,8 @@ export type Database = {
           instruction_language?: string
           slug?: string
           sort_order?: number
+          category?: string
+          tags?: string[]
           id?: number
           is_published?: boolean | null
           target_dialect_id?: number | null

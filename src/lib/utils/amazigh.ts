@@ -135,3 +135,12 @@ export const ALPHABET_LATIN = [
   'H', 'Ḥ', 'I', 'J', 'K', 'L', 'M', 'N', 'Q', 'R', 'Ṛ', 'S',
   'Ṣ', 'T', 'Ṭ', 'U', 'W', 'X', 'Y', 'Z', 'Ẓ'
 ] as const;
+
+export const COURSE_CATEGORIES = [
+  { value: 'conversation', label: 'Daily Conversation (Asiwel)' },
+  { value: 'grammar', label: 'Grammar & Structure (Tajerrumt)' },
+  { value: 'vocabulary', label: 'Vocabulary & Phrases (Amawal)' },
+  { value: 'alphabet', label: 'Reading & Writing (Agemmay)' },
+  { value: 'culture', label: 'Culture & Literature (Tasekla)' }
+] as const;
+

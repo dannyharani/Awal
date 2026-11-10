@@ -2,6 +2,7 @@
   import { enhance } from '$app/forms';
   import { superForm } from 'sveltekit-superforms';
   import { locales } from '$lib/paraglide/runtime';
+  import { COURSE_CATEGORIES } from '$lib/utils/amazigh';
   import {
     GripVertical,
     Plus,
@@ -582,6 +583,31 @@
               <option value={loc}>{loc.toUpperCase()}</option>
             {/each}
           </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1.5">
+          <Label class="text-xs">Category / Topic</Label>
+          <select
+            name="category"
+            value={data.course.category ?? 'conversation'}
+            class="border-input bg-background flex h-9 w-full rounded-md border px-2 text-xs"
+          >
+            {#each COURSE_CATEGORIES as cat}
+              <option value={cat.value}>{cat.label}</option>
+            {/each}
+          </select>
+        </div>
+
+        <div class="space-y-1.5">
+          <Label class="text-xs">Tags (comma-separated)</Label>
+          <Input
+            name="tags"
+            value={(data.course.tags ?? []).join(', ')}
+            placeholder="e.g. grammar, verbs, tifinagh"
+            class="h-9 text-xs"
+          />
         </div>
       </div>
 

@@ -80,7 +80,11 @@ export const createCourseSchema = z.object({
     .default('beginner'),
 
   target_dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0),
-  instruction_language: z.enum([...locales] as [string, ...string[]]).default('en')
+  instruction_language: z.enum([...locales] as [string, ...string[]]).default('en'),
+  category: z
+    .enum(['conversation', 'grammar', 'vocabulary', 'alphabet', 'culture'])
+    .default('conversation'),
+  tags: z.string().optional().default('')
 });
 
 export const createLessonSchema = z.object({

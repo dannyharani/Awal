@@ -134,6 +134,11 @@ export const actions = {
     const difficulty_level = String(formData.get('difficulty_level') || 'beginner');
     const target_dialect_id = Number(formData.get('target_dialect_id')) || null;
     const instruction_language = String(formData.get('instruction_language') || 'en');
+    const category = String(formData.get('category') || 'conversation');
+    const rawTags = String(formData.get('tags') || '');
+    const tags = rawTags
+      ? rawTags.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean)
+      : [];
 
     if (title.length < 3) {
       return fail(400, { message: 'Title is too short' });
@@ -147,6 +152,8 @@ export const actions = {
         difficulty_level,
         target_dialect_id,
         instruction_language,
+        category,
+        tags,
         updated_at: new Date().toISOString()
       })
       .eq('id', Number(params.courseId));

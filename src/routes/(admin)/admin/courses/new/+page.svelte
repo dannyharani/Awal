@@ -2,6 +2,7 @@
   import { superForm } from 'sveltekit-superforms';
   import { CircleAlert } from '@lucide/svelte';
   import { locales } from '$lib/paraglide/runtime';
+  import { COURSE_CATEGORIES } from '$lib/utils/amazigh';
 
   // UI Components
   import * as Card from '$lib/components/ui/card';
@@ -141,6 +142,33 @@
                 <option value={loc}>{LANG_NAMES[loc] ?? loc.toUpperCase()}</option>
               {/each}
             </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div class="space-y-2">
+            <Label for="category">Course Subject / Category</Label>
+            <select
+              id="category"
+              name="category"
+              bind:value={$form.category}
+              class="border-input bg-background flex h-9 w-full rounded-md border px-3 text-sm"
+            >
+              {#each COURSE_CATEGORIES as cat}
+                <option value={cat.value}>{cat.label}</option>
+              {/each}
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <Label for="tags">Topic Tags (comma-separated)</Label>
+            <Input
+              id="tags"
+              name="tags"
+              bind:value={$form.tags}
+              placeholder="e.g. greetings, tifinagh, food, verbs"
+              class="h-9 text-xs"
+            />
           </div>
         </div>
       </form>

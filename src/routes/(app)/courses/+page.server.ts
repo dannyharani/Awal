@@ -42,6 +42,7 @@ export const load = async ({ locals: { supabase, user, role } }) => {
     dialects: dialectsReq.data ?? [],
     enrollments: enrollmentsReq.data ?? [],
     completedLessonIds: Array.from(completedLessonIds),
+    user,
     canAccessStudio: role === 'admin' || role === 'instructor'
   };
 };
