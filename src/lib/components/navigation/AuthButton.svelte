@@ -3,7 +3,7 @@
   import { Button, buttonVariants } from '$lib/components/ui/button';
   import * as Avatar from '$lib/components/ui/avatar';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-  import { Settings, LogOut, User, Sparkles, ExternalLink, Users } from '@lucide/svelte';
+  import { Settings, LogOut, User, Sparkles, ExternalLink, Users, Bookmark } from '@lucide/svelte';
   import { goto, invalidateAll } from '$app/navigation';
   import * as m from '$lib/paraglide/messages.js';
 
@@ -31,6 +31,9 @@
   };
   const redirectEditProfile = async () => {
     goto('/settings/profile');
+  };
+  const redirectSavedWords = async () => {
+    goto('/saved');
   };
   const redirectSettings = async () => {
     goto('/settings');
@@ -83,6 +86,10 @@
       <DropdownMenu.Item onclick={redirectEditProfile}>
         <User class="mr-2 h-4 w-4" />
         Edit {m.nav_profile()}
+      </DropdownMenu.Item>
+      <DropdownMenu.Item onclick={redirectSavedWords}>
+        <Bookmark class="mr-2 h-4 w-4" />
+        {m.nav_saved_words()}
       </DropdownMenu.Item>
       <DropdownMenu.Item onclick={redirectSettings}>
         <Settings class="mr-2 h-4 w-4" />

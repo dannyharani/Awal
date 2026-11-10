@@ -195,5 +195,16 @@
   "word_academy_desc": "Cours et leçons interactives incluant ce mot ou ce dialecte.",
   "word_start_lesson": "Ouvrir la leçon",
   "word_explore_course": "Voir le cours",
-  "word_click_word_hint": "Cliquez sur n'importe quel mot de la phrase pour le rechercher"
+  "word_click_word_hint": "Cliquez sur n'importe quel mot de la phrase pour le rechercher",
+  "nav_saved_words": "Mots enregistrés",
+  "saved_words_title": "Mes mots enregistrés",
+  "saved_words_subtitle": "Votre collection personnelle de vocabulaire amazighe et liste d'étude.",
+  "saved_words_empty_title": "Aucun mot enregistré pour le moment",
+  "saved_words_empty_desc": "Parcourez le dictionnaire et cliquez sur le marque-page pour ajouter des mots ici.",
+  "saved_words_practice_all": "S'entraîner sur tous ({count})",
+  "saved_words_clear_all": "Tout effacer",
+  "saved_words_search_placeholder": "Rechercher dans vos mots enregistrés...",
+  "saved_words_count": "{count} mots enregistrés",
+  "saved_words_removed": "Mot retiré de la liste",
+  "saved_words_card_counter": "Carte {current} sur {total}"
 }

@@ -195,5 +195,16 @@
   "word_academy_desc": "Cursos y lecciones interactivas que incluyen esta palabra o dialecto.",
   "word_start_lesson": "Abrir lección",
   "word_explore_course": "Ver curso",
-  "word_click_word_hint": "Haz clic en cualquier palabra de la frase para buscarla"
+  "word_click_word_hint": "Haz clic en cualquier palabra de la frase para buscarla",
+  "nav_saved_words": "Palabras guardadas",
+  "saved_words_title": "Mis palabras guardadas",
+  "saved_words_subtitle": "Tu colección personal de vocabulario amazigh y lista de estudio.",
+  "saved_words_empty_title": "Aún no hay palabras guardadas",
+  "saved_words_empty_desc": "Explora el diccionario y haz clic en el marcador de cualquier palabra para guardarla aquí.",
+  "saved_words_practice_all": "Practicar todas ({count})",
+  "saved_words_clear_all": "Borrar todo",
+  "saved_words_search_placeholder": "Buscar en tus palabras guardadas...",
+  "saved_words_count": "{count} palabras guardadas",
+  "saved_words_removed": "Palabra eliminada de la lista",
+  "saved_words_card_counter": "Tarjeta {current} de {total}"
 }

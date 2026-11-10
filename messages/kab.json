@@ -195,5 +195,16 @@
   "word_academy_desc": "Timsirin d yiselmaden يellan ɣef wawal-agi neɣ tantala-agi.",
   "word_start_lesson": "Ldi tamsirt",
   "word_explore_course": "Wali tamussni",
-  "word_click_word_hint": "Sit ɣef yal awal deg tefyirt akken ad t-tnadiḍ"
+  "word_click_word_hint": "Sit ɣef yal awal deg tefyirt akken ad t-tnadiḍ",
+  "nav_saved_words": "Awalen yettwaḥerzen",
+  "saved_words_title": "Awalen-iw yettwaḥerzen",
+  "saved_words_subtitle": "Tajmilt-ik n wawalen n tmaziɣt d umuɣ n tɣuri.",
+  "saved_words_empty_title": "Ulac awal yettwaḥerzen yakan",
+  "saved_words_empty_desc": "Nadi deg umawal sakin sit ɣef tcekkart n yal awal akken ad t-tḥerzeḍ da.",
+  "saved_words_practice_all": "Sleɣmu akk ({count})",
+  "saved_words_clear_all": "Sfeḍ akk",
+  "saved_words_search_placeholder": "Nadi deg wawalen-ik yettwaḥerzen...",
+  "saved_words_count": "{count} wawalen yettwaḥerzen",
+  "saved_words_removed": "Awal yettwakkes seg umuɣ",
+  "saved_words_card_counter": "Takarḍa {current} seg {total}"
 }

@@ -196,5 +196,16 @@
   "word_academy_desc": "ⵜⵉⵎⵙⵉⵔⵉⵏ ⵉⵍⵍⴰⵏ ⵖⴼ ⵡⴰⵡⴰⵍ ⴰⴷ ⵏⵖ ⵜⴰⵏⵜⴰⵍⴰ ⴰⴷ.",
   "word_start_lesson": "ⵕⵥⵎ ⵜⴰⵎⵙⵉⵔⵜ",
   "word_explore_course": "ⵥⵕ ⵜⴰⵎⵙⵉⵔⵜ",
-  "word_click_word_hint": "ⴰⴷⵔ ⵖⴼ ⴽⵓ ⴰⵡⴰⵍ ⴳ ⵜⵡⵉⵏⵙⵜ ⴰⴼⴰⴷ ⴰⴷ ⵜ ⵜⵔⵣⵓⴷ"
+  "word_click_word_hint": "ⴰⴷⵔ ⵖⴼ ⴽⵓ ⴰⵡⴰⵍ ⴳ ⵜⵡⵉⵏⵙⵜ ⴰⴼⴰⴷ ⴰⴷ ⵜ ⵜⵔⵣⵓⴷ",
+  "nav_saved_words": "ⵉⵡⴰⵍⵉⵡⵏ ⵉⵜⵜⵓⵃⴹⴰⵏ",
+  "saved_words_title": "ⵉⵡⴰⵍⵉⵡⵏ-ⵉⵏⵓ ⵉⵜⵜⵓⵃⴹⴰⵏ",
+  "saved_words_subtitle": "ⵜⴰⴳⵔⵓⵎⵎⴰ ⵏⵏⴽ ⵏ ⵜⴳⵓⵔⵉⵡⵉⵏ ⵏ ⵜⵎⴰⵣⵉⵖⵜ ⴷ ⵓⵎⵓⵖ ⵏ ⵓⵙⵍⵖⵎⵓ.",
+  "saved_words_empty_title": "ⵓⵔⵜⴰ ⵍⵍⵉⵏ ⵉⵡⴰⵍⵉⵡⵏ ⵉⵜⵜⵓⵃⴹⴰⵏ",
+  "saved_words_empty_desc": "ⵔⵣⵓ ⴳ ⵓⵎⴰⵡⴰⵍ ⵜⴰⴷⵔⴷ ⵖⴼ ⵓⵎⴰⵜⴰⵔ ⵏ ⴽⵓ ⴰⵡⴰⵍ ⴰⴼⴰⴷ ⴰⴷ ⵜ ⵜⵃⴹⵓⴷ ⴷⴰ.",
+  "saved_words_practice_all": "ⵙⵍⵖⵎⵓ ⴽⵓⵍⵍⵓ ({count})",
+  "saved_words_clear_all": "ⵙⴼⴹ ⴽⵓⵍⵍⵓ",
+  "saved_words_search_placeholder": "ⵔⵣⵓ ⴳ ⵉⵡⴰⵍⵉⵡⵏ ⵏⵏⴽ ⵉⵜⵜⵓⵃⴹⴰⵏ...",
+  "saved_words_count": "{count} ⵉⵡⴰⵍⵉⵡⵏ ⵉⵜⵜⵓⵃⴹⴰⵏ",
+  "saved_words_removed": "ⵉⵜⵜⵡⴰⴽⴽⵙ ⵡⴰⵡⴰⵍ ⵙⴳ ⵓⵎⵓⵖ",
+  "saved_words_card_counter": "ⵜⴰⴽⴰⵕⴹⴰ {current} ⵙⴳ {total}"
 }

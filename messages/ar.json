@@ -195,5 +195,16 @@
   "word_academy_desc": "دورات ودروس تفاعلية تتضمن هذه الكلمة أو اللهجة.",
   "word_start_lesson": "افتح الدرس",
   "word_explore_course": "عرض الدورة",
-  "word_click_word_hint": "انقر على أي كلمة في الجملة للبحث عنها"
+  "word_click_word_hint": "انقر على أي كلمة في الجملة للبحث عنها",
+  "nav_saved_words": "الكلمات المحفوظة",
+  "saved_words_title": "كلماتي المحفوظة",
+  "saved_words_subtitle": "مجموعتك الشخصية من المفردات الأمازيغية وقائمة المذاكرة.",
+  "saved_words_empty_title": "لا توجد كلمات محفوظة بعد",
+  "saved_words_empty_desc": "تصفح القاموس وانقر على زر الحفظ بجانب أي كلمة لإضافتها هنا.",
+  "saved_words_practice_all": "تدرب على الكل ({count})",
+  "saved_words_clear_all": "مسح الكل",
+  "saved_words_search_placeholder": "ابحث في كلماتك المحفوظة...",
+  "saved_words_count": "{count} كلمات محفوظة",
+  "saved_words_removed": "تمت إزالة الكلمة من المحفوظات",
+  "saved_words_card_counter": "بطاقة {current} من {total}"
 }

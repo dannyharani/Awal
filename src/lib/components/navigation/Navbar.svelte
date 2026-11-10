@@ -13,7 +13,8 @@
     Users,
     Info,
     Menu,
-    X
+    X,
+    Bookmark
   } from '@lucide/svelte';
   import * as m from '$lib/paraglide/messages.js';
 
@@ -120,6 +121,16 @@
 
       <LanguageSwitcher />
 
+      <Button
+        variant="ghost"
+        size="icon"
+        href="/saved"
+        class="h-9 w-9 text-muted-foreground hover:text-foreground {pathname === '/saved' ? 'text-primary bg-muted' : ''}"
+        title={m.nav_saved_words()}
+      >
+        <Bookmark class="h-4 w-4 {pathname === '/saved' ? 'fill-current' : ''}" />
+      </Button>
+
       <Button variant="outline" size="sm" href="/add" class="hidden gap-1.5 md:flex">
         <Plus class="h-4 w-4" />
         <span>{m.nav_add_word()}</span>
@@ -222,6 +233,18 @@
               <span>{m.nav_studio()}</span>
             </a>
           {/if}
+
+          <a
+            href="/saved"
+            onclick={() => (mobileMenuOpen = false)}
+            class="flex items-center gap-2.5 rounded-lg px-3 py-2 transition-colors {pathname ===
+            '/saved'
+              ? 'bg-muted text-primary font-semibold'
+              : 'text-foreground/80 hover:bg-muted/60'}"
+          >
+            <Bookmark class="h-4 w-4 {pathname === '/saved' ? 'fill-current' : ''}" />
+            <span>{m.nav_saved_words()}</span>
+          </a>
 
           <a
             href="/about"

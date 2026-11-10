@@ -195,5 +195,16 @@
   "word_academy_desc": "Courses and interactive lessons featuring this word or dialect.",
   "word_start_lesson": "Open Lesson",
   "word_explore_course": "View Course",
-  "word_click_word_hint": "Click any word in the sentence to look it up"
+  "word_click_word_hint": "Click any word in the sentence to look it up",
+  "nav_saved_words": "Saved Words",
+  "saved_words_title": "My Saved Words",
+  "saved_words_subtitle": "Your personal Amazigh vocabulary collection and study list.",
+  "saved_words_empty_title": "No saved words yet",
+  "saved_words_empty_desc": "Browse the dictionary and click the bookmark button on any word to add it here.",
+  "saved_words_practice_all": "Practice All ({count})",
+  "saved_words_clear_all": "Clear All",
+  "saved_words_search_placeholder": "Search your saved words...",
+  "saved_words_count": "{count} saved words",
+  "saved_words_removed": "Word removed from saved list",
+  "saved_words_card_counter": "Card {current} of {total}"
 }

@@ -5,7 +5,8 @@
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Separator } from '$lib/components/ui/separator';
-  import { Trophy, BookOpen, Star, Calendar, ArrowRight, ArrowLeft, Settings } from '@lucide/svelte';
+  import { Trophy, BookOpen, Star, Calendar, ArrowRight, ArrowLeft, Settings, Bookmark } from '@lucide/svelte';
+  import * as m from '$lib/paraglide/messages.js';
 
   let { data } = $props();
   const { profile, stats, contributions } = $derived(data);
@@ -75,10 +76,16 @@
         </div>
 
         {#if isOwnProfile}
-          <Button variant="outline" class="group gap-2 shadow-sm" href="/settings/profile">
-            <Settings class="h-4 w-4 transition-transform group-hover:rotate-45" />
-            Edit Profile
-          </Button>
+          <div class="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+            <Button variant="outline" class="group gap-2 shadow-xs" href="/saved">
+              <Bookmark class="h-4 w-4 text-primary" />
+              <span>{m.nav_saved_words()}</span>
+            </Button>
+            <Button variant="outline" class="group gap-2 shadow-xs" href="/settings/profile">
+              <Settings class="h-4 w-4 transition-transform group-hover:rotate-45" />
+              <span>Edit Profile</span>
+            </Button>
+          </div>
         {/if}
       </div>
 
