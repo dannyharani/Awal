@@ -5,6 +5,7 @@
   import { Input } from '$lib/components/ui/input';
   import { Badge } from '$lib/components/ui/badge';
   import * as Command from '../ui/command';
+  import * as m from '$lib/paraglide/messages.js';
 
   let { supabase } = $derived(page.data);
 
@@ -64,7 +65,7 @@
     <Search class="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
     <Input
       type="search"
-      placeholder="Search Amazigh, ⵜⴰⵎⴰⵣⵉⵖⵜ, or meaning..."
+      placeholder={m.search_placeholder()}
       class="pl-9 text-sm"
       bind:value={query}
       oninput={handleInput}

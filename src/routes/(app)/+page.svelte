@@ -12,6 +12,7 @@
   } from '@lucide/svelte';
   import { Badge } from '$lib/components/ui/badge';
   import { ALPHABET_LATIN } from '$lib/utils/amazigh';
+  import * as m from '$lib/paraglide/messages.js';
 
   let { data } = $props();
   const {
@@ -31,31 +32,32 @@
 <div class="container mx-auto space-y-12 py-10">
   <section class="mx-auto max-w-2xl space-y-6 text-center">
     <h1 class="text-4xl font-extrabold tracking-tight lg:text-5xl">
-      The Open <span class="text-primary">Amazigh</span> Dictionary
+      {m.hero_title_prefix()}
+      <span class="text-primary">{m.hero_title_highlight()}</span>
+      {m.hero_title_suffix()}
     </h1>
     <p class="text-muted-foreground text-xl">
-      A community-driven project to document, preserve, and standardize the Amazigh language across
-      all regions and scripts.
+      {m.hero_subtitle()}
     </p>
 
     <div class="flex items-center justify-center gap-4 pt-2">
       <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
         <span class="text-2xl font-bold">{stats.total_words}</span>
-        <span class="text-muted-foreground text-xs tracking-wider uppercase">Words</span>
+        <span class="text-muted-foreground text-xs tracking-wider uppercase">{m.stats_words()}</span>
       </div>
       <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
         <span class="text-2xl font-bold">{stats.total_definitions}</span>
-        <span class="text-muted-foreground text-xs tracking-wider uppercase">Definitions</span>
+        <span class="text-muted-foreground text-xs tracking-wider uppercase">{m.stats_definitions()}</span>
       </div>
       <div class="bg-muted/30 flex min-w-[110px] flex-col items-center rounded-lg border p-3">
         <span class="text-2xl font-bold">{dialects.length}</span>
-        <span class="text-muted-foreground text-xs tracking-wider uppercase">Dialects</span>
+        <span class="text-muted-foreground text-xs tracking-wider uppercase">{m.stats_dialects()}</span>
       </div>
     </div>
 
     <div class="flex justify-center gap-4 pt-2">
-      <Button size="lg" href="/add">Contribute a Word</Button>
-      <Button variant="outline" size="lg" href="/courses">Explore Courses</Button>
+      <Button size="lg" href="/add">{m.cta_contribute_word()}</Button>
+      <Button variant="outline" size="lg" href="/courses">{m.cta_explore_courses()}</Button>
     </div>
   </section>
 
@@ -64,12 +66,12 @@
     <div class="flex flex-wrap items-center justify-between gap-2">
       <div class="flex items-center gap-2">
         <Compass class="text-primary h-5 w-5" />
-        <h2 class="text-xl font-bold">Browse the Dictionary</h2>
+        <h2 class="text-xl font-bold">{m.browse_title()}</h2>
       </div>
       {#if isFiltering}
         <Button variant="ghost" size="sm" href="/" class="h-7 gap-1 text-xs">
           <X class="h-3.5 w-3.5" />
-          Clear Filters
+          {m.clear_filters()}
         </Button>
       {/if}
     </div>
@@ -77,7 +79,7 @@
     <!-- Alphabet Strip -->
     <div class="space-y-2">
       <span class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-        By Letter (Tamaziɣt Latin)
+        {m.browse_by_letter()}
       </span>
       <div class="flex flex-wrap gap-1.5">
         {#each ALPHABET_LATIN as letter}
@@ -101,7 +103,7 @@
     <!-- Dialect Strip -->
     <div class="space-y-2">
       <span class="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-        By Region / Dialect
+        {m.browse_by_dialect()}
       </span>
       <div class="flex flex-wrap gap-2">
         {#each dialects as dialect}
@@ -134,7 +136,7 @@
               No words found matching this filter yet.
             </p>
             <Button variant="link" size="sm" href="/add" class="mt-1">
-              + Contribute the first entry
+              + {m.cta_contribute_word()}
             </Button>
           </div>
         {:else}
@@ -151,7 +153,7 @@
                       {word.definitions[0].definition_text}
                     </p>
                   {:else}
-                    <p class="text-muted-foreground/60 text-xs italic">Needs definition</p>
+                    <p class="text-muted-foreground/60 text-xs italic">{m.needs_definition()}</p>
                   {/if}
                 </div>
                 {#if word.script_tifinagh}
@@ -171,7 +173,7 @@
     <section>
       <div class="mb-4 flex items-center gap-2">
         <Sparkles class="h-5 w-5 text-yellow-500" />
-        <h2 class="text-2xl font-bold">Word of the Day</h2>
+        <h2 class="text-2xl font-bold">{m.word_of_the_day()}</h2>
       </div>
 
       <Card.Root class="from-primary/5 to-background border-primary/20 bg-gradient-to-br">
@@ -187,7 +189,7 @@
             {/if}
           </div>
           <Button href="/word/{wordOfTheDay.slug}" class="group">
-            View Definition
+            {m.view_definition()}
             <ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </Card.Content>
@@ -199,7 +201,7 @@
     <div class="mb-6 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <Clock class="text-muted-foreground h-5 w-5" />
-        <h2 class="text-2xl font-bold">Recently Added</h2>
+        <h2 class="text-2xl font-bold">{m.recently_added()}</h2>
       </div>
     </div>
 
@@ -217,8 +219,8 @@
                 {/if}
               </Card.Title>
               <Card.Description class="flex items-center justify-between pt-2 text-xs">
-                <span>Added {new Date(word.created_at).toLocaleDateString()}</span>
-                <span>{word.definitions?.[0]?.count ?? 0} definitions</span>
+                <span>{new Date(word.created_at).toLocaleDateString()}</span>
+                <span>{word.definitions?.[0]?.count ?? 0} {m.stats_definitions().toLowerCase()}</span>
               </Card.Description>
             </Card.Header>
           </Card.Root>
@@ -232,11 +234,11 @@
       <div class="mb-4 flex items-center justify-between">
         <div class="flex items-center gap-2">
           <HandHeart class="text-primary h-5 w-5" />
-          <h2 class="text-2xl font-bold">Help Complete These Entries</h2>
+          <h2 class="text-2xl font-bold">{m.help_complete_title()}</h2>
         </div>
       </div>
       <p class="text-muted-foreground mb-5 text-sm">
-        These headwords are missing definitions or Tifinagh script. Click any word to contribute!
+        {m.help_complete_subtitle()}
       </p>
 
       <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -250,12 +252,12 @@
               <div class="flex flex-wrap gap-1.5">
                 {#if !word.definitions || word.definitions.length === 0}
                   <Badge variant="outline" class="border-amber-500/40 text-[10px] text-amber-600">
-                    Needs Definition
+                    {m.needs_definition()}
                   </Badge>
                 {/if}
                 {#if !word.script_tifinagh}
                   <Badge variant="outline" class="border-blue-500/40 text-[10px] text-blue-600">
-                    Needs Tifinagh
+                    {m.needs_tifinagh()}
                   </Badge>
                 {/if}
               </div>

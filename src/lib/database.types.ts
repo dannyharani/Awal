@@ -81,6 +81,9 @@ export type Database = {
           creator_id: string | null
           description: string | null
           difficulty_level: string | null
+          instruction_language: string
+          slug: string
+          sort_order: number
           id: number
           is_published: boolean | null
           target_dialect_id: number | null
@@ -92,6 +95,9 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           difficulty_level?: string | null
+          instruction_language?: string
+          slug?: string
+          sort_order?: number
           id?: number
           is_published?: boolean | null
           target_dialect_id?: number | null
@@ -103,6 +109,9 @@ export type Database = {
           creator_id?: string | null
           description?: string | null
           difficulty_level?: string | null
+          instruction_language?: string
+          slug?: string
+          sort_order?: number
           id?: number
           is_published?: boolean | null
           target_dialect_id?: number | null
@@ -667,6 +676,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_lesson: {
+        Args: {
+          p_course_id: number
+          p_lesson_id: number
+        }
+        Returns: Json
+      }
       get_dictionary_stats: {
         Args: never
         Returns: {

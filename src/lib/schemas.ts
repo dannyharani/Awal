@@ -79,7 +79,8 @@ export const createCourseSchema = z.object({
     })
     .default('beginner'),
 
-  target_dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0)
+  target_dialect_id: z.coerce.number().int().min(1, 'Please select a dialect').default(0),
+  instruction_language: z.enum([...locales] as [string, ...string[]]).default('en')
 });
 
 export const createLessonSchema = z.object({
@@ -147,6 +148,7 @@ export const saveLessonSchema = z.object({
 
 export const strictStepSchema = z.object({
   id: z.union([z.number(), z.string()]),
+  linked_headword_id: z.number().int().nullable().optional(),
 
   data: z.discriminatedUnion('type', [
     z.object({
@@ -157,7 +159,9 @@ export const strictStepSchema = z.object({
       type: z.literal('video'),
       content: z.object({
         url: z.string().optional(),
-        video_url: z.string().optional()
+        video_url: z.string().optional(),
+        title: z.string().optional(),
+        notes: z.string().optional()
       })
     }),
     z.object({

@@ -1,13 +1,13 @@
-<script>
-  import { page } from '$app/stores';
-
+<script lang="ts">
   import '../app.css';
-  import { locales, localizeHref } from '$lib/paraglide/runtime';
-  import favicon from '$lib/assets/favicon.svg';
+  import { getTextDirection } from '$lib/paraglide/runtime';
   import { ModeWatcher } from 'mode-watcher';
 
   let { data, children } = $props();
+  let dir = $derived(getTextDirection(data?.lang ?? 'en'));
 </script>
 
 <ModeWatcher />
-{@render children()}
+<div {dir} class="min-h-screen">
+  {@render children()}
+</div>

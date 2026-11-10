@@ -1,13 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import { superValidate, message } from 'sveltekit-superforms';
-import { zod4 } from 'sveltekit-superforms/adapters'; // Note: 'zod4' is alias for 'zod' in newer versions, use whichever works for your version
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { createCourseSchema } from '$lib/schemas';
+import { generateWordSlug } from '$lib/utils/amazigh';
 
 export const load = async ({ locals: { supabase } }) => {
-  // 1. Fetch dialects for the dropdown
   const { data: dialects } = await supabase.from('dialects').select('id, name').order('name');
-
-  // 2. Initialize form
   const form = await superValidate(zod4(createCourseSchema));
 
   return {
@@ -18,37 +16,42 @@ export const load = async ({ locals: { supabase } }) => {
 
 export const actions = {
   default: async ({ request, locals: { supabase, safeGetSession } }) => {
-    // 1. Check Auth
     const { session } = await safeGetSession();
     if (!session) return fail(401, { message: 'Unauthorized' });
 
-    // 2. Validate Form
     const form = await superValidate(request, zod4(createCourseSchema));
 
     if (!form.valid) {
       return fail(400, { form });
     }
 
-    // 3. Insert into Supabase
+    const baseSlug = generateWordSlug(form.data.title) || 'course';
+    const slug = `${baseSlug}-${Date.now().toString(36).slice(-4)}`;
+
+    const { count } = await supabase
+      .from('courses')
+      .select('*', { count: 'exact', head: true });
+
     const { data, error } = await supabase
       .from('courses')
       .insert({
         title: form.data.title,
+        slug,
         description: form.data.description,
         difficulty_level: form.data.difficulty_level,
         target_dialect_id: form.data.target_dialect_id,
+        instruction_language: form.data.instruction_language || 'en',
         creator_id: session.user.id,
-        is_published: false
+        is_published: false,
+        sort_order: (count || 0) + 1
       })
       .select('id')
       .single();
 
     if (error) {
-      // Return the form with a status message so data isn't lost
       return message(form, 'Database error: ' + error.message, { status: 500 });
     }
 
-    // 4. Redirect to the Builder
-    throw redirect(303, `admin/courses/${data.id}/curriculum`);
+    throw redirect(303, `/admin/courses/${data.id}/curriculum`);
   }
 };

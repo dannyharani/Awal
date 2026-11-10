@@ -22,7 +22,10 @@
     onUpdate({ form, result }) {
       if (form.valid && result.type === 'success') {
         // 4. COMMIT: Now we actually switch the app language
-        setLocale(form.data.preferred_locale as (typeof locales)[number]);
+        const newLang = form.data.preferred_locale as (typeof locales)[number];
+        document.cookie = `PARAGLIDE_LOCALE=${newLang}; path=/; max-age=34560000; SameSite=Lax`;
+        setLocale(newLang, { reload: true });
+        window.location.reload();
       }
     }
   });

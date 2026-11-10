@@ -1,12 +1,14 @@
 <script lang="ts">
   import { page } from '$app/state';
-  import { Button, buttonVariants } from '$lib/components/ui/button'; // Import variants
+  import { Button, buttonVariants } from '$lib/components/ui/button';
   import * as Avatar from '$lib/components/ui/avatar';
   import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-  import { Settings, LogOut, User } from '@lucide/svelte';
+  import { Settings, LogOut, User, Sparkles } from '@lucide/svelte';
   import { goto, invalidateAll } from '$app/navigation';
+  import * as m from '$lib/paraglide/messages.js';
 
   let session = $derived(page.data.session);
+  let role = $derived(page.data.role);
   let supabase = $derived(page.data.supabase);
   let userProfile = $derived(session?.user?.user_metadata);
 
@@ -24,6 +26,9 @@
   };
   const redirectSettings = async () => {
     goto('/settings');
+  };
+  const redirectStudio = async () => {
+    goto('/admin/courses');
   };
 
   const handleLogout = async () => {
@@ -45,23 +50,29 @@
     </DropdownMenu.Trigger>
 
     <DropdownMenu.Content class="w-56" align="end">
-      <DropdownMenu.Label>My Account</DropdownMenu.Label>
+      <DropdownMenu.Label>{m.nav_my_account()}</DropdownMenu.Label>
       <DropdownMenu.Separator />
+      {#if role === 'admin' || role === 'instructor'}
+        <DropdownMenu.Item onclick={redirectStudio}>
+          <Sparkles class="mr-2 h-4 w-4" />
+          {m.nav_studio()}
+        </DropdownMenu.Item>
+      {/if}
       <DropdownMenu.Item onclick={redirectProfile}>
         <User class="mr-2 h-4 w-4" />
-        Profile
+        {m.nav_profile()}
       </DropdownMenu.Item>
       <DropdownMenu.Item onclick={redirectSettings}>
         <Settings class="mr-2 h-4 w-4" />
-        Settings
+        {m.settings_title()}
       </DropdownMenu.Item>
       <DropdownMenu.Separator />
       <DropdownMenu.Item onclick={handleLogout}>
         <LogOut class="mr-2 h-4 w-4" />
-        Log out
+        {m.nav_logout()}
       </DropdownMenu.Item>
     </DropdownMenu.Content>
   </DropdownMenu.Root>
 {:else}
-  <Button onclick={handleLogin} variant="default">Sign In with Google</Button>
+  <Button onclick={handleLogin} size="sm" variant="default">{m.nav_sign_in()}</Button>
 {/if}
