@@ -1,5 +1,5 @@
 -- ============================================================================
--- Phase 1 Migration: Aselkim Dictionary 2.0
+-- Phase 1 Migration: Awal Dictionary 2.0
 -- 1. Fix profiles.preferred_locale default value
 -- 2. Add missing major dialects
 -- 3. Create definition_comments & word_relations tables

@@ -41,7 +41,7 @@
       <div>
         <h3 class="text-2xl font-bold tracking-tight">Profile Settings</h3>
         <p class="text-muted-foreground">
-          Manage your public profile and how others see you on Aselkim.
+          Manage your public profile and how others see you on Awal.
         </p>
       </div>
 

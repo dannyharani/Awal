@@ -1,9 +1,9 @@
-# Aselkim (ⴰⵙⵍⴽⵉⵎ) ⵣ
+# Awal (ⴰⵡⴰⵍ) ⵣ
 
 > **The Open-Source Digital Platform for the Amazigh Language & Heritage**  
 > *Crowdsourced Dictionary • Educator Academy • Daily Word Games • Pan-Dialect Inclusivity*
 
-[![CI](https://github.com/danniharany/aselkim/actions/workflows/ci.yml/badge.svg)](https://github.com/danniharany/aselkim/actions/workflows/ci.yml)
+[![CI](https://github.com/danniharany/awal/actions/workflows/ci.yml/badge.svg)](https://github.com/danniharany/awal/actions/workflows/ci.yml)
 [![SvelteKit](https://img.shields.io/badge/SvelteKit-2.x-orange.svg)](https://kit.svelte.dev)
 [![Svelte 5](https://img.shields.io/badge/Svelte-5.x%20Runes-red.svg)](https://svelte.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-green.svg)](https://supabase.com)
@@ -14,9 +14,9 @@
 
 ## 🌟 Vision & Etymology
 
-**Aselkim** (ⴰⵙⵍⴽⵉⵎ) is the Tamaziɣt word for *computer / processor*, derived from the ancient root **S-L-K-M** (to convey, connect, transmit, deliver).
+**Awal** (ⴰⵡⴰⵍ) is the universal Tamaziɣt word for *Word, Speech, Voice, Language, and Word of Honor* across all Amazigh dialects.
 
-Aselkim serves as an all-in-one digital sanctuary where speakers, learners, educators, and linguists can:
+Awal serves as an all-in-one digital sanctuary where speakers, learners, educators, and linguists can:
 1. **Document and standardize** Amazigh vocabulary across all regional variants (*Tantaliwin*).
 2. **Teach and learn** through interactive, multimedia courses designed by native educators.
 3. **Build daily engagement** through NYT-style Amazigh daily brain games (*Uraren*).
@@ -24,11 +24,11 @@ Aselkim serves as an all-in-one digital sanctuary where speakers, learners, educ
 
 ---
 
-## 🏛 Four Pillars of Aselkim
+## 🏛 Four Pillars of Awal
 
 ```
                    ┌─────────────────────────────────┐
-                   │        ASELKIM PLATFORM         │
+                   │          AWAL PLATFORM          │
                    └────────────────┬────────────────┘
           ┌──────────────────┬──────┴───────────┬──────────────────┐
           ▼                  ▼                  ▼                  ▼
@@ -67,7 +67,7 @@ Aselkim serves as an all-in-one digital sanctuary where speakers, learners, educ
 
 ## 🌐 Internationalization (i18n)
 
-Aselkim is built from the ground up for multilingual communities:
+Awal is built from the ground up for multilingual communities:
 
 | Code | Language / Dialect | Script | Direction |
 | :--- | :--- | :--- | :--- |
@@ -103,8 +103,8 @@ We warmly invite contributions for additional varieties (Tachelhit `shi`, Tarifi
 
 ### 2. Clone & Install
 ```bash
-git clone https://github.com/<your-username>/aselkim.git
-cd aselkim
+git clone https://github.com/<your-username>/awal.git
+cd awal
 pnpm install
 ```
 

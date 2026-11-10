@@ -121,7 +121,7 @@
     <div class="space-y-1.5">
       <Label class="flex items-center gap-1.5">
         <BookOpen class="text-primary h-3.5 w-3.5" />
-        Import Word from Aselkim Dictionary
+        Import Word from Awal Dictionary
       </Label>
       <div class="relative">
         <Search class="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />

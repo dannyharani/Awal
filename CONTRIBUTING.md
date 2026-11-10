@@ -1,6 +1,6 @@
-# Contributing to Aselkim (ⴰⵙⵍⴽⵉⵎ)
+# Contributing to Awal (ⴰⵡⴰⵍ)
 
-Thank you for your interest in contributing to **Aselkim**! Aselkim is an open-source, community-driven digital platform dedicated to the preservation, documentation, standardization, and education of the Amazigh language (Tamaziɣt) across all its dialects and scripts.
+Thank you for your interest in contributing to **Awal**! Awal is an open-source, community-driven digital platform dedicated to the preservation, documentation, standardization, and education of the Amazigh language (Tamaziɣt) across all its dialects and scripts.
 
 Whether you are a native speaker, linguist, educator, developer, or enthusiast, your contribution is deeply valued.
 
@@ -34,7 +34,7 @@ You do not need to be a software developer to make a huge impact:
 
 ## Contributing to Internationalization (i18n)
 
-Aselkim uses [Paraglide-JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (powered by Inlang) to deliver type-safe, compile-time internationalization without client bloat.
+Awal uses [Paraglide-JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (powered by Inlang) to deliver type-safe, compile-time internationalization without client bloat.
 
 ### Supported Locales
 
@@ -70,8 +70,8 @@ project.inlang/
 
 1. **Fork & Clone** the repository:
    ```bash
-   git clone https://github.com/<your-username>/aselkim.git
-   cd aselkim
+   git clone https://github.com/<your-username>/awal.git
+   cd awal
    pnpm install
    ```
 2. Open the file corresponding to the language you want to update (e.g., `messages/zgh.json` or `messages/kab.json`).
@@ -126,8 +126,8 @@ When translating into Tamaziɣt:
 
 2. **Clone & Install**:
    ```bash
-   git clone https://github.com/<your-username>/aselkim.git
-   cd aselkim
+   git clone https://github.com/<your-username>/awal.git
+   cd awal
    pnpm install
    ```
 
@@ -183,4 +183,4 @@ pnpm build
 
 - **Linguistic Inclusivity**: All Amazigh varieties (Northern, Atlas, Saharan, Tuareg, Canary/Guanche heritage) are treated with equal respect and dignity.
 - **Constructive Collaboration**: Offer kind, constructive feedback. Assume good faith.
-- **Open Knowledge**: All contributions to Aselkim are made available under open-source and open-data licensing for the perpetual benefit of the Amazigh people and world heritage.
+- **Open Knowledge**: All contributions to Awal are made available under open-source and open-data licensing for the perpetual benefit of the Amazigh people and world heritage.

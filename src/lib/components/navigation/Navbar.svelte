@@ -19,7 +19,7 @@
     <div class="flex items-center gap-6">
       <a href="/" class="flex items-center space-x-1">
         <span class="text-xl font-bold tracking-tight">
-          Aselkim <span class="text-primary">.</span>
+          Awal <span class="text-primary">.</span>
         </span>
       </a>
 

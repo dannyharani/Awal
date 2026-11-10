@@ -12,7 +12,7 @@
       <div class="space-y-3 md:col-span-2">
         <a href="/" class="flex items-center space-x-1">
           <span class="text-xl font-bold tracking-tight">
-            Aselkim <span class="text-primary">.</span>
+            Awal <span class="text-primary">.</span>
           </span>
         </a>
         <p class="text-muted-foreground max-w-sm text-xs leading-relaxed">
@@ -75,7 +75,7 @@
     </div>
 
     <div class="text-muted-foreground/80 mt-10 flex flex-wrap items-center justify-between gap-4 border-t pt-6 text-xs">
-      <p>© {currentYear} Aselkim. {m.footer_rights()}</p>
+      <p>© {currentYear} Awal. {m.footer_rights()}</p>
       <div class="flex items-center gap-1">
         <span>Crafted with</span>
         <Heart class="h-3 w-3 fill-red-500 text-red-500" />

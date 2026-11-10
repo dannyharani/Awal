@@ -40,24 +40,24 @@
 
   const FAQS = [
     {
-      q: 'What does "Aselkim" mean?',
-      a: 'In Tamaziɣt, "Aselkim" (ⴰⵙⵍⴽⵉⵎ) means "computer" or "that which connects and processes", derived from the root S-L-K-M (selkem: to transmit, deliver, communicate). Our goal is to connect Tamaziɣt speakers and learners worldwide through modern digital technology.'
+      q: 'What does "Awal" mean?',
+      a: 'In Tamaziɣt across every regional dialect, "Awal" (ⴰⵡⴰⵍ) means "Word", "Speech", "Voice", and "Language". In Amazigh cultural philosophy, "Awal" also signifies one\'s word of honor and the living oral heritage passed down across generations ("Awal d awal"). Our goal is to give the Amazigh word a permanent, thriving home in the digital age.'
     },
     {
-      q: 'Which scripts does Aselkim support?',
-      a: 'Aselkim fully supports both Neo-Tifinagh (ⵜⵉⴼⵉⵏⴰⵖ, standardized by IRCAM) and Tamaziɣt Latin (including special phonological characters like ɣ, ɛ, č, ǧ, ḍ, ṭ, ẓ, ḥ, ṣ, ṛ). Headwords also feature Arabic script transcriptions to maximize accessibility.'
+      q: 'Which scripts does Awal support?',
+      a: 'Awal fully supports both Neo-Tifinagh (ⵜⵉⴼⵉⵏⴰⵖ, standardized by IRCAM) and Tamaziɣt Latin (including special phonological characters like ɣ, ɛ, č, ǧ, ḍ, ṭ, ẓ, ḥ, ṣ, ṛ). Headwords also feature Arabic script transcriptions to maximize accessibility.'
     },
     {
-      q: 'How does Aselkim handle dialect variations?',
-      a: 'Rather than forcing artificial homogenization, Aselkim embraces dialect diversity. Every definition specifies its region or dialect, and our cross-dialect relation system connects cognates, phonetic variants, and synonyms across regions.'
+      q: 'How does Awal handle dialect variations?',
+      a: 'Rather than forcing artificial homogenization, Awal embraces dialect diversity. Every definition specifies its region or dialect, and our cross-dialect relation system connects cognates, phonetic variants, and synonyms across regions.'
     },
     {
       q: 'Who can contribute definitions or courses?',
       a: 'Any signed-in user can contribute new words, dialect meanings, example sentences, and pronunciation recordings. Approved educators and instructors can author full structured courses in the Educator Studio.'
     },
     {
-      q: 'Is Aselkim free to use?',
-      a: 'Yes! Aselkim is free and open to everyone dedicated to learning, preserving, and celebrating the Amazigh language and culture.'
+      q: 'Is Awal free to use?',
+      a: 'Yes! Awal is free and open to everyone dedicated to learning, preserving, and celebrating the Amazigh language and culture.'
     }
   ];
 </script>
@@ -72,8 +72,8 @@
 
     <div class="space-y-3">
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-        About <span class="text-primary font-bold">Aselkim</span>
-        <span class="text-muted-foreground ml-2 font-serif text-3xl sm:text-4xl">ⴰⵙⵍⴽⵉⵎ</span>
+        About <span class="text-primary font-bold">Awal</span>
+        <span class="text-muted-foreground ml-2 font-serif text-3xl sm:text-4xl">ⴰⵡⴰⵍ</span>
       </h1>
       <p class="text-muted-foreground text-xl leading-relaxed">
         An all-in-one digital platform dedicated to the documentation, education, and revitalization of the Amazigh language across all scripts and regional dialects.
@@ -94,7 +94,7 @@
         Tamaziɣt is one of humanity's oldest surviving language families, spoken for millennia across North Africa (Tamazɣa) from the Atlantic coast and Canary Islands to the Siwa oasis in Egypt.
       </p>
       <p class="text-muted-foreground text-base leading-relaxed">
-        Historically preserved through vibrant oral storytelling, poetry, and ancestral script, Tamaziɣt now enters a new era. Aselkim was founded to provide the modern digital infrastructure required to document regional vocabulary, offer structured online courses, and gamify daily learning for the global community.
+        Historically preserved through vibrant oral storytelling, poetry, and ancestral script, Tamaziɣt now enters a new era. Awal was founded to provide the modern digital infrastructure required to document regional vocabulary, offer structured online courses, and gamify daily learning for the global community.
       </p>
     </div>
 
@@ -128,7 +128,7 @@
   <section class="space-y-8">
     <div class="text-center space-y-2 max-w-2xl mx-auto">
       <Badge variant="outline" class="text-xs uppercase">Platform Architecture</Badge>
-      <h2 class="text-3xl font-extrabold tracking-tight">The Pillars of Aselkim</h2>
+      <h2 class="text-3xl font-extrabold tracking-tight">The Pillars of Awal</h2>
       <p class="text-muted-foreground text-sm">
         Everything you need to discover, teach, and master Tamaziɣt in one unified ecosystem.
       </p>
@@ -172,7 +172,7 @@
   <Card.Root class="border-primary/30 bg-gradient-to-r from-primary/10 via-background to-primary/10">
     <Card.Content class="flex flex-col items-center justify-between gap-6 p-8 text-center sm:flex-row sm:text-left">
       <div class="space-y-2 max-w-xl">
-        <h3 class="text-2xl font-extrabold">Ready to Join the Aselkim Community?</h3>
+        <h3 class="text-2xl font-extrabold">Ready to Join the Awal Community?</h3>
         <p class="text-muted-foreground text-sm">
           Whether you want to learn your ancestral language, document a regional word, or create interactive courses as an educator, you are warmly welcome.
         </p>

@@ -123,7 +123,7 @@
       <div>
         <h2 class="text-2xl font-bold">Upcoming Game Lineup</h2>
         <p class="text-muted-foreground text-sm">
-          A full suite of brain games powered by the Aselkim community dictionary.
+          A full suite of brain games powered by the Awal community dictionary.
         </p>
       </div>
 
@@ -197,7 +197,7 @@
           Help Fuel the Daily Word Banks
         </h3>
         <p class="text-muted-foreground text-sm leading-relaxed">
-          The game puzzles are built directly from entries in the Aselkim Dictionary. Contribute new words, definitions, and pronunciations today to have your words featured in upcoming daily puzzles!
+          The game puzzles are built directly from entries in the Awal Dictionary. Contribute new words, definitions, and pronunciations today to have your words featured in upcoming daily puzzles!
         </p>
       </div>
 

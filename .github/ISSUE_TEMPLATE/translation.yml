@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping make Aselkim accessible to more Amazigh speakers and learners!
+        Thank you for helping make Awal accessible to more Amazigh speakers and learners!
 
   - type: dropdown
     id: language
