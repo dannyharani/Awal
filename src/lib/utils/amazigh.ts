@@ -88,6 +88,106 @@ export function latinToTifinagh(input: string): string {
   return result;
 }
 
+const TIFINAGH_TO_LATIN_MAP: Record<string, string> = {
+  ⴰ: 'a',
+  ⴱ: 'b',
+  ⴲ: 'b',
+  ⴳ: 'g',
+  ⴴ: 'g',
+  ⴵ: 'ǧ',
+  ⴶ: 'ǧ',
+  ⴷ: 'd',
+  ⴸ: 'd',
+  ⴹ: 'ḍ',
+  ⴺ: 'ḍ',
+  ⴻ: 'e',
+  ⴼ: 'f',
+  ⴽ: 'k',
+  ⴾ: 'k',
+  ⴿ: 'k',
+  ⵀ: 'h',
+  ⵁ: 'h',
+  ⵂ: 'h',
+  ⵃ: 'ḥ',
+  ⵄ: 'ɛ',
+  ⵅ: 'x',
+  ⵆ: 'x',
+  ⵇ: 'q',
+  ⵈ: 'q',
+  ⵉ: 'i',
+  ⵊ: 'j',
+  ⵋ: 'j',
+  ⵌ: 'j',
+  ⵍ: 'l',
+  ⵎ: 'm',
+  ⵏ: 'n',
+  ⵐ: 'ny',
+  ⵑ: 'ng',
+  ⵒ: 'p',
+  ⵓ: 'u',
+  ⵔ: 'r',
+  ⵕ: 'ṛ',
+  ⵖ: 'ɣ',
+  ⵗ: 'ɣ',
+  ⵘ: 'ɣ',
+  ⵙ: 's',
+  ⵚ: 'ṣ',
+  ⵛ: 'c',
+  ⵜ: 't',
+  ⵝ: 't',
+  ⵞ: 'č',
+  ⵟ: 'ṭ',
+  ⵠ: 'v',
+  ⵡ: 'w',
+  ⵢ: 'y',
+  ⵣ: 'z',
+  ⵤ: 'z',
+  ⵥ: 'ẓ',
+  ⵯ: 'ʷ'
+};
+
+export interface TifinaghToken {
+  char: string;
+  latin: string;
+  isTifinagh: boolean;
+}
+
+export function containsTifinagh(input: string): boolean {
+  return /[\u2D30-\u2D7F]/.test(input);
+}
+
+/**
+ * Transliterates a Neo-Tifinagh string into standard Amazigh Latin script.
+ */
+export function tifinaghToLatin(tifinagh: string): string {
+  if (!tifinagh) return '';
+  let result = '';
+  for (const ch of tifinagh) {
+    result += TIFINAGH_TO_LATIN_MAP[ch] ?? ch;
+  }
+  return result;
+}
+
+/**
+ * Breaks a Tifinagh word or phrase into letter-by-letter phonetic tokens so learners
+ * can read Neo-Tifinagh character by character.
+ */
+export function tifinaghBreakdown(tifinagh: string): TifinaghToken[] {
+  if (!tifinagh) return [];
+  const tokens: TifinaghToken[] = [];
+  for (const ch of tifinagh) {
+    const latin = TIFINAGH_TO_LATIN_MAP[ch];
+    if (latin) {
+      tokens.push({ char: ch, latin, isTifinagh: true });
+    } else if (/[\u2D30-\u2D7F]/.test(ch)) {
+      tokens.push({ char: ch, latin: ch, isTifinagh: true });
+    } else {
+      tokens.push({ char: ch, latin: ch, isTifinagh: false });
+    }
+  }
+  return tokens;
+}
+
 /**
  * Generates a consistent URL-safe slug for Amazigh headwords,
  * preserving standard Amazigh Latin characters.
@@ -155,6 +255,15 @@ export interface AmazighGlossaryEntry {
 }
 
 export const AMAZIGH_GLOSSARY: Record<string, AmazighGlossaryEntry> = {
+  asafu: {
+    word: 'Asafu',
+    tifinagh: 'ⴰⵙⴰⴼⵓ',
+    slug: 'asafu',
+    partOfSpeech: 'noun (m.)',
+    meaning: 'Torch, torchlight, flame, or beacon of illumination and wisdom.',
+    dialect: 'Pan-Amazigh',
+    notes: 'Plural: Isufa (ⵉⵙⵓⴼⴰ) • Symbolizes enlightenment and cultural revival.'
+  },
   awal: {
     word: 'Awal',
     tifinagh: 'ⴰⵡⴰⵍ',
@@ -252,7 +361,7 @@ export const AMAZIGH_GLOSSARY: Record<string, AmazighGlossaryEntry> = {
     partOfSpeech: 'noun (m.)',
     meaning: 'Seeker, researcher, or explorer of roots and meanings.',
     dialect: 'Pan-Amazigh',
-    notes: 'Used for Awal’s daily triconsonantal root-finder challenge.'
+    notes: 'Used for Asafu’s daily triconsonantal root-finder challenge.'
   },
   assaghen: {
     word: 'Assaɣen',

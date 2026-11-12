@@ -16,7 +16,7 @@
     <div>
       <h1 class="text-3xl font-bold tracking-tight">{m.settings_title()}</h1>
       <p class="text-muted-foreground mt-1 text-sm">
-        Manage your account preferences, public profile, and Awal experience.
+        Manage your account preferences, public profile, and Asafu experience.
       </p>
     </div>
 

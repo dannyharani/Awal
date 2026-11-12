@@ -689,11 +689,29 @@ export type Database = {
         }
         Returns: Json
       }
+      get_contribution_counts: {
+        Args: never
+        Returns: {
+          definitions_count: number
+          examples_count: number
+          lessons_completed: number
+          user_id: string
+        }[]
+      }
       get_dictionary_stats: {
         Args: never
         Returns: {
           total_definitions: number
           total_words: number
+        }[]
+      }
+      get_incomplete_headwords: {
+        Args: { max_results?: number }
+        Returns: {
+          id: number
+          script_latin: string | null
+          script_tifinagh: string | null
+          slug: string
         }[]
       }
       get_random_word: {
@@ -725,14 +743,16 @@ export type Database = {
       is_moderator_or_admin: { Args: never; Returns: boolean }
       normalize_amazigh_latin: { Args: { input_text: string }; Returns: string }
       search_dictionary: {
-        Args: { term: string }
+        Args: { term: string; max_results?: number }
         Returns: {
           headword_text: string
           id: number
           match_preview: string
           match_type: string
-          script_arabic: string
-          script_tifinagh: string
+          part_of_speech: string | null
+          root: string | null
+          script_arabic: string | null
+          script_tifinagh: string | null
           similarity: number
           slug: string
         }[]

@@ -195,19 +195,37 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
   }
   const linkedLessons = Array.from(linkedLessonsMap.values());
 
-  // Fetch same-root words and dialect-matching courses in parallel
+  // Fetch same-root words, meaning-matching cross-dialect cognates, and courses in parallel
   const docDialectIds = Array.from(
     new Set(definitions.map((d) => d.dialect_id).filter((id): id is number => id !== null))
   );
 
-  const [sameRootRes, coursesRes] = await Promise.all([
+  const primaryEnDef =
+    definitions.find((d) => d.language_code === 'en' && d.definition_text) ?? definitions[0];
+  const meaningWords = (primaryEnDef?.definition_text ?? '')
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length >= 4 && !['that', 'this', 'with', 'from', 'into', 'action', 'made', 'have'].includes(w));
+  const meaningKeyword = meaningWords[0] ?? null;
+
+  const [sameRootRes, cognateRes, coursesRes] = await Promise.all([
     detectedRoots.length > 0
       ? supabase
           .from('definitions')
-          .select('headwords!inner (id, slug, script_latin, script_tifinagh), attributes')
+          .select('definition_text, language_code, headwords!inner (id, slug, script_latin, script_tifinagh), attributes')
           .neq('headword_id', headword.id)
           .eq('attributes->>root', detectedRoots[0])
-          .limit(8)
+          .limit(18)
+      : Promise.resolve({ data: [] }),
+    meaningKeyword
+      ? supabase
+          .from('definitions')
+          .select('definition_text, language_code, dialects (name), headwords!inner (id, slug, script_latin, script_tifinagh)')
+          .neq('headword_id', headword.id)
+          .eq('language_code', 'en')
+          .ilike('definition_text', `%${meaningKeyword}%`)
+          .limit(18)
       : Promise.resolve({ data: [] }),
     supabase
       .from('courses')
@@ -219,15 +237,64 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
 
   const sameRootMap = new Map<
     number,
-    { id: number; slug: string; script_latin: string | null; script_tifinagh: string | null }
+    {
+      id: number;
+      slug: string;
+      script_latin: string | null;
+      script_tifinagh: string | null;
+      meaning: string | null;
+      meaningLang: string | null;
+    }
   >();
   for (const row of sameRootRes.data ?? []) {
     const hw = Array.isArray(row.headwords) ? row.headwords[0] : row.headwords;
-    if (hw && !sameRootMap.has(hw.id)) {
-      sameRootMap.set(hw.id, hw);
+    if (!hw) continue;
+    const existing = sameRootMap.get(hw.id);
+    if (!existing) {
+      sameRootMap.set(hw.id, {
+        ...hw,
+        meaning: row.definition_text ?? null,
+        meaningLang: row.language_code ?? null
+      });
+    } else if (existing.meaningLang !== 'en' && row.language_code === 'en' && row.definition_text) {
+      existing.meaning = row.definition_text;
+      existing.meaningLang = 'en';
     }
   }
-  const sameRootWords = Array.from(sameRootMap.values());
+  const sameRootWords = Array.from(sameRootMap.values())
+    .slice(0, 8)
+    .map(({ meaningLang: _lang, ...rest }) => rest);
+
+  const excludedHwIds = new Set<number>([
+    headword.id,
+    ...sameRootWords.map((w) => w.id),
+    ...relatedWords.map((r) => r.word.id)
+  ]);
+  const cognateMap = new Map<
+    number,
+    {
+      id: number;
+      slug: string;
+      script_latin: string | null;
+      script_tifinagh: string | null;
+      meaning: string;
+      dialectName: string | null;
+    }
+  >();
+  for (const row of cognateRes.data ?? []) {
+    const hw = Array.isArray(row.headwords) ? row.headwords[0] : row.headwords;
+    if (!hw || excludedHwIds.has(hw.id) || cognateMap.has(hw.id)) continue;
+    const dialectObj = Array.isArray(row.dialects) ? row.dialects[0] : row.dialects;
+    cognateMap.set(hw.id, {
+      id: hw.id,
+      slug: hw.slug,
+      script_latin: hw.script_latin,
+      script_tifinagh: hw.script_tifinagh,
+      meaning: row.definition_text ?? '',
+      dialectName: (dialectObj as { name?: string } | null)?.name ?? null
+    });
+  }
+  const meaningCognates = Array.from(cognateMap.values()).slice(0, 6);
 
   const allPublishedCourses = (coursesRes.data ?? []).map((c) => ({
     ...c,
@@ -297,6 +364,7 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, user, r
     definitions,
     relatedWords,
     sameRootWords,
+    meaningCognates,
     detectedRoots,
     linkedLessons,
     relatedCourses,
@@ -740,6 +808,95 @@ export const actions: Actions = {
 
     const { error: delErr } = await query;
     if (delErr) return fail(500, { message: 'Failed to remove relation' });
+    return { success: true };
+  },
+
+  addPronunciation: async ({ request, locals: { supabase, user, role } }) => {
+    if (!user) return fail(401, { message: 'Sign in required to record pronunciation' });
+
+    const formData = await request.formData();
+    const headwordId = Number(formData.get('headword_id'));
+    const dialectId = Number(formData.get('dialect_id'));
+    const audio = formData.get('audio');
+
+    if (!headwordId || !dialectId) {
+      return fail(400, { message: 'Missing word or dialect selection.' });
+    }
+    if (!(audio instanceof File) || audio.size === 0) {
+      return fail(400, { message: 'Please record or upload an audio clip first.' });
+    }
+    if (audio.size >= 500 * 1024) {
+      return fail(400, { message: 'Audio file must be smaller than 500 KB.' });
+    }
+
+    const safeName = audio.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const fileName = `${user.id}/${Date.now()}_${safeName}`;
+    const { error: uploadError } = await supabase.storage
+      .from('pronunciations')
+      .upload(fileName, audio);
+
+    if (uploadError) {
+      console.error('Pronunciation upload error:', uploadError);
+      return fail(500, { message: 'Failed to upload audio clip.' });
+    }
+
+    const {
+      data: { publicUrl }
+    } = supabase.storage.from('pronunciations').getPublicUrl(fileName);
+
+    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+
+    // Prefer updating user's own definition in the same dialect if it has no audio yet
+    const { data: ownDef } = await supabase
+      .from('definitions')
+      .select('id, audio_url')
+      .eq('headword_id', headwordId)
+      .eq('dialect_id', dialectId)
+      .eq('user_id', user.id)
+      .is('audio_url', null)
+      .limit(1)
+      .maybeSingle();
+
+    if (ownDef) {
+      const { error: updErr } = await supabase
+        .from('definitions')
+        .update({ audio_url: publicUrl })
+        .eq('id', ownDef.id);
+      if (updErr) return fail(500, { message: 'Failed to attach audio to definition.' });
+      return { success: true };
+    }
+
+    // Otherwise create a dialect pronunciation entry carrying the word's primary meaning
+    const { data: existingDefs } = await supabase
+      .from('definitions')
+      .select('definition_text, language_code, attributes')
+      .eq('headword_id', headwordId)
+      .limit(5);
+
+    const bestDef =
+      existingDefs?.find((d) => d.language_code === 'en') ?? existingDefs?.[0] ?? null;
+    const rawAttrs =
+      typeof bestDef?.attributes === 'string'
+        ? JSON.parse(bestDef.attributes)
+        : ((bestDef?.attributes as Record<string, unknown> | null) ?? {});
+    const { source: _src, ...cleanAttrs } = rawAttrs;
+
+    const { error: insErr } = await supabase.from('definitions').insert({
+      headword_id: headwordId,
+      user_id: user.id,
+      dialect_id: dialectId,
+      definition_text: bestDef?.definition_text ?? 'Pronunciation recording',
+      language_code: bestDef?.language_code ?? 'en',
+      audio_url: publicUrl,
+      is_verified: isModerator,
+      attributes: cleanAttrs
+    });
+
+    if (insErr) {
+      console.error('Insert pronunciation definition error:', insErr);
+      return fail(500, { message: 'Failed to save pronunciation recording.' });
+    }
+
     return { success: true };
   }
 };

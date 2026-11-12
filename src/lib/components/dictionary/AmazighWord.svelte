@@ -39,7 +39,7 @@
   let resolvedSlug = $derived(slug ?? glossary?.slug ?? generateWordSlug(word));
   let resolvedPos = $derived(partOfSpeech ?? glossary?.partOfSpeech ?? 'noun');
   let resolvedMeaning = $derived(
-    meaning ?? glossary?.meaning ?? 'Explore or contribute this Tamaziɣt entry in the Awal dictionary.'
+    meaning ?? glossary?.meaning ?? 'Explore or contribute this Tamaziɣt entry in the Asafu dictionary.'
   );
   let resolvedDialect = $derived(dialect ?? glossary?.dialect ?? 'Tamaziɣt');
   let resolvedNotes = $derived(notes ?? glossary?.notes ?? '');

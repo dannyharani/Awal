@@ -68,7 +68,7 @@
     <Card.Root>
       <Card.Header>
         <Card.Title>App Preferences</Card.Title>
-        <Card.Description>Customize how Awal looks and feels.</Card.Description>
+        <Card.Description>Customize how Asafu looks and feels.</Card.Description>
       </Card.Header>
       <Card.Content class="space-y-8">
         <div class="grid gap-2">

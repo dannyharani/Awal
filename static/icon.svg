@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="asafu-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#asafu-grad)" />
+  <!-- Yaz (ⵣ) Neo-Tifinagh Emblem -->
+  <path
+    d="M64 22 V106 M34 32 C44 48, 84 48, 94 32 M34 96 C44 80, 84 80, 94 96"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="10"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

@@ -50,7 +50,7 @@
       <Card.Header>
         <Card.Title>Public Profile</Card.Title>
         <Card.Description>
-          Manage your public profile and how others see you on Awal.
+          Manage your public profile and how others see you on Asafu.
         </Card.Description>
       </Card.Header>
 

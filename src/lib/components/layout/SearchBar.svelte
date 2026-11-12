@@ -1,28 +1,29 @@
 <script lang="ts">
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
-  import { Search, Loader } from '@lucide/svelte';
+  import { Search, Loader, Sparkles, ArrowRight } from '@lucide/svelte';
   import { Input } from '$lib/components/ui/input';
   import { Badge } from '$lib/components/ui/badge';
   import * as Command from '../ui/command';
   import * as m from '$lib/paraglide/messages.js';
+  import {
+    searchDictionary,
+    getQueryTifinaghPreview,
+    parseRootQuery,
+    type DictionarySearchResult
+  } from '$lib/utils/search';
 
   let { supabase } = $derived(page.data);
 
-  type SearchResult = {
-    id: number;
-    slug: string;
-    headword_text: string;
-    script_tifinagh?: string | null;
-    match_type?: string | null;
-    match_preview?: string | null;
-  };
-
   let open = $state(false);
   let query = $state('');
-  let results = $state<SearchResult[]>([]);
+  let results = $state<DictionarySearchResult[]>([]);
   let loading = $state(false);
   let timer: ReturnType<typeof setTimeout>;
+  let searchSeq = 0;
+
+  let tifPreview = $derived(getQueryTifinaghPreview(query));
+  let rootPreview = $derived(parseRootQuery(query));
 
   function handleInput(e: Event) {
     const target = e.target as HTMLInputElement;
@@ -38,25 +39,39 @@
     }
 
     loading = true;
+    const seq = ++searchSeq;
     timer = setTimeout(async () => {
-      await performSearch();
-      loading = false;
-    }, 250);
+      await performSearch(seq);
+    }, 220);
   }
 
-  async function performSearch() {
-    const { data, error } = await supabase.rpc('search_dictionary', {
-      term: query.trim()
-    });
-    if (!error && data) {
-      results = data;
-    }
+  async function performSearch(seq: number) {
+    const res = await searchDictionary(supabase, query, 10);
+    if (seq !== searchSeq) return;
+    results = res.results;
+    loading = false;
   }
 
   function selectResult(slug: string) {
     query = '';
     open = false;
     goto(`/word/${slug}`);
+  }
+
+  function submitFullSearch() {
+    const q = query.trim();
+    if (!q) return;
+    open = false;
+    goto(`/search?q=${encodeURIComponent(q)}`);
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Enter' && query.trim().length >= 1) {
+      e.preventDefault();
+      submitFullSearch();
+    } else if (e.key === 'Escape') {
+      open = false;
+    }
   }
 </script>
 
@@ -66,21 +81,41 @@
     <Input
       type="search"
       placeholder={m.search_placeholder()}
-      class="pl-9 text-sm"
+      class="pr-8 pl-9 text-sm"
       bind:value={query}
       oninput={handleInput}
+      onkeydown={handleKeydown}
       onfocus={() => (open = true)}
-      onblur={() => setTimeout(() => (open = false), 200)}
+      onblur={() => setTimeout(() => (open = false), 220)}
     />
     {#if loading}
-      <Loader class="text-muted-foreground absolute top-2.5 right-8 h-4 w-4 animate-spin" />
+      <Loader class="text-muted-foreground absolute top-2.5 right-2.5 h-4 w-4 animate-spin" />
     {/if}
   </div>
 
-  {#if open && (results.length > 0 || (query.trim().length > 1 && !loading))}
+  {#if open && (results.length > 0 || (query.trim().length > 1 && !loading) || rootPreview)}
     <div
-      class="bg-popover text-popover-foreground fixed inset-x-3 top-14 z-50 overflow-hidden rounded-xl border shadow-xl sm:absolute sm:inset-x-0 sm:top-full sm:mt-1 sm:w-full sm:min-w-[320px]"
+      class="bg-popover text-popover-foreground fixed inset-x-3 top-14 z-50 overflow-hidden rounded-xl border shadow-xl sm:absolute sm:inset-x-0 sm:top-full sm:mt-1 sm:w-full sm:min-w-[360px]"
     >
+      {#if tifPreview || rootPreview}
+        <div
+          class="bg-muted/40 text-muted-foreground flex items-center justify-between border-b px-3.5 py-1.5 text-[11px]"
+        >
+          {#if rootPreview}
+            <span class="flex items-center gap-1.5 font-medium">
+              <Sparkles class="text-primary h-3 w-3" />
+              Searching root family <strong class="text-primary font-mono">{rootPreview}</strong>
+            </span>
+          {:else if tifPreview}
+            <span class="flex items-center gap-1.5">
+              <span>Tifinagh:</span>
+              <strong class="text-primary font-serif text-sm">{tifPreview}</strong>
+            </span>
+          {/if}
+          <span class="hidden text-[10px] opacity-75 sm:inline">Enter for full view</span>
+        </div>
+      {/if}
+
       <Command.Root shouldFilter={false}>
         <Command.List class="max-h-80 overflow-y-auto">
           {#if results.length > 0}
@@ -91,24 +126,42 @@
                 onSelect={() => selectResult(result.slug)}
               >
                 <div class="flex w-full items-center justify-between gap-2">
-                  <div class="flex items-center gap-2">
-                    <span class="text-foreground font-bold">{result.headword_text}</span>
+                  <div class="flex min-w-0 items-center gap-2">
+                    <span class="text-foreground truncate font-bold">{result.headword_text}</span>
                     {#if result.script_tifinagh}
-                      <span class="text-primary/80 font-serif text-sm">
+                      <span class="text-primary/85 shrink-0 font-serif text-sm">
                         {result.script_tifinagh}
+                      </span>
+                    {/if}
+                    {#if result.part_of_speech}
+                      <span class="text-muted-foreground hidden font-serif text-[11px] italic sm:inline">
+                        {result.part_of_speech}
                       </span>
                     {/if}
                   </div>
 
-                  {#if result.match_type === 'inflected'}
-                    <Badge variant="outline" class="h-4 px-1.5 text-[9px] uppercase">
-                      Inflected
-                    </Badge>
-                  {:else if result.match_type === 'meaning'}
-                    <Badge variant="secondary" class="h-4 px-1.5 text-[9px] uppercase">
-                      Meaning
-                    </Badge>
-                  {/if}
+                  <div class="flex shrink-0 items-center gap-1">
+                    {#if result.match_type === 'fuzzy'}
+                      <Badge
+                        variant="outline"
+                        class="h-4 border-amber-500/40 bg-amber-500/10 px-1.5 text-[9px] font-semibold text-amber-700 uppercase dark:text-amber-300"
+                      >
+                        Did you mean?
+                      </Badge>
+                    {:else if result.match_type === 'root'}
+                      <Badge variant="outline" class="border-primary/40 bg-primary/10 text-primary h-4 px-1.5 font-mono text-[9px] uppercase">
+                        Root {result.root ?? ''}
+                      </Badge>
+                    {:else if result.match_type === 'inflected'}
+                      <Badge variant="outline" class="h-4 px-1.5 text-[9px] uppercase">
+                        Inflected
+                      </Badge>
+                    {:else if result.match_type === 'meaning'}
+                      <Badge variant="secondary" class="h-4 px-1.5 text-[9px] uppercase">
+                        Meaning
+                      </Badge>
+                    {/if}
+                  </div>
                 </div>
 
                 {#if result.match_preview}
@@ -118,6 +171,20 @@
                 {/if}
               </Command.Item>
             {/each}
+
+            <div class="border-t bg-muted/20 p-1.5">
+              <button
+                type="button"
+                onmousedown={(e) => {
+                  e.preventDefault();
+                  submitFullSearch();
+                }}
+                class="text-primary hover:bg-muted flex w-full items-center justify-between rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-colors"
+              >
+                <span>Explore all results & filters for "{query.trim()}"</span>
+                <ArrowRight class="h-3.5 w-3.5" />
+              </button>
+            </div>
           {:else if query.trim().length > 1 && !loading}
             <Command.Item
               value="__create_new__"

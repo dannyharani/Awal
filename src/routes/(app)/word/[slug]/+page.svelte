@@ -2,10 +2,12 @@
   import AddDefinitionCard from '$lib/components/dictionary/AddDefinitionCard.svelte';
   import DefinitionCard from '$lib/components/dictionary/DefinitionCard.svelte';
   import AudioPlayer from '$lib/components/dictionary/AudioPlayer.svelte';
+  import AudioRecorder from '$lib/components/dictionary/AudioRecorder.svelte';
   import { enhance } from '$app/forms';
   import { page } from '$app/state';
   import { browser } from '$app/environment';
-  import { latinToTifinagh, WORD_RELATION_TYPES } from '$lib/utils/amazigh';
+  import { latinToTifinagh, tifinaghBreakdown, WORD_RELATION_TYPES } from '$lib/utils/amazigh';
+  import { isSystemUsername } from '$lib/constants';
   import * as m from '$lib/paraglide/messages.js';
 
   // UI Components
@@ -38,7 +40,9 @@
     ArrowUpDown,
     RotateCcw,
     Volume2,
-    BookOpen
+    BookOpen,
+    Search,
+    Mic
   } from '@lucide/svelte';
 
   let { data } = $props();
@@ -47,6 +51,7 @@
   let dialects = $derived(data.dialects ?? []);
   let relatedWords = $derived(data.relatedWords ?? []);
   let sameRootWords = $derived(data.sameRootWords ?? []);
+  let meaningCognates = $derived(data.meaningCognates ?? []);
   let detectedRoots = $derived(data.detectedRoots ?? []);
   let linkedLessons = $derived(data.linkedLessons ?? []);
   let relatedCourses = $derived(data.relatedCourses ?? []);
@@ -57,6 +62,19 @@
 
   // Copy & Share feedback state
   let copiedKey = $state<string | null>(null);
+  let showTifinaghGuide = $state(false);
+  let audioDialogOpen = $state(false);
+  let audioDialectId = $state<number>(1);
+  let isUploadingAudio = $state(false);
+
+  $effect(() => {
+    if (dialects.length > 0 && !dialects.some((d) => d.id === audioDialectId)) {
+      audioDialectId = dialects[0].id;
+    }
+  });
+  let tifinaghLetters = $derived(
+    headword?.script_tifinagh ? tifinaghBreakdown(headword.script_tifinagh) : []
+  );
   function copyText(text: string, key: string) {
     if (!browser || !text) return;
     navigator.clipboard.writeText(text);
@@ -71,7 +89,7 @@
     const url = window.location.href;
     if (navigator.share) {
       navigator.share({
-        title: `${headword.script_latin} ${headword.script_tifinagh ? `(${headword.script_tifinagh})` : ''} — Awal`,
+        title: `${headword.script_latin} ${headword.script_tifinagh ? `(${headword.script_tifinagh})` : ''} — Asafu`,
         url
       }).catch(() => copyText(url, 'share'));
     } else {
@@ -229,7 +247,11 @@
   let contributors = $derived.by(() => {
     const map = new Map<string, { username: string; avatar_url: string | null }>();
     for (const def of definitions) {
-      if (def.author?.username && !map.has(def.author.username)) {
+      if (
+        def.author?.username &&
+        !isSystemUsername(def.author.username) &&
+        !map.has(def.author.username)
+      ) {
         map.set(def.author.username, {
           username: def.author.username,
           avatar_url: def.author.avatar_url ?? null
@@ -309,7 +331,7 @@
         </div>
 
         <p class="text-muted-foreground mx-auto max-w-md text-base leading-relaxed">
-          This Amazigh word has not been documented in the Awal dictionary yet. You can be the first to create it and add its meaning!
+          This Amazigh word has not been documented in the Asafu dictionary yet. You can be the first to create it and add its meaning!
         </p>
 
         {#if data.glossary}
@@ -338,6 +360,15 @@
           >
             <Plus class="h-5 w-5" />
             Add "{data.candidateWord}" to Dictionary
+          </Button>
+          <Button
+            variant="secondary"
+            size="lg"
+            href="/search?q={encodeURIComponent(data.candidateWord ?? '')}"
+            class="gap-2"
+          >
+            <Search class="h-4 w-4" />
+            Search Dictionary
           </Button>
           <Button variant="outline" size="lg" href="/">
             Browse Dictionary
@@ -571,6 +602,17 @@
                   <Copy class="text-primary/60 group-hover:text-primary h-3.5 w-3.5 transition-opacity" />
                 {/if}
               </button>
+              {#if tifinaghLetters.some((item) => item.isTifinagh)}
+                <button
+                  type="button"
+                  onclick={() => (showTifinaghGuide = !showTifinaghGuide)}
+                  class="text-muted-foreground hover:border-primary/40 hover:text-primary inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium transition-colors"
+                  aria-expanded={showTifinaghGuide}
+                >
+                  <BookOpen class="h-3 w-3" />
+                  {showTifinaghGuide ? 'Hide script guide' : 'Read Tifinagh'}
+                </button>
+              {/if}
             {:else}
               <span class="text-muted-foreground/60 rounded-lg border border-dashed px-2.5 py-1 text-xs italic">
                 {m.word_no_tifinagh()}
@@ -694,9 +736,13 @@
             {/each}
 
             {#each detectedRoots as root}
-              <Badge variant="outline" class="border-primary/30 bg-primary/5 font-mono text-xs font-bold uppercase text-primary">
+              <a
+                href="/search?q={encodeURIComponent(`root:${root}`)}"
+                class="border-primary/30 bg-primary/5 text-primary hover:bg-primary/15 inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-bold uppercase transition-colors"
+                title="Explore words with root {root}"
+              >
                 {m.word_attr_root()} {root}
-              </Badge>
+              </a>
             {/each}
 
             {#if availableDialects.length > 0}
@@ -708,16 +754,101 @@
           </div>
         </div>
 
-        <!-- Right Side of Hero: Primary Audio Player & Contributors -->
+        <!-- Right Side of Hero: Primary Audio Player, Quick Record & Contributors -->
         <div class="flex flex-col items-start gap-3 lg:items-end">
-          {#if primaryAudioDef?.audio_url}
-            <div class="bg-background/80 flex items-center gap-2.5 rounded-xl border p-2 shadow-2xs">
-              <AudioPlayer
-                src={primaryAudioDef.audio_url}
-                label={primaryAudioDef.dialects?.name ?? m.word_listen()}
-              />
-            </div>
-          {/if}
+          <div class="flex flex-wrap items-center gap-2">
+            {#if primaryAudioDef?.audio_url}
+              <div class="bg-background/80 flex items-center gap-2.5 rounded-xl border p-2 shadow-2xs">
+                <AudioPlayer
+                  src={primaryAudioDef.audio_url}
+                  label={primaryAudioDef.dialects?.name ?? m.word_listen()}
+                />
+              </div>
+            {/if}
+
+            {#if user && headword}
+              <Dialog.Root bind:open={audioDialogOpen}>
+                <Dialog.Trigger>
+                  {#snippet child({ props })}
+                    <Button
+                      variant={primaryAudioDef?.audio_url ? 'outline' : 'default'}
+                      size="sm"
+                      class="gap-1.5 rounded-xl shadow-2xs"
+                      {...props}
+                    >
+                      <Mic class="h-3.5 w-3.5" />
+                      {primaryAudioDef?.audio_url ? 'Add Dialect Audio' : 'Record Pronunciation'}
+                    </Button>
+                  {/snippet}
+                </Dialog.Trigger>
+                <Dialog.Content class="sm:max-w-[440px]">
+                  <Dialog.Header>
+                    <Dialog.Title class="flex items-center gap-2">
+                      <Mic class="text-primary h-4 w-4" />
+                      Record Pronunciation for "{headword.script_latin}"
+                    </Dialog.Title>
+                  </Dialog.Header>
+
+                  <form
+                    method="POST"
+                    action="?/addPronunciation"
+                    enctype="multipart/form-data"
+                    use:enhance={() => {
+                      isUploadingAudio = true;
+                      return async ({ result, update }) => {
+                        isUploadingAudio = false;
+                        await update();
+                        if (result.type === 'success') {
+                          audioDialogOpen = false;
+                        }
+                      };
+                    }}
+                    class="space-y-4 pt-2"
+                  >
+                    <input type="hidden" name="headword_id" value={headword.id} />
+
+                    <div class="space-y-1.5">
+                      <Label for="audio-dialect">Dialect Spoken</Label>
+                      <select
+                        id="audio-dialect"
+                        name="dialect_id"
+                        bind:value={audioDialectId}
+                        class="border-input bg-background flex h-9 w-full rounded-md border px-3 text-sm"
+                      >
+                        {#each dialects as dialect (dialect.id)}
+                          <option value={dialect.id}>{dialect.name}</option>
+                        {/each}
+                      </select>
+                    </div>
+
+                    <div class="space-y-1.5">
+                      <Label>Audio Clip (up to 12 seconds)</Label>
+                      <AudioRecorder name="audio" />
+                    </div>
+
+                    <div class="flex justify-end gap-2 pt-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onclick={() => (audioDialogOpen = false)}
+                      >
+                        {m.common_cancel()}
+                      </Button>
+                      <Button type="submit" size="sm" disabled={isUploadingAudio}>
+                        {isUploadingAudio ? 'Uploading...' : 'Save Pronunciation'}
+                      </Button>
+                    </div>
+                  </form>
+                </Dialog.Content>
+              </Dialog.Root>
+            {:else if !primaryAudioDef?.audio_url}
+              <span class="text-muted-foreground inline-flex items-center gap-1.5 rounded-xl border border-dashed px-3 py-1.5 text-xs">
+                <Mic class="h-3.5 w-3.5" />
+                No audio yet · Sign in to record
+              </span>
+            {/if}
+          </div>
 
           {#if contributors.length > 0}
             <div class="flex items-center gap-2">
@@ -882,6 +1013,28 @@
           {/if}
         </div>
 
+        {#if showTifinaghGuide && tifinaghLetters.length > 0}
+          <div class="bg-muted/40 flex flex-wrap items-center gap-1.5 rounded-xl border px-3 py-2.5">
+            <span class="text-muted-foreground mr-1 text-[10px] font-bold tracking-wider uppercase">
+              Script breakdown:
+            </span>
+            {#each tifinaghLetters as letter}
+              {#if letter.char.trim() === ''}
+                <span class="w-2"></span>
+              {:else}
+                <div class="bg-background inline-flex flex-col items-center rounded-md border px-2 py-1 text-center shadow-2xs">
+                  <span class="text-primary font-serif text-base leading-none font-bold">
+                    {letter.char}
+                  </span>
+                  <span class="text-muted-foreground mt-0.5 font-mono text-[10px] leading-none">
+                    {letter.isTifinagh ? letter.latin : letter.char}
+                  </span>
+                </div>
+              {/if}
+            {/each}
+          </div>
+        {/if}
+
         {#if sameRootWords.length > 0 && detectedRoots.length > 0}
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-muted-foreground text-[11px] font-semibold uppercase tracking-wider">
@@ -890,13 +1043,62 @@
             {#each sameRootWords as rw (rw.id)}
               <a
                 href="/word/{rw.slug}"
-                class="border-primary/20 bg-primary/5 hover:bg-primary/15 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs transition-colors"
+                class="border-primary/20 bg-primary/5 hover:bg-primary/15 inline-flex max-w-[220px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs transition-colors"
+                title={rw.meaning ?? rw.script_latin}
               >
-                <span class="font-semibold">{rw.script_latin}</span>
+                <span class="shrink-0 font-semibold">{rw.script_latin}</span>
                 {#if rw.script_tifinagh}
-                  <span class="text-primary font-serif text-[11px]">{rw.script_tifinagh}</span>
+                  <span class="text-primary shrink-0 font-serif text-[11px]">{rw.script_tifinagh}</span>
+                {/if}
+                {#if rw.meaning}
+                  <span class="text-muted-foreground truncate text-[11px]">· {rw.meaning}</span>
                 {/if}
               </a>
+            {/each}
+            <a
+              href="/search?q={encodeURIComponent(`root:${detectedRoots[0]}`)}"
+              class="text-primary hover:underline ml-1 inline-flex items-center gap-1 text-[11px] font-semibold"
+            >
+              Explore root <ArrowRight class="h-3 w-3" />
+            </a>
+          </div>
+        {/if}
+
+        {#if meaningCognates.length > 0}
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-muted-foreground text-[11px] font-semibold uppercase tracking-wider">
+              Cross-dialect synonyms & cognates:
+            </span>
+            {#each meaningCognates as cog (cog.id)}
+              <div class="border-border/70 bg-background/80 inline-flex max-w-[260px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs">
+                <a
+                  href="/word/{cog.slug}"
+                  class="hover:text-primary inline-flex min-w-0 items-center gap-1.5 transition-colors"
+                  title="{cog.meaning}{cog.dialectName ? ` (${cog.dialectName})` : ''}"
+                >
+                  <span class="shrink-0 font-semibold">{cog.script_latin}</span>
+                  {#if cog.script_tifinagh}
+                    <span class="text-primary shrink-0 font-serif text-[11px]">{cog.script_tifinagh}</span>
+                  {/if}
+                  {#if cog.dialectName}
+                    <span class="text-muted-foreground truncate text-[10px]">· {cog.dialectName}</span>
+                  {/if}
+                </a>
+                {#if user && headword}
+                  <form method="POST" action="?/addWordRelation" use:enhance class="inline-flex">
+                    <input type="hidden" name="source_headword_id" value={headword.id} />
+                    <input type="hidden" name="target_slug" value={cog.slug} />
+                    <input type="hidden" name="relation_type" value="synonym" />
+                    <button
+                      type="submit"
+                      class="text-primary/70 hover:text-primary rounded-full p-0.5 transition-colors"
+                      title="Link as cross-dialect synonym"
+                    >
+                      <Plus class="h-3 w-3" />
+                    </button>
+                  </form>
+                {/if}
+              </div>
             {/each}
           </div>
         {/if}

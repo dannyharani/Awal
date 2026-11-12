@@ -77,7 +77,7 @@
         <span>Community Directory • ⴰⵎⵣⴷⴰⵢ</span>
       </div>
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">
-        The <AmazighWord word="Awal" />
+        The <AmazighWord word="Asafu" />
         <AmazighWord word="Amezday" showTifinaghInline />
       </h1>
       <p class="text-muted-foreground text-lg">
@@ -260,7 +260,7 @@
                   {member.bio}
                 </p>
               {:else}
-                <p class="text-muted-foreground/60 text-xs italic">Awal community member</p>
+                <p class="text-muted-foreground/60 text-xs italic">Asafu community member</p>
               {/if}
             </Card.Header>
 

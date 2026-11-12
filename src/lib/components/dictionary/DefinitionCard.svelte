@@ -20,6 +20,7 @@
   import DefinitionComments from './DefinitionComments.svelte';
   import AmazighKeyboardBar from './AmazighKeyboardBar.svelte';
   import EditDefinitionDialog from '$lib/components/dictionary/EditDefinitionDialog.svelte';
+  import { isSystemUsername } from '$lib/constants';
   import { getLocale } from '$lib/paraglide/runtime';
   import * as m from '$lib/paraglide/messages.js';
 
@@ -45,7 +46,20 @@
   let newExampleTranslation = $state('');
   let isAddingExample = $state(false);
 
-  let hasAttributes = $derived(Object.keys(attributes).length > 0);
+  const INTERNAL_ATTR_KEYS = new Set(['root_estimated', 'source']);
+  let displayAttributes = $derived(
+    Object.entries(attributes).filter(
+      ([key, value]) =>
+        !INTERNAL_ATTR_KEYS.has(key) &&
+        value !== null &&
+        value !== undefined &&
+        String(value).trim() !== ''
+    )
+  );
+  let hasAttributes = $derived(displayAttributes.length > 0);
+  let isDglaiImport = $derived(
+    attributes.source === 'dglai' || isSystemUsername(def.author?.username)
+  );
   let canModerate = $derived(
     role === 'admin' || role === 'moderator' || role === 'instructor'
   );
@@ -153,34 +167,44 @@
     </div>
 
     <div class="text-muted-foreground ml-auto flex shrink-0 items-center gap-2 text-xs">
-      <span class="hidden sm:inline">{m.word_by()}</span>
-      {#if def.author?.username}
-        <a
-          href="/user/{def.author.username}"
-          class="text-foreground hover:text-primary flex items-center gap-1.5 font-medium transition-colors"
+      {#if isDglaiImport}
+        <Badge
+          variant="outline"
+          class="border-amber-500/30 bg-amber-500/5 px-2 py-0.5 text-[10px] font-semibold text-amber-700 dark:text-amber-400"
+          title="Imported from IRCAM DGLAI lexicon"
         >
-          <Avatar.Root class="bg-background h-5 w-5 border">
-            <Avatar.Image src={def.author?.avatar_url} />
-            <Avatar.Fallback class="text-[9px]">
-              {def.author.username.slice(0, 2).toUpperCase()}
-            </Avatar.Fallback>
-          </Avatar.Root>
-          <span class="max-w-[110px] truncate hover:underline sm:max-w-none">
-            {def.author.username}
-          </span>
-        </a>
-        {#if def.author?.role && def.author.role !== 'user'}
-          <Badge variant="outline" class="h-4 px-1.5 text-[9px] capitalize">
-            {def.author.role}
-          </Badge>
-        {/if}
+          IRCAM DGLAI
+        </Badge>
       {:else}
-        <div class="text-foreground flex items-center gap-1.5 font-medium">
-          <Avatar.Root class="bg-background h-5 w-5 border">
-            <Avatar.Fallback class="text-[9px]">U</Avatar.Fallback>
-          </Avatar.Root>
-          <span>{m.word_anonymous()}</span>
-        </div>
+        <span class="hidden sm:inline">{m.word_by()}</span>
+        {#if def.author?.username}
+          <a
+            href="/user/{def.author.username}"
+            class="text-foreground hover:text-primary flex items-center gap-1.5 font-medium transition-colors"
+          >
+            <Avatar.Root class="bg-background h-5 w-5 border">
+              <Avatar.Image src={def.author?.avatar_url} />
+              <Avatar.Fallback class="text-[9px]">
+                {def.author.username.slice(0, 2).toUpperCase()}
+              </Avatar.Fallback>
+            </Avatar.Root>
+            <span class="max-w-[110px] truncate hover:underline sm:max-w-none">
+              {def.author.username}
+            </span>
+          </a>
+          {#if def.author?.role && def.author.role !== 'user'}
+            <Badge variant="outline" class="h-4 px-1.5 text-[9px] capitalize">
+              {def.author.role}
+            </Badge>
+          {/if}
+        {:else}
+          <div class="text-foreground flex items-center gap-1.5 font-medium">
+            <Avatar.Root class="bg-background h-5 w-5 border">
+              <Avatar.Fallback class="text-[9px]">U</Avatar.Fallback>
+            </Avatar.Root>
+            <span>{m.word_anonymous()}</span>
+          </div>
+        {/if}
       {/if}
     </div>
   </Card.Header>
@@ -212,10 +236,17 @@
           </div>
         {/if}
         {#if attributes.root}
-          <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
+          <a
+            href="/search?q={encodeURIComponent(`root:${attributes.root}`)}"
+            class="bg-muted/50 hover:border-primary/40 hover:bg-primary/10 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs transition-colors"
+            title="Search words sharing root {attributes.root}"
+          >
             <span class="text-muted-foreground font-medium">{m.word_attr_root()}</span>
             <span class="text-primary font-mono font-bold tracking-wider uppercase">{attributes.root}</span>
-          </div>
+            {#if attributes.root_estimated}
+              <span class="text-muted-foreground text-[10px]" title="Algorithmically estimated root">(est.)</span>
+            {/if}
+          </a>
         {/if}
         {#if attributes.verb_stems}
           <div class="bg-muted/50 inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs">
@@ -270,7 +301,7 @@
                     </p>
                   {/if}
 
-                  {#if example.author?.username}
+                  {#if example.author?.username && !isSystemUsername(example.author.username)}
                     <p class="text-muted-foreground/70 text-[10px]">
                       {m.word_added_by()} <a
                         href="/user/{example.author.username}"
@@ -415,7 +446,7 @@
         </h4>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {#each Object.entries(attributes) as [key, value]}
+          {#each displayAttributes as [key, value]}
             <div
               class="bg-background border-border/50 flex flex-col rounded-md border px-3 py-2 text-sm shadow-sm"
             >
@@ -424,7 +455,12 @@
               >
                 {attrLabels[key] ?? key.replace(/_/g, ' ')}
               </span>
-              <span class="text-foreground break-words font-medium">{value}</span>
+              <span class="text-foreground break-words font-medium">
+                {value}
+                {#if key === 'root' && attributes.root_estimated}
+                  <span class="text-muted-foreground ml-1 text-xs font-normal">(est.)</span>
+                {/if}
+              </span>
             </div>
           {/each}
         </div>

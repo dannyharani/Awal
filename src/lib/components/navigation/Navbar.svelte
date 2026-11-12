@@ -14,7 +14,8 @@
     Info,
     Menu,
     X,
-    Bookmark
+    Bookmark,
+    Search
   } from '@lucide/svelte';
   import * as m from '$lib/paraglide/messages.js';
 
@@ -40,7 +41,7 @@
     <div class="flex items-center gap-4 xl:gap-6">
       <a href="/" class="flex items-center space-x-1 shrink-0">
         <span class="text-xl font-bold tracking-tight">
-          Awal <span class="text-primary">.</span>
+          Asafu <span class="text-primary font-serif">.</span>
         </span>
       </a>
 
@@ -75,8 +76,8 @@
         >
           <Gamepad2 class="h-4 w-4" />
           <span>{m.nav_games()}</span>
-          <span class="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-primary">
-            Soon
+          <span class="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-700 dark:text-emerald-400">
+            Play
           </span>
         </a>
 
@@ -176,6 +177,19 @@
           </a>
 
           <a
+            href="/search"
+            onclick={() => (mobileMenuOpen = false)}
+            class="flex items-center gap-2.5 rounded-lg px-3 py-2 transition-colors {pathname.startsWith(
+              '/search'
+            )
+              ? 'bg-muted text-primary font-semibold'
+              : 'text-foreground/80 hover:bg-muted/60'}"
+          >
+            <Search class="h-4 w-4" />
+            <span>Search Explorer</span>
+          </a>
+
+          <a
             href="/courses"
             onclick={() => (mobileMenuOpen = false)}
             class="flex items-center gap-2.5 rounded-lg px-3 py-2 transition-colors {pathname.startsWith(
@@ -201,8 +215,8 @@
               <Gamepad2 class="h-4 w-4" />
               <span>{m.nav_games()}</span>
             </div>
-            <span class="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-primary">
-              Soon
+            <span class="rounded bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-extrabold uppercase text-emerald-700 dark:text-emerald-400">
+              Play
             </span>
           </a>
 

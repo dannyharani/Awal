@@ -23,24 +23,24 @@
 
   const FAQS = [
     {
-      q: 'What does "Awal" mean?',
-      a: 'In Tamaziɣt across every regional dialect, "Awal" (ⴰⵡⴰⵍ) means "Word", "Speech", "Voice", and "Language". In Amazigh cultural philosophy, "Awal" also signifies one\'s word of honor and the living oral heritage passed down across generations ("Awal d awal"). Our goal is to give the Amazigh word a permanent, thriving home in the digital age.'
+      q: 'What does "Asafu" mean?',
+      a: 'In Tamaziɣt, "Asafu" (ⴰⵙⴰⴼⵓ, plural "isufa" / ⵉⵙⵓⴼⴰ) means "Torch" or "Torchlight". It symbolizes illumination, light, fire, and wisdom. Our platform carries this torch forward to illuminate the Amazigh language, dialects, and cultural heritage in the digital era.'
     },
     {
-      q: 'Which scripts does Awal support?',
-      a: 'Awal fully supports both Neo-Tifinagh (ⵜⵉⴼⵉⵏⴰⵖ, standardized by IRCAM) and Tamaziɣt Latin (including special phonological characters like ɣ, ɛ, č, ǧ, ḍ, ṭ, ẓ, ḥ, ṣ, ṛ). Headwords also feature Arabic script transcriptions to maximize accessibility.'
+      q: 'Which scripts does Asafu support?',
+      a: 'Asafu fully supports both Neo-Tifinagh (ⵜⵉⴼⵉⵏⴰⵖ, standardized by IRCAM) and Tamaziɣt Latin (including special phonological characters like ɣ, ɛ, č, ǧ, ḍ, ṭ, ẓ, ḥ, ṣ, ṛ). Headwords also feature Arabic script transcriptions to maximize accessibility.'
     },
     {
-      q: 'How does Awal handle dialect variations?',
-      a: 'Rather than forcing artificial homogenization, Awal embraces dialect diversity. Every definition specifies its region or dialect, and our cross-dialect relation system connects cognates, phonetic variants, and synonyms across regions.'
+      q: 'How does Asafu handle dialect variations?',
+      a: 'Rather than forcing artificial homogenization, Asafu embraces dialect diversity. Every definition specifies its region or dialect, and our cross-dialect relation system connects cognates, phonetic variants, and synonyms across regions.'
     },
     {
       q: 'Who can contribute definitions or courses?',
       a: 'Any signed-in user can contribute new words, dialect meanings, example sentences, and pronunciation recordings. Approved educators and instructors can author full structured courses in the Educator Studio.'
     },
     {
-      q: 'Is Awal free to use?',
-      a: 'Yes! Awal is free and open to everyone dedicated to learning, preserving, and celebrating the Amazigh language and culture.'
+      q: 'Is Asafu free to use?',
+      a: 'Yes! Asafu is free and open to everyone dedicated to learning, preserving, and celebrating the Amazigh language and culture.'
     }
   ];
 </script>
@@ -55,7 +55,7 @@
 
     <div class="space-y-4">
       <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-        About <AmazighWord word="Awal" class="text-primary font-bold" showTifinaghInline />
+        About <AmazighWord word="Asafu" class="text-primary font-bold" showTifinaghInline />
       </h1>
       <p class="text-muted-foreground mx-auto max-w-3xl text-xl leading-relaxed">
         An all-in-one digital platform dedicated to the documentation, education, and revitalization of
@@ -83,7 +83,7 @@
         <AmazighWord word="Tamaziɣt" /> is one of humanity's oldest surviving language families, spoken for millennia across North Africa (<AmazighWord word="Tamazɣa" />) from the Atlantic coast and Canary Islands to the Siwa oasis in Egypt.
       </p>
       <p class="text-muted-foreground text-base leading-relaxed">
-        Historically preserved through vibrant oral storytelling, <AmazighWord word="Tasekla" /> (poetry and literature), and the ancestral <AmazighWord word="Tifinagh" /> script, Tamaziɣt now enters a new era. <AmazighWord word="Awal" /> was founded to provide the modern digital infrastructure required to document regional vocabulary, offer structured online courses, and gamify daily learning for the global <AmazighWord word="Amezday" /> (community).
+        Historically preserved through vibrant oral storytelling, <AmazighWord word="Tasekla" /> (poetry and literature), and the ancestral <AmazighWord word="Tifinagh" /> script, Tamaziɣt now enters a new era. <AmazighWord word="Asafu" /> was founded to provide the modern digital infrastructure required to document regional vocabulary, offer structured online courses, and gamify daily learning for the global <AmazighWord word="Amezday" /> (community).
       </p>
     </div>
 
@@ -126,7 +126,7 @@
     <div class="mx-auto max-w-2xl space-y-2 text-center">
       <Badge variant="outline" class="text-xs uppercase">Platform Architecture</Badge>
       <h2 class="text-3xl font-extrabold tracking-tight">
-        The Four Pillars of <AmazighWord word="Awal" />
+        The Four Pillars of <AmazighWord word="Asafu" />
       </h2>
       <p class="text-muted-foreground text-sm">
         Everything you need to discover, teach, and master Tamaziɣt in one unified ecosystem. Hover or tap any Amazigh pillar name to inspect its lexical root.
@@ -198,7 +198,7 @@
       <div class="mx-auto max-w-2xl space-y-2 text-center">
         <Badge variant="outline" class="text-xs uppercase">Regional Diversity</Badge>
         <h2 class="text-3xl font-extrabold tracking-tight">
-          Dialects Documented on Awal
+          Dialects Documented on Asafu
         </h2>
         <p class="text-muted-foreground text-sm">
           Click any regional variety below to explore its documented vocabulary in the dictionary.
@@ -261,7 +261,7 @@
     <Card.Content class="flex flex-col items-center justify-between gap-6 p-8 text-center sm:flex-row sm:text-left">
       <div class="max-w-xl space-y-2">
         <h3 class="text-2xl font-extrabold">
-          Ready to Join the <AmazighWord word="Awal" /> <AmazighWord word="Amezday" />?
+          Ready to Join the <AmazighWord word="Asafu" /> <AmazighWord word="Amezday" />?
         </h3>
         <p class="text-muted-foreground text-sm">
           Whether you want to learn your ancestral language, document a regional word, or create interactive courses as an educator, you are warmly welcome.

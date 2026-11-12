@@ -33,10 +33,14 @@
     platformStats,
     dialects,
     browsedWords,
+    browseTotal,
+    browsePage,
+    browsePageSize,
     wordsNeedingHelp,
     wordsNeedingDefinition,
     wordsNeedingTifinagh,
     wordsNeedingVerification,
+    dailyChallenge,
     featuredCourses,
     topContributors,
     activeLetter,
@@ -44,6 +48,16 @@
   } = $derived(data);
 
   let isFiltering = $derived(Boolean(activeLetter || activeDialect));
+  let totalBrowsePages = $derived(Math.max(1, Math.ceil((browseTotal || browsedWords.length) / browsePageSize)));
+
+  function browseHref(targetPage: number): string {
+    const params = new URLSearchParams();
+    if (activeLetter) params.set('letter', activeLetter);
+    if (activeDialect) params.set('dialect', String(activeDialect));
+    if (targetPage > 1) params.set('page', String(targetPage));
+    const qs = params.toString();
+    return qs ? `/?${qs}#browse` : '/#browse';
+  }
 
   // Interactive Word of the Day shuffle state
   let shuffledIndex = $state<number | null>(null);
@@ -70,12 +84,7 @@
     return wordsNeedingHelp;
   });
 
-  // Mini daily challenge on landing page
-  const dailyQuizOptions = [
-    { label: 'Word, speech, or promise', correct: true },
-    { label: 'Mountain range', correct: false },
-    { label: 'Morning star', correct: false }
-  ];
+  // Mini daily challenge on landing page (seeded daily from the dictionary)
   let selectedQuizIdx = $state<number | null>(null);
 </script>
 
@@ -86,7 +95,7 @@
       <Sparkles class="text-primary h-3.5 w-3.5 shrink-0" />
       <span>
         <AmazighWord word="Azul" showTifinaghInline />! Welcome to
-        <AmazighWord word="Awal" showTifinaghInline /> — hover or tap any dotted Amazigh word for instant definitions
+        <AmazighWord word="Asafu" showTifinaghInline /> — hover or tap any dotted Amazigh word for instant definitions
       </span>
     </div>
 
@@ -180,12 +189,21 @@
                 {/if}
               </div>
 
-              {#if attrs?.pos || attrs?.construct_state || attrs?.plural}
+              {#if attrs?.part_of_speech || attrs?.pos || attrs?.construct_state || attrs?.plural || attrs?.root}
                 <div class="flex flex-wrap items-center gap-2 pt-1 text-xs">
-                  {#if attrs?.pos}
-                    <span class="bg-primary/10 text-primary rounded px-2 py-0.5 font-semibold italic">
-                      {attrs.pos}
+                  {#if attrs?.part_of_speech || attrs?.pos}
+                    <span class="bg-primary/10 text-primary rounded px-2 py-0.5 font-semibold capitalize italic">
+                      {attrs.part_of_speech || attrs.pos}
                     </span>
+                  {/if}
+                  {#if attrs?.root}
+                    <a
+                      href="/search?q={encodeURIComponent(`root:${attrs.root}`)}"
+                      class="border-primary/25 bg-primary/5 text-primary hover:bg-primary/15 rounded border px-2 py-0.5 font-mono text-[11px] font-bold transition-colors"
+                      title="Explore words sharing this root"
+                    >
+                      Root {attrs.root}
+                    </a>
                   {/if}
                   {#if attrs?.construct_state}
                     <span class="text-muted-foreground">
@@ -236,26 +254,30 @@
           <Badge variant="secondary" class="text-[10px]">Mini Challenge</Badge>
         </div>
         <Card.Title class="pt-1 text-lg">
-          What does <span class="text-primary">Awal (ⴰⵡⴰⵍ)</span> mean?
+          What does
+          <a href="/word/{dailyChallenge.slug}" class="text-primary hover:underline">
+            {dailyChallenge.latin}{#if dailyChallenge.tifinagh} ({dailyChallenge.tifinagh}){/if}
+          </a>
+          mean?
         </Card.Title>
       </Card.Header>
 
       <Card.Content class="space-y-2 py-2">
-        {#each dailyQuizOptions as opt, idx}
+        {#each dailyChallenge.options as opt, idx}
           <button
             type="button"
             onclick={() => (selectedQuizIdx = idx)}
-            class="flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left text-xs font-medium transition-all {selectedQuizIdx ===
+            class="flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-xs font-medium transition-all {selectedQuizIdx ===
             idx
               ? opt.correct
                 ? 'border-emerald-500 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
                 : 'border-amber-500 bg-amber-500/10 text-amber-700 dark:text-amber-300'
               : 'hover:bg-muted/60 bg-background'}"
           >
-            <span>{opt.label}</span>
+            <span class="line-clamp-2">{opt.label}</span>
             {#if selectedQuizIdx === idx}
-              <span class="text-[10px] font-bold">
-                {opt.correct ? '✓ Correct! (Ayyuz)' : 'Try again'}
+              <span class="shrink-0 text-[10px] font-bold">
+                {opt.correct ? '✓ Ayyuz!' : 'Try again'}
               </span>
             {/if}
           </button>
@@ -284,12 +306,18 @@
           • <AmazighWord word="Agemmay" showTifinaghInline />
         </span>
       </div>
-      {#if isFiltering}
-        <Button variant="ghost" size="sm" href="/" class="h-7 gap-1 text-xs">
-          <X class="h-3.5 w-3.5" />
-          {m.clear_filters()}
+      <div class="flex items-center gap-2">
+        {#if isFiltering}
+          <Button variant="ghost" size="sm" href="/" class="h-7 gap-1 text-xs">
+            <X class="h-3.5 w-3.5" />
+            {m.clear_filters()}
+          </Button>
+        {/if}
+        <Button variant="outline" size="sm" href="/search" class="h-7 gap-1 text-xs">
+          Advanced Search
+          <ArrowRight class="h-3 w-3" />
         </Button>
-      {/if}
+      </div>
     </div>
 
     <!-- Alphabet Strip -->
@@ -343,9 +371,16 @@
 
     {#if isFiltering}
       <div class="border-t pt-4">
-        <h3 class="text-muted-foreground mb-3 text-xs font-bold tracking-wider uppercase">
-          Matching Words ({browsedWords.length})
-        </h3>
+        <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h3 class="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+            Matching Words ({browseTotal > 0 ? browseTotal.toLocaleString() : browsedWords.length})
+          </h3>
+          {#if totalBrowsePages > 1}
+            <span class="text-muted-foreground text-xs">
+              Page {browsePage} of {totalBrowsePages}
+            </span>
+          {/if}
+        </div>
         {#if browsedWords.length === 0}
           <div class="bg-background rounded-lg border border-dashed p-6 text-center">
             <p class="text-muted-foreground text-sm">
@@ -360,10 +395,10 @@
             {#each browsedWords as word (word.id)}
               <a
                 href="/word/{word.slug}"
-                class="bg-background hover:border-primary/50 flex items-center justify-between rounded-lg border p-3.5 transition-all hover:shadow-sm"
+                class="bg-background hover:border-primary/50 flex items-center justify-between gap-2 rounded-lg border p-3.5 transition-all hover:shadow-sm"
               >
-                <div>
-                  <p class="text-foreground font-bold">{word.script_latin}</p>
+                <div class="min-w-0">
+                  <p class="text-foreground truncate font-bold">{word.script_latin}</p>
                   {#if word.definitions?.[0]?.definition_text}
                     <p class="text-muted-foreground line-clamp-1 text-xs">
                       {word.definitions[0].definition_text}
@@ -373,13 +408,40 @@
                   {/if}
                 </div>
                 {#if word.script_tifinagh}
-                  <Badge variant="secondary" class="font-serif text-sm">
+                  <Badge variant="secondary" class="shrink-0 font-serif text-sm">
                     {word.script_tifinagh}
                   </Badge>
                 {/if}
               </a>
             {/each}
           </div>
+
+          {#if totalBrowsePages > 1 || browsedWords.length >= browsePageSize}
+            <div class="mt-4 flex items-center justify-between border-t pt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                href={browsePage > 1 ? browseHref(browsePage - 1) : undefined}
+                disabled={browsePage <= 1}
+                class="text-xs"
+              >
+                ← Previous
+              </Button>
+              <span class="text-muted-foreground text-xs">
+                Showing {(browsePage - 1) * browsePageSize + 1}–{(browsePage - 1) * browsePageSize + browsedWords.length}
+                {#if browseTotal > 0} of {browseTotal.toLocaleString()}{/if}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                href={browsePage < totalBrowsePages ? browseHref(browsePage + 1) : undefined}
+                disabled={browsePage >= totalBrowsePages}
+                class="text-xs"
+              >
+                Next →
+              </Button>
+            </div>
+          {/if}
         {/if}
       </div>
     {/if}

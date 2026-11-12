@@ -1,0 +1,17 @@
+{
+  "name": "Asafu (ⴰⵙⴰⴼⵓ) — Amazigh Dictionary & Learning Platform",
+  "short_name": "Asafu ⴰⵙⴰⴼⵓ",
+  "description": "The living Tamaziɣt dictionary, multi-script search engine, spaced repetition flashcards, courses, and daily Amazigh word games.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#d97706",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
