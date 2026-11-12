@@ -47,6 +47,6 @@ export const load = async ({ params, locals: { supabase, user, role } }) => {
   return {
     course,
     completedLessonIds,
-    canEdit: role === 'admin' || role === 'instructor'
+    canEdit: role === 'owner' || role === 'instructor'
   };
 };

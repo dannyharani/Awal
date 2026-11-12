@@ -563,7 +563,7 @@ export const actions: Actions = {
       }
     }
 
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
     let query = supabase.from('definitions').update(updatePayload).eq('id', definitionId);
     if (!isModerator) {
       query = query.eq('user_id', user.id);
@@ -584,7 +584,7 @@ export const actions: Actions = {
 
     const formData = await request.formData();
     const definitionId = Number(formData.get('definition_id'));
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     let query = supabase.from('definitions').delete().eq('id', definitionId);
     if (!isModerator) {
@@ -597,7 +597,7 @@ export const actions: Actions = {
   },
 
   verifyDefinition: async ({ request, locals: { supabase, user, role } }) => {
-    if (!user || (role !== 'admin' && role !== 'moderator' && role !== 'instructor')) {
+    if (!user || (role !== 'owner' && role !== 'admin' && role !== 'moderator' && role !== 'instructor')) {
       return fail(403, { message: 'Only instructors and moderators can verify definitions.' });
     }
 
@@ -645,7 +645,7 @@ export const actions: Actions = {
 
     const formData = await request.formData();
     const exampleId = Number(formData.get('example_id'));
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     let query = supabase.from('examples').delete().eq('id', exampleId);
     if (!isModerator) {
@@ -663,7 +663,7 @@ export const actions: Actions = {
     const formData = await request.formData();
     const definitionId = Number(formData.get('definition_id'));
     const audioUrl = String(formData.get('audio_url') || '');
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     const { data: def, error: fetchError } = await supabase
       .from('definitions')
@@ -739,7 +739,7 @@ export const actions: Actions = {
 
     const formData = await request.formData();
     const commentId = Number(formData.get('comment_id'));
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     let query = supabase.from('definition_comments').delete().eq('id', commentId);
     if (!isModerator) {
@@ -799,7 +799,7 @@ export const actions: Actions = {
 
     const formData = await request.formData();
     const relationId = Number(formData.get('relation_id'));
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     let query = supabase.from('word_relations').delete().eq('id', relationId);
     if (!isModerator) {
@@ -844,7 +844,7 @@ export const actions: Actions = {
       data: { publicUrl }
     } = supabase.storage.from('pronunciations').getPublicUrl(fileName);
 
-    const isModerator = role === 'admin' || role === 'moderator' || role === 'instructor';
+    const isModerator = role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor';
 
     // Prefer updating user's own definition in the same dialect if it has no audio yet
     const { data: ownDef } = await supabase

@@ -43,6 +43,6 @@ export const load = async ({ locals: { supabase, user, role } }) => {
     enrollments: enrollmentsReq.data ?? [],
     completedLessonIds: Array.from(completedLessonIds),
     user,
-    canAccessStudio: role === 'admin' || role === 'instructor'
+    canAccessStudio: role === 'owner' || role === 'instructor'
   };
 };

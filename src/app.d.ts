@@ -13,11 +13,13 @@ declare global {
       safeGetSession: () => Promise<{
         session: Session | null;
         user: User | null;
-        role: 'admin' | 'user' | 'moderator' | 'instructor' | null;
+        role: 'owner' | 'admin' | 'user' | 'moderator' | 'instructor' | null;
+        is_blocked?: boolean;
       }>;
       session: Session | null;
       user: User | null;
-      role: 'admin' | 'user' | 'moderator' | 'instructor' | null;
+      role: 'owner' | 'admin' | 'user' | 'moderator' | 'instructor' | null;
+      is_blocked?: boolean;
     }
     interface PageData {
       session: Session | null;

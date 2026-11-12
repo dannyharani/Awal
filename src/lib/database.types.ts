@@ -505,6 +505,7 @@ export type Database = {
           created_at: string | null
           first_name: string | null
           id: string
+          is_blocked: boolean
           last_name: string | null
           preferred_locale: string
           reputation_points: number | null
@@ -517,6 +518,7 @@ export type Database = {
           created_at?: string | null
           first_name?: string | null
           id: string
+          is_blocked?: boolean
           last_name?: string | null
           preferred_locale?: string
           reputation_points?: number | null
@@ -529,6 +531,7 @@ export type Database = {
           created_at?: string | null
           first_name?: string | null
           id?: string
+          is_blocked?: boolean
           last_name?: string | null
           preferred_locale?: string
           reputation_points?: number | null

@@ -25,7 +25,7 @@ export const load = async ({ locals: { supabase } }) => {
 
 export const actions = {
   reorderCourses: async ({ request, locals: { supabase, user, role } }) => {
-    if (!user || (role !== 'admin' && role !== 'instructor')) {
+    if (!user || (role !== 'owner' && role !== 'instructor')) {
       return fail(403, { message: 'Forbidden' });
     }
 
@@ -50,7 +50,7 @@ export const actions = {
   },
 
   togglePublish: async ({ request, locals: { supabase, user, role } }) => {
-    if (!user || (role !== 'admin' && role !== 'instructor')) {
+    if (!user || (role !== 'owner' && role !== 'instructor')) {
       return fail(403, { message: 'Forbidden' });
     }
 
@@ -68,7 +68,7 @@ export const actions = {
   },
 
   deleteCourse: async ({ request, locals: { supabase, user, role } }) => {
-    if (!user || (role !== 'admin' && role !== 'instructor')) {
+    if (!user || (role !== 'owner' && role !== 'instructor')) {
       return fail(403, { message: 'Forbidden' });
     }
 

@@ -61,7 +61,7 @@
     attributes.source === 'dglai' || isSystemUsername(def.author?.username)
   );
   let canModerate = $derived(
-    role === 'admin' || role === 'moderator' || role === 'instructor'
+    role === 'owner' || role === 'admin' || role === 'moderator' || role === 'instructor'
   );
   let canEdit = $derived(
     Boolean(user && (user.id === def.user_id || canModerate))
@@ -321,7 +321,7 @@
                     size="sm"
                   />
 
-                  {#if user && (user.id === example.user_id || role === 'admin' || role === 'moderator')}
+                  {#if user && (user.id === example.user_id || role === 'owner' || role === 'admin' || role === 'moderator')}
                     <form method="POST" action="?/deleteExample" use:enhance>
                       <input type="hidden" name="example_id" value={example.id} />
                       <Button

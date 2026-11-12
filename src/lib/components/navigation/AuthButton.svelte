@@ -71,7 +71,7 @@
         {/if}
       </DropdownMenu.Label>
       <DropdownMenu.Separator />
-      {#if role === 'admin' || role === 'instructor'}
+      {#if role === 'owner' || role === 'instructor'}
         <DropdownMenu.Item onclick={redirectStudio}>
           <Sparkles class="mr-2 h-4 w-4" />
           {m.nav_studio()}

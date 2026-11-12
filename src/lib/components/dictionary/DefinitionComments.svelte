@@ -50,7 +50,7 @@
 
   function canDelete(commentUserId: string) {
     if (!user) return false;
-    return user.id === commentUserId || role === 'admin' || role === 'moderator';
+    return user.id === commentUserId || role === 'owner' || role === 'admin' || role === 'moderator';
   }
 
   function formatRelativeDate(dateStr: string) {

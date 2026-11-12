@@ -20,7 +20,7 @@
   import * as m from '$lib/paraglide/messages.js';
 
   let role = $derived(page.data.role);
-  let canAccessStudio = $derived(role === 'admin' || role === 'instructor');
+  let canAccessStudio = $derived(role === 'owner' || role === 'instructor');
   let pathname = $derived(page.url.pathname);
 
   let mobileMenuOpen = $state(false);

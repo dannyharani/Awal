@@ -5,7 +5,7 @@
   import { Badge } from '$lib/components/ui/badge';
   import { Button } from '$lib/components/ui/button';
   import { Separator } from '$lib/components/ui/separator';
-  import { Trophy, BookOpen, Star, Calendar, ArrowRight, ArrowLeft, Settings, Bookmark } from '@lucide/svelte';
+  import { Trophy, BookOpen, Star, Calendar, ArrowRight, ArrowLeft, Settings, Bookmark, Crown, ShieldAlert, ShieldCheck } from '@lucide/svelte';
   import * as m from '$lib/paraglide/messages.js';
 
   let { data } = $props();
@@ -16,11 +16,18 @@
 
   // Check if this is MY profile
   let isOwnProfile = $derived(user?.id === profile.id);
+  let isOwner = $derived(data.isOwner);
+  let isBlocked = $derived(Boolean((profile as any)?.is_blocked));
   let displayName = $derived(
     profile.first_name || profile.last_name
       ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim()
       : profile.username
   );
+
+  let selectedRole = $state('user');
+  $effect(() => {
+    selectedRole = profile.role ?? 'user';
+  });
 </script>
 
 <div class="container mx-auto max-w-4xl px-4 py-10">
@@ -50,9 +57,20 @@
             <h1 class="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               {displayName}
             </h1>
-            {#if profile.role && profile.role !== 'user'}
+            {#if profile.role === 'owner'}
+              <Badge class="gap-1 bg-amber-500/15 text-amber-700 dark:text-amber-400 border-amber-500/30 text-xs font-semibold uppercase">
+                <Crown class="h-3 w-3 text-amber-500" />
+                Creator & Owner
+              </Badge>
+            {:else if profile.role && profile.role !== 'user'}
               <Badge variant="default" class="text-xs capitalize">
                 {profile.role}
+              </Badge>
+            {/if}
+            {#if isBlocked}
+              <Badge variant="destructive" class="gap-1 text-xs font-semibold uppercase">
+                <ShieldAlert class="h-3 w-3" />
+                Suspended
               </Badge>
             {/if}
           </div>
@@ -100,6 +118,61 @@
             class="hover:text-primary underline">Add one now.</a
           >
         </p>
+      {/if}
+
+      <!-- Creator & Owner Moderation Console -->
+      {#if isOwner && !isOwnProfile}
+        <div class="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-left shadow-xs">
+          <div class="mb-3 flex items-center justify-between">
+            <span class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
+              <Crown class="h-4 w-4" />
+              Creator Administration Console
+            </span>
+            <span class="text-[11px] text-muted-foreground">User ID: <code class="text-[10px]">{profile.id}</code></span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-4">
+            <!-- Role Selector -->
+            <form method="POST" action="?/updateUserRole" class="flex items-center gap-2">
+              <input type="hidden" name="target_user_id" value={profile.id} />
+              <label for="new_role" class="text-xs font-medium text-foreground">Role:</label>
+              <select
+                id="new_role"
+                name="new_role"
+                bind:value={selectedRole}
+                class="h-8 rounded-md border border-input bg-background px-2 py-1 text-xs font-medium shadow-xs focus:ring-1 focus:ring-primary focus:outline-hidden"
+              >
+                <option value="user">User (Standard)</option>
+                <option value="moderator">Moderator (Dictionary)</option>
+                <option value="instructor">Instructor (Courses & Studio)</option>
+                <option value="admin">Admin</option>
+                <option value="owner">Owner / Creator</option>
+              </select>
+              <Button type="submit" size="sm" variant="outline" class="h-8 text-xs">
+                Save Role
+              </Button>
+            </form>
+
+            <Separator orientation="vertical" class="hidden h-6 md:block" />
+
+            <!-- Block / Unblock Toggle -->
+            <form method="POST" action="?/toggleBlockUser" class="flex items-center gap-2">
+              <input type="hidden" name="target_user_id" value={profile.id} />
+              <input type="hidden" name="block_action" value={isBlocked ? 'unblock' : 'block'} />
+              {#if isBlocked}
+                <Button type="submit" size="sm" variant="outline" class="h-8 gap-1.5 border-emerald-500/40 text-xs text-emerald-600 hover:bg-emerald-500/10 dark:text-emerald-400">
+                  <ShieldCheck class="h-3.5 w-3.5" />
+                  Unblock User
+                </Button>
+              {:else}
+                <Button type="submit" size="sm" variant="destructive" class="h-8 gap-1.5 text-xs">
+                  <ShieldAlert class="h-3.5 w-3.5" />
+                  Block / Suspend User
+                </Button>
+              {/if}
+            </form>
+          </div>
+        </div>
       {/if}
 
       <div

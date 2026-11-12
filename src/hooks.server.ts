@@ -24,7 +24,7 @@ export const handleSupabase: Handle = async ({ event, resolve }) => {
     } = await event.locals.supabase.auth.getSession();
 
     if (!session) {
-      return { session: null, user: null, role: null };
+      return { session: null, user: null, role: null, is_blocked: false };
     }
 
     const {
@@ -33,22 +33,38 @@ export const handleSupabase: Handle = async ({ event, resolve }) => {
     } = await event.locals.supabase.auth.getUser();
 
     if (error || !user) {
-      return { session: null, user: null, role: null };
+      return { session: null, user: null, role: null, is_blocked: false };
     }
 
-    const { data: profile } = await event.locals.supabase.from('profiles').select('role').eq('id', user.id).single();
+    const { data: profile } = await event.locals.supabase
+      .from('profiles')
+      .select('role, is_blocked')
+      .eq('id', user.id)
+      .single();
 
-    return { session, user, role: (profile?.role as 'admin' | 'user' | 'moderator' | 'instructor' | null) ?? null };
+    return {
+      session,
+      user,
+      role: (profile?.role as 'owner' | 'admin' | 'user' | 'moderator' | 'instructor' | null) ?? null,
+      is_blocked: Boolean((profile as any)?.is_blocked)
+    };
   };
 
-  const { session, user, role } = await event.locals.safeGetSession();
+  const { session, user, role, is_blocked } = await event.locals.safeGetSession();
 
   event.locals.session = session;
   event.locals.user = user;
   event.locals.role = role; // Store role in locals for easy access
+  event.locals.is_blocked = is_blocked;
 
-  if (event.url.pathname.startsWith('/admin') && role !== 'admin' && role !== 'instructor') {
-    return new Response('Forbidden', { status: 403 });
+  // Blocked users are restricted from performing mutations / admin routes
+  if (is_blocked && (event.request.method !== 'GET' || event.url.pathname.startsWith('/admin'))) {
+    return new Response('Your account has been suspended by the platform administrator.', { status: 403 });
+  }
+
+  // Creator studio & admin pages: only accessible to 'owner' and 'instructor' (teachers)
+  if (event.url.pathname.startsWith('/admin') && role !== 'owner' && role !== 'instructor') {
+    return new Response('Forbidden: Creator studio is restricted to instructors and the platform owner.', { status: 403 });
   }
 
   return resolve(event, {
